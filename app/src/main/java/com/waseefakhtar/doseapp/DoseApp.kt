@@ -77,8 +77,6 @@ fun DoseApp() {
                         )
                 ) {
 
-                    Greeting("Android")
-
                     DoseNavHost(
                         navController = navController,
                         modifier = Modifier
@@ -90,22 +88,6 @@ fun DoseApp() {
 
         }
     }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Column {
-        Text(
-            text = "Hello,",
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.displayMedium
-        )
-        Text(
-            text = "[Edit Name]",
-            style = MaterialTheme.typography.displayMedium
-        )
-    }
-
 }
 
 @Composable

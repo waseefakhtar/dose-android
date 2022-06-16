@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 
@@ -20,5 +21,6 @@ fun DoseNavHost(
         modifier = modifier,
     ) {
         homeGraph()
+        calendarGraph()
     }
 }
