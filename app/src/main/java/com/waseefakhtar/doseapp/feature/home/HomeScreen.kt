@@ -23,14 +23,16 @@ fun HomeScreen() {
 @Composable
 fun Greeting(name: String) {
     Column {
+        // TODO: Add greeting based on time of day e.g. Good Morning, Good Afternoon, Good evening.
+        // TODO: Get name from DB and show user's first name.
         Text(
-            text = "Hello,",
+            text = "Hello!",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displayMedium
         )
-        Text(
+        /*Text(
             text = "[Edit Name]",
             style = MaterialTheme.typography.displayMedium
-        )
+        )*/
     }
 }
