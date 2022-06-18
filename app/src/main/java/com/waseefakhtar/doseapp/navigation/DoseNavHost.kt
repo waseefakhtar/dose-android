@@ -1,16 +1,22 @@
 package com.waseefakhtar.doseapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 
 @Composable
 fun DoseNavHost(
+    bottomBarVisibility: MutableState<Boolean>,
+    fabVisibility: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = HomeDestination.route
@@ -20,7 +26,8 @@ fun DoseNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeGraph()
-        calendarGraph()
+        homeGraph(bottomBarVisibility, fabVisibility)
+        calendarGraph(bottomBarVisibility, fabVisibility)
+        addMedicationGraph(bottomBarVisibility, fabVisibility)
     }
 }
