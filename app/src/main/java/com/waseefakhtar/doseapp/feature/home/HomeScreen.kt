@@ -26,13 +26,13 @@ fun Greeting(name: String) {
         // TODO: Add greeting based on time of day e.g. Good Morning, Good Afternoon, Good evening.
         // TODO: Get name from DB and show user's first name.
         Text(
-            text = "Hello!",
+            text = "Good",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displayMedium
         )
-        /*Text(
-            text = "[Edit Name]",
+        Text(
+            text = "Morning!",
             style = MaterialTheme.typography.displayMedium
-        )*/
+        )
     }
 }
