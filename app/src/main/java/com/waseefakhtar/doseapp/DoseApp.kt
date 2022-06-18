@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp
 
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -11,7 +12,12 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -60,6 +66,9 @@ fun DoseApp() {
                 modifier = Modifier.padding(16.dp),
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onBackground,
+                floatingActionButton = {
+                        DoseFAB()
+                },
                 bottomBar = {
                         DoseBottomBar(
                             onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
@@ -128,6 +137,17 @@ private fun DoseBottomBar(
             }
         }
     }
+}
+
+@Composable
+fun DoseFAB() {
+    ExtendedFloatingActionButton(
+        text = { Text(text = "Add Medication") },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
+        onClick = {
+            // Navigate to Add Medication
+        },
+        elevation = FloatingActionButtonDefaults.elevation(0.dp))
 }
 
 @Preview(showBackground = true)
