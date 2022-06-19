@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,7 +23,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -35,11 +32,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
@@ -188,7 +183,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                     handleSelection(
                         isSelected =  isMorningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                            selectionCount,
+                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                        ),
                         onStateChange = { count, selected ->
                             isMorningSelected = selected
                             selectionCount = count
@@ -210,7 +208,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                     handleSelection(
                         isSelected =  isAfternoonSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                            selectionCount,
+                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                        ),
                         onStateChange = { count, selected ->
                             isAfternoonSelected = selected
                             selectionCount = count
@@ -236,7 +237,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                     handleSelection(
                         isSelected =  isEveningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                            selectionCount,
+                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                        ),
                         onStateChange = { count, selected ->
                             isEveningSelected = selected
                             selectionCount = count
@@ -258,7 +262,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                     handleSelection(
                         isSelected =  isNightSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                            selectionCount,
+                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                        ),
                         onStateChange = { count, selected ->
                             isNightSelected = selected
                             selectionCount = count
@@ -292,11 +299,11 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
     }
 }
 
-private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimes: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
+private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimesOfDay: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
     if (isSelected) {
         onStateChange(selectionCount - 1, !isSelected)
     } else {
-        if (canSelectMoreTimes) {
+        if (canSelectMoreTimesOfDay) {
             onStateChange(selectionCount + 1, !isSelected)
         } else {
             onShowMaxSelectionError()
@@ -304,9 +311,7 @@ private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectM
     }
 }
 
-private fun canSelectMoreTimes(selectionCount: Int, morningSelection: Boolean, afternoonSelection: Boolean, eveningSelection: Boolean, nightSelection: Boolean, numberOfDosage: Int): Boolean {
-    println("shouldSelect: ${selectionCount}. ${numberOfDosage}")
-
+private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): Boolean {
     return selectionCount < numberOfDosage
 }
 
