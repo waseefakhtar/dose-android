@@ -270,10 +270,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
         Button(
             modifier = Modifier
-                .fillMaxWidth(0.75F)
+                .fillMaxWidth()
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
