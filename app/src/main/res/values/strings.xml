@@ -8,4 +8,5 @@
     <string name="recurrence">Recurrence</string>
     <string name="until">Until</string>
     <string name="times_of_day">Times of Day</string>
+    <string name="done">Done</string>
 </resources>
