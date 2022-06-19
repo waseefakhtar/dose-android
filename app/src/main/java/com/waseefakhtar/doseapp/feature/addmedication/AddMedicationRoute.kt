@@ -1,22 +1,21 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -34,17 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.intl.LocaleList
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.waseefakhtar.doseapp.R
-import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.getRecurrenceList
+import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -100,6 +97,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
             DosageTextField()
             RecurrenceDropdownMenu()
         }
+
+        Spacer(modifier = Modifier.padding(4.dp))
+        UntilTextField()
     }
 }
 
@@ -130,7 +130,7 @@ fun DosageTextField() {
             trailingIcon = {
                 if (isMaxDoseError) {
                     Icon(
-                        imageVector = Icons.Default.Info,
+                        imageVector = Icons.Filled.Info,
                         contentDescription = "Error",
                         tint = MaterialTheme.colorScheme.error
                     )
@@ -194,55 +194,47 @@ fun RecurrenceDropdownMenu() {
 }
 
 @Composable
-fun RecurrencePickerView(
-    selectedRecurrence: Recurrence,
-    onSelection: (Recurrence) -> Unit,
-    recurrenceList: List<Recurrence>
-) {
-    var showDialog by remember { mutableStateOf(false) }
+fun UntilTextField() {
     Text(
-        modifier = Modifier
-            .clickable {
-                showDialog = true
-            }
-            .padding(start = 20.dp, end = 5.dp),
-        text = selectedRecurrence.recurrenceString
+        text = stringResource(id = R.string.until),
+        style = MaterialTheme.typography.bodyLarge
     )
 
-    if (showDialog)
-        RecurrencePickerDialog(recurrenceList, onSelection) {
-            showDialog = false
-        }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
+
+    val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
+    val currentDate = sdf.format(Date())
+    var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
+
+
+    val context = LocalContext.current
+
+    val calendar = Calendar.getInstance()
+    val year: Int = calendar.get(Calendar.YEAR)
+    val month: Int = calendar.get(Calendar.MONTH)
+    val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
+    calendar.time = Date()
+
+    val mDatePickerDialog = DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
+        }, year, month, day)
+
+
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        readOnly = true,
+        value = selectedDate,
+        onValueChange = {},
+        trailingIcon = { Icons.Default.DateRange },
+        interactionSource = interactionSource
+    )
+
+    if (isPressed) {
+        mDatePickerDialog.show()
+    }
 }
 
-@Composable
-fun RecurrencePickerDialog(
-    recurrenceList: List<Recurrence>,
-    onSelection: (Recurrence) -> Unit,
-    dismiss: () -> Unit,
-) {
-    Dialog(onDismissRequest = dismiss) {
-        Box {
-            LazyColumn(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp, vertical = 40.dp)
-            ) {
-                for (recurrence in recurrenceList) {
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .clickable {
-                                    onSelection(recurrence)
-                                    dismiss()
-                                }
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            text = recurrence.recurrenceString
-                        )
-                    }
-                }
-            }
-        }
-    }
+fun Int.toMonthName(): String {
+    return DateFormatSymbols().months[this]
 }

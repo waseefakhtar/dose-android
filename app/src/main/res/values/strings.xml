@@ -6,4 +6,6 @@
     <string name="medication_name">Medication Name</string>
     <string name="dose_per_day">Dosage</string>
     <string name="recurrence">Recurrence</string>
+    <string name="until">Until</string>
+
 </resources>
