@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
@@ -56,7 +58,6 @@ fun AddMedicationRoute(
 @Composable
 fun AddMedicationScreen(onBackClicked: () -> Unit) {
     var medicationName by rememberSaveable { mutableStateOf("") }
-
 
     Column(
         modifier = Modifier.padding(0.dp, 16.dp),
@@ -161,7 +162,7 @@ fun RecurrenceDropdownMenu() {
             style = MaterialTheme.typography.bodyLarge
         )
 
-        val options = getRecurrenceList().map { it.recurrenceString }
+        val options = getRecurrenceList().map { it.name }
         var expanded by remember { mutableStateOf(false) }
         var selectedOptionText by remember { mutableStateOf(options[0]) }
         ExposedDropdownMenuBox(
