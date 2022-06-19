@@ -28,10 +28,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
@@ -159,10 +159,10 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
             style = MaterialTheme.typography.bodyLarge
         )
 
-        var morningSelectionSaveable by rememberSaveable { mutableStateOf(false) }
-        var afternoonSelectionSaveable by rememberSaveable { mutableStateOf(false) }
-        var eveningSelectionSaveable by rememberSaveable { mutableStateOf(false) }
-        var nightSelectionSaveable by rememberSaveable { mutableStateOf(false) }
+        var isMorningSelected by rememberSaveable { mutableStateOf(false) }
+        var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
+        var isEveningSelected by rememberSaveable { mutableStateOf(false) }
+        var isNightSelected by rememberSaveable { mutableStateOf(false) }
         var selectionCount by rememberSaveable { mutableStateOf(0) }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -174,14 +174,20 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                selected = morningSelectionSaveable,
-                onClick = {
-                    if (shouldSelect(selectionCount, morningSelectionSaveable, afternoonSelectionSaveable, eveningSelectionSaveable, nightSelectionSaveable, numberOfDosageSaveable.toIntOrNull() ?: 0)) {
-                        selectionCount++
-                        morningSelectionSaveable = !morningSelectionSaveable
-                    } else {
-                        showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
-                    }
+                selected = isMorningSelected,
+                onClick =  {
+                    handleSelection(
+                        isSelected =  isMorningSelected,
+                        selectionCount = selectionCount,
+                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        onStateChange = { count, selected ->
+                            isMorningSelected = selected
+                            selectionCount = count
+                        },
+                        onShowMaxSelectionError = {
+                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                        }
+                    )
                 },
                 label = { Text(text = TimesOfDay.Morning.name)  },
                 selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
@@ -190,14 +196,20 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                selected = afternoonSelectionSaveable,
+                selected = isAfternoonSelected,
                 onClick = {
-                    if (shouldSelect(selectionCount, morningSelectionSaveable, afternoonSelectionSaveable, eveningSelectionSaveable, nightSelectionSaveable, numberOfDosageSaveable.toIntOrNull() ?: 0)) {
-                        selectionCount++
-                        afternoonSelectionSaveable = !afternoonSelectionSaveable
-                    } else {
-                        showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
-                    }
+                    handleSelection(
+                        isSelected =  isAfternoonSelected,
+                        selectionCount = selectionCount,
+                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        onStateChange = { count, selected ->
+                            isAfternoonSelected = selected
+                            selectionCount = count
+                        },
+                        onShowMaxSelectionError = {
+                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                        }
+                    )
                 },
                 label = { Text(text = TimesOfDay.Afternoon.name)  },
                 selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
@@ -210,14 +222,20 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                selected = eveningSelectionSaveable,
+                selected = isEveningSelected,
                 onClick = {
-                    if (shouldSelect(selectionCount, morningSelectionSaveable, afternoonSelectionSaveable, eveningSelectionSaveable, nightSelectionSaveable, numberOfDosageSaveable.toIntOrNull() ?: 0)) {
-                        selectionCount++
-                        eveningSelectionSaveable = !eveningSelectionSaveable
-                    } else {
-                        showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
-                    }
+                    handleSelection(
+                        isSelected =  isEveningSelected,
+                        selectionCount = selectionCount,
+                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        onStateChange = { count, selected ->
+                            isEveningSelected = selected
+                            selectionCount = count
+                        },
+                        onShowMaxSelectionError = {
+                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                        }
+                    )
                 },
                 label = { Text(text = TimesOfDay.Evening.name)  },
                 selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
@@ -226,14 +244,20 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                selected = nightSelectionSaveable,
+                selected = isNightSelected,
                 onClick = {
-                    if (shouldSelect(selectionCount, morningSelectionSaveable, afternoonSelectionSaveable, eveningSelectionSaveable, nightSelectionSaveable, numberOfDosageSaveable.toIntOrNull() ?: 0)) {
-                        selectionCount++
-                        nightSelectionSaveable = !nightSelectionSaveable
-                    } else {
-                        showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
-                    }
+                    handleSelection(
+                        isSelected =  isNightSelected,
+                        selectionCount = selectionCount,
+                        canSelectMoreTimes =  canSelectMoreTimes(selectionCount, isMorningSelected, isAfternoonSelected, isEveningSelected, isNightSelected, numberOfDosageSaveable.toIntOrNull() ?: 0),
+                        onStateChange = { count, selected ->
+                            isNightSelected = selected
+                            selectionCount = count
+                        },
+                        onShowMaxSelectionError = {
+                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                        }
+                    )
                 },
                 label = { Text(text = TimesOfDay.Night.name)  },
                 selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
@@ -242,7 +266,19 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
     }
 }
 
-private fun shouldSelect(selectionCount: Int, morningSelection: Boolean, afternoonSelection: Boolean, eveningSelection: Boolean, nightSelection: Boolean, numberOfDosage: Int): Boolean {
+private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimes: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
+    if (isSelected) {
+        onStateChange(selectionCount - 1, !isSelected)
+    } else {
+        if (canSelectMoreTimes) {
+            onStateChange(selectionCount + 1, !isSelected)
+        } else {
+            onShowMaxSelectionError()
+        }
+    }
+}
+
+private fun canSelectMoreTimes(selectionCount: Int, morningSelection: Boolean, afternoonSelection: Boolean, eveningSelection: Boolean, nightSelection: Boolean, numberOfDosage: Int): Boolean {
     println("shouldSelect: ${selectionCount}. ${numberOfDosage}")
 
     return selectionCount < numberOfDosage
