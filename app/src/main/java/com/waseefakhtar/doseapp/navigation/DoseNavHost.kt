@@ -28,6 +28,6 @@ fun DoseNavHost(
     ) {
         homeGraph(bottomBarVisibility, fabVisibility)
         calendarGraph(bottomBarVisibility, fabVisibility)
-        addMedicationGraph(bottomBarVisibility, fabVisibility)
+        addMedicationGraph(bottomBarVisibility, fabVisibility) { navController.navigateUp() }
     }
 }

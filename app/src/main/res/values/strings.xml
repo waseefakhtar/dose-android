@@ -3,4 +3,7 @@
     <string name="home">Home</string>
     <string name="calendar">Calendar</string>
     <string name="add_medication">Add Medication</string>
+    <string name="medication_name">Medication Name</string>
+    <string name="dose_per_day">Dosage</string>
+    <string name="recurrence">Recurrence</string>
 </resources>
