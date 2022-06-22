@@ -2,8 +2,6 @@ package com.waseefakhtar.doseapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,6 +26,11 @@ fun DoseNavHost(
     ) {
         homeGraph(bottomBarVisibility, fabVisibility)
         calendarGraph(bottomBarVisibility, fabVisibility)
-        addMedicationGraph(bottomBarVisibility, fabVisibility) { navController.navigateUp() }
+        addMedicationGraph(
+            bottomBarVisibility = bottomBarVisibility,
+            fabVisibility = fabVisibility,
+            onBackClicked = { navController.navigateUp() },
+            navigateToMedicationConfirm = { /*navController.navigate()*/ }
+        )
     }
 }

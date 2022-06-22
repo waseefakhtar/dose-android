@@ -46,7 +46,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.waseefakhtar.doseapp.feature.addmedication.AddMedicationRoute
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.navigation.DoseNavHost
 import com.waseefakhtar.doseapp.navigation.DoseTopLevelNavigation

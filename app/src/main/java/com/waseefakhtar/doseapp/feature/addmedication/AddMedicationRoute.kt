@@ -60,15 +60,16 @@ import java.util.*
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
+    navigateToMedicationConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     //viewModel: CalendarViewModel = hiltViewModel()
 ) {
-    AddMedicationScreen(onBackClicked)
+    AddMedicationScreen(onBackClicked, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMedicationScreen(onBackClicked: () -> Unit) {
+fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: () -> Unit) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosageSaveable by rememberSaveable { mutableStateOf("") }
 
@@ -287,12 +288,12 @@ fun AddMedicationScreen(onBackClicked: () -> Unit) {
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-
+                navigateToMedicationConfirm()
             },
             shape = MaterialTheme.shapes.extraLarge
             ) {
             Text(
-                text = stringResource(id = R.string.done),
+                text = stringResource(id = R.string.next),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
