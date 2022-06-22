@@ -102,14 +102,15 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             value = medicationName,
             onValueChange = { medicationName = it },
             //label = { Text(text = stringResource(id = R.string.medication_name)) },
-            placeholder = { Text(text = "Hexamine") },
+            placeholder = { Text(text = "e.g. Hexamine") },
         )
 
         Spacer(modifier = Modifier.padding(4.dp))
+
+        var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
             val maxDose = 3
 
             Column(
@@ -139,19 +140,20 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                             )
                         }
                     },
-                    placeholder = { Text(text = "3") },
+                    placeholder = { Text(text = "e.g. 1") },
                     isError = isMaxDoseError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
-                if (isMaxDoseError) {
-                    Text(
-                        text = "You cannot have more than 99 dosage per day.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
             }
             RecurrenceDropdownMenu()
+        }
+
+        if (isMaxDoseError) {
+            Text(
+                text = "You cannot have more than 99 dosage per day.",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
 
         Spacer(modifier = Modifier.padding(4.dp))
