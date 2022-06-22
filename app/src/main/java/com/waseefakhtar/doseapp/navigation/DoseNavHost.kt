@@ -10,6 +10,8 @@ import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGr
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
+import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
+import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.medicationConfirmGraph
 
 @Composable
 fun DoseNavHost(
@@ -30,7 +32,15 @@ fun DoseNavHost(
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() },
-            navigateToMedicationConfirm = { /*navController.navigate()*/ }
+            navigateToMedicationConfirm = { navController.navigate(MedicationConfirmDestination.route) }
+        )
+        medicationConfirmGraph(
+            bottomBarVisibility = bottomBarVisibility,
+            fabVisibility = fabVisibility,
+            onBackClicked = { navController.navigateUp() },
+            navigateToHome = {
+                // TODO: Navigate to Home with no backstack.
+            }
         )
     }
 }
