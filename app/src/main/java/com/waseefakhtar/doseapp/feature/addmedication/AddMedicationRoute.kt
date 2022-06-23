@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -35,11 +36,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +62,7 @@ import java.util.*
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
-    navigateToMedicationConfirm: () -> Unit,
+    navigateToMedicationConfirm: (Medication) -> Unit,
     modifier: Modifier = Modifier,
     //viewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -69,12 +71,20 @@ fun AddMedicationRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: () -> Unit) {
+fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: (Medication) -> Unit) {
     var medicationName by rememberSaveable { mutableStateOf("") }
-    var numberOfDosageSaveable by rememberSaveable { mutableStateOf("") }
+    var numberOfDosage by rememberSaveable { mutableStateOf("") }
+    var recurrence by rememberSaveable { mutableStateOf("") }
+    var endDate by rememberSaveable { mutableStateOf(0L) }
+    var isMorningSelected by rememberSaveable { mutableStateOf(false) }
+    var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
+    var isEveningSelected by rememberSaveable { mutableStateOf(false) }
+    var isNightSelected by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.padding(0.dp, 16.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .padding(0.dp, 16.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FloatingActionButton(
@@ -122,11 +132,11 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 )
                 TextField(
                     modifier = Modifier.width(128.dp),
-                    value = numberOfDosageSaveable,
+                    value = numberOfDosage,
                     onValueChange = {
                         if (it.length < maxDose) {
                             isMaxDoseError = false
-                            numberOfDosageSaveable = it
+                            numberOfDosage = it
                         } else {
                             isMaxDoseError = true
                         }
@@ -145,7 +155,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
-            RecurrenceDropdownMenu()
+            RecurrenceDropdownMenu { recurrence = it }
         }
 
         if (isMaxDoseError) {
@@ -157,7 +167,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
         }
 
         Spacer(modifier = Modifier.padding(4.dp))
-        UntilTextField()
+        UntilTextField { endDate = it }
 
 
         Spacer(modifier = Modifier.padding(4.dp))
@@ -166,10 +176,6 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             style = MaterialTheme.typography.bodyLarge
         )
 
-        var isMorningSelected by rememberSaveable { mutableStateOf(false) }
-        var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
-        var isEveningSelected by rememberSaveable { mutableStateOf(false) }
-        var isNightSelected by rememberSaveable { mutableStateOf(false) }
         var selectionCount by rememberSaveable { mutableStateOf(0) }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -188,14 +194,14 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         selectionCount = selectionCount,
                         canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
                             selectionCount,
-                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                            numberOfDosage.toIntOrNull() ?: 0
                         ),
                         onStateChange = { count, selected ->
                             isMorningSelected = selected
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -213,14 +219,14 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         selectionCount = selectionCount,
                         canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
                             selectionCount,
-                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                            numberOfDosage.toIntOrNull() ?: 0
                         ),
                         onStateChange = { count, selected ->
                             isAfternoonSelected = selected
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -242,14 +248,14 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         selectionCount = selectionCount,
                         canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
                             selectionCount,
-                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                            numberOfDosage.toIntOrNull() ?: 0
                         ),
                         onStateChange = { count, selected ->
                             isEveningSelected = selected
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -267,14 +273,14 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         selectionCount = selectionCount,
                         canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
                             selectionCount,
-                            numberOfDosageSaveable.toIntOrNull() ?: 0
+                            numberOfDosage.toIntOrNull() ?: 0
                         ),
                         onStateChange = { count, selected ->
                             isNightSelected = selected
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosageSaveable, context)
+                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -290,7 +296,22 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                navigateToMedicationConfirm()
+                validateMedication(
+                    name = medicationName,
+                    dosage = numberOfDosage.toIntOrNull() ?: 0,
+                    recurrence = recurrence,
+                    endDate = endDate,
+                    morningSelection = isMorningSelected,
+                    afternoonSelection = isAfternoonSelected,
+                    eveningSelection = isEveningSelected,
+                    nightSelection = isNightSelected,
+                    onInvalidate = {
+                        Toast.makeText(context, context.getString(R.string.value_is_empty, context.getString(it)), Toast.LENGTH_LONG).show()
+                    },
+                    onValidate = {
+                        navigateToMedicationConfirm(it)
+                    }
+                )
             },
             shape = MaterialTheme.shapes.extraLarge
             ) {
@@ -300,6 +321,56 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             )
         }
     }
+}
+
+private fun validateMedication(
+    name: String,
+    dosage: Int,
+    recurrence: String,
+    endDate: Long,
+    morningSelection: Boolean,
+    afternoonSelection: Boolean,
+    eveningSelection: Boolean,
+    nightSelection: Boolean,
+    onInvalidate: (Int) -> Unit,
+    onValidate: (Medication) -> Unit
+) {
+    if (name.isEmpty()) {
+        onInvalidate(R.string.medication_name)
+        return
+    }
+
+    if (dosage < 1) {
+        onInvalidate(R.string.dose_per_day)
+        return
+    }
+
+    if (endDate < 1) {
+        onInvalidate(R.string.until)
+        return
+    }
+
+    if (!morningSelection && !afternoonSelection && !eveningSelection && !nightSelection) {
+        onInvalidate(R.string.times_of_day)
+        return
+    }
+
+    val timesOfDay = mutableListOf<TimesOfDay>()
+    if (morningSelection) timesOfDay.add(TimesOfDay.Morning)
+    if (afternoonSelection) timesOfDay.add(TimesOfDay.Afternoon)
+    if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
+    if (nightSelection) timesOfDay.add(TimesOfDay.Night)
+
+    val newMedication =
+        Medication(
+            id = 1231,
+            name = name,
+            dosage = dosage,
+            recurrence = recurrence,
+            endDate = Date(endDate),
+            timesOfDay = timesOfDay,
+        )
+    onValidate(newMedication)
 }
 
 private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimesOfDay: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
@@ -328,7 +399,7 @@ private fun showMaxSelectionSnackbar(scope: CoroutineScope, numberOfDosage: Stri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecurrenceDropdownMenu() {
+fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -360,6 +431,7 @@ fun RecurrenceDropdownMenu() {
                         text = { Text(selectionOption) },
                         onClick = {
                             selectedOptionText = selectionOption
+                            recurrence(selectionOption)
                             expanded = false
                         }
                     )
@@ -370,7 +442,7 @@ fun RecurrenceDropdownMenu() {
 }
 
 @Composable
-fun UntilTextField() {
+fun UntilTextField(endDate: (Long) -> Unit) {
     Text(
         text = stringResource(id = R.string.until),
         style = MaterialTheme.typography.bodyLarge
@@ -392,8 +464,12 @@ fun UntilTextField() {
     val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
     calendar.time = Date()
 
-    val mDatePickerDialog = DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+    val mDatePickerDialog =
+        DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            val newDate = Calendar.getInstance()
+            newDate.set(year, month, dayOfMonth)
             selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
+            endDate(newDate.timeInMillis)
         }, year, month, day)
 
 

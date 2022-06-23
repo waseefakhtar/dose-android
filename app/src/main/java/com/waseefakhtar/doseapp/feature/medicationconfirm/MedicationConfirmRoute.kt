@@ -13,19 +13,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.waseefakhtar.doseapp.domain.model.Medication
 
 @Composable
 fun MedicationConfirmRoute(
+    medication: Medication?,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     //viewModel: CalendarViewModel = hiltViewModel()
 ) {
-    MedicationConfirmScreen(onBackClicked, navigateToHome)
+    medication?.let {
+        MedicationConfirmScreen(it, onBackClicked, navigateToHome)
+    } ?: {
+        // TODO: Show error and stay on AddMedication.
+    }
 }
 
 @Composable
-fun MedicationConfirmScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: () -> Unit) {
+fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, navigateToMedicationConfirm: () -> Unit) {
 
     Column(
         modifier = Modifier.padding(0.dp, 16.dp).verticalScroll(rememberScrollState()),
