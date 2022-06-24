@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -167,7 +166,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
         }
 
         Spacer(modifier = Modifier.padding(4.dp))
-        UntilTextField { endDate = it }
+        EndDateTextField { endDate = it }
 
 
         Spacer(modifier = Modifier.padding(4.dp))
@@ -346,7 +345,7 @@ private fun validateMedication(
     }
 
     if (endDate < 1) {
-        onInvalidate(R.string.until)
+        onInvalidate(R.string.end_date)
         return
     }
 
@@ -442,9 +441,9 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
 }
 
 @Composable
-fun UntilTextField(endDate: (Long) -> Unit) {
+fun EndDateTextField(endDate: (Long) -> Unit) {
     Text(
-        text = stringResource(id = R.string.until),
+        text = stringResource(id = R.string.end_date),
         style = MaterialTheme.typography.bodyLarge
     )
 
@@ -464,7 +463,7 @@ fun UntilTextField(endDate: (Long) -> Unit) {
     val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
     calendar.time = Date()
 
-    val mDatePickerDialog =
+    val datePickerDialog =
         DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
             val newDate = Calendar.getInstance()
             newDate.set(year, month, dayOfMonth)
@@ -483,7 +482,7 @@ fun UntilTextField(endDate: (Long) -> Unit) {
     )
 
     if (isPressed) {
-        mDatePickerDialog.show()
+        datePickerDialog.show()
     }
 }
 

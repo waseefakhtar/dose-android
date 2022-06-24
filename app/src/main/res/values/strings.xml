@@ -6,7 +6,7 @@
     <string name="medication_name">Medication Name</string>
     <string name="dose_per_day">Dosage</string>
     <string name="recurrence">Recurrence</string>
-    <string name="until">Until</string>
+    <string name="end_date">End Date</string>
     <string name="times_of_day">Times of Day</string>
     <string name="next">Next</string>
     <string name="value_is_empty">Please enter a valid value for %s</string>
