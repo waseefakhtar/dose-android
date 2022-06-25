@@ -12,6 +12,7 @@ import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGr
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
+import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.medicationConfirmGraph
 
@@ -36,11 +37,13 @@ fun DoseNavHost(
             onBackClicked = { navController.navigateUp() },
             navigateToMedicationConfirm = {
                 // TODO: Replace with medication id
+                navController.currentBackStackEntry?.arguments?.putParcelable(MEDICATION, it)
                 val medicationJson = Uri.encode(Gson().toJson(it))
-                navController.navigate("${MedicationConfirmDestination.route}/${medicationJson}")
+                navController.navigate(MedicationConfirmDestination.route)
             }
         )
         medicationConfirmGraph(
+            navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() },

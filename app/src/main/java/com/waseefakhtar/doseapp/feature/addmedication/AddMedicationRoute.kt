@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
@@ -71,11 +72,11 @@ fun AddMedicationRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: (Medication) -> Unit) {
-    var medicationName by rememberSaveable { mutableStateOf("") }
-    var numberOfDosage by rememberSaveable { mutableStateOf("") }
-    var recurrence by rememberSaveable { mutableStateOf("") }
-    var endDate by rememberSaveable { mutableStateOf(0L) }
-    var isMorningSelected by rememberSaveable { mutableStateOf(false) }
+    var medicationName by rememberSaveable { mutableStateOf("Hex") }
+    var numberOfDosage by rememberSaveable { mutableStateOf("1") }
+    var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
+    var endDate by rememberSaveable { mutableStateOf(Date().time) }
+    var isMorningSelected by rememberSaveable { mutableStateOf(true) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
