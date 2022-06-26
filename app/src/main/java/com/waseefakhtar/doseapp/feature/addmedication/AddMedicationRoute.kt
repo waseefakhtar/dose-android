@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.toFormattedString
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
@@ -451,8 +452,7 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
-    val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
-    val currentDate = sdf.format(Date())
+    val currentDate = Date().toFormattedString()
     var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
 
 
