@@ -85,7 +85,8 @@ fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, n
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-
+                // TODO: Store new medication in DB.
+                // TODO: Navigate to Home.
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {
