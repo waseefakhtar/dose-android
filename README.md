@@ -17,3 +17,8 @@ Coming soon.
 
 ## IDE Version
 Android Studio Chipmunk (2021.2.1)
+
+## License
+
+Dose App is distributed under the terms of the MIT License. See the
+[license](LICENSE) for more information.
