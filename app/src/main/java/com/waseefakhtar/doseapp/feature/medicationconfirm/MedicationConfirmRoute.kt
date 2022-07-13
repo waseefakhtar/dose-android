@@ -42,7 +42,7 @@ fun MedicationConfirmRoute(
 }
 
 @Composable
-fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, navigateToMedicationConfirm: () -> Unit) {
+fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, navigateToHome: () -> Unit) {
 
     Column(
         modifier = Modifier.padding(0.dp, 16.dp),
@@ -87,6 +87,7 @@ fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, n
             onClick = {
                 // TODO: Store new medication in DB.
                 // TODO: Navigate to Home.
+                navigateToHome()
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {
