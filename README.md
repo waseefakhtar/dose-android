@@ -2,7 +2,9 @@
 
 <h1 align="center">Dose App 💊 [Work in progress 🚧]</h1>
 
-<p align="center">An work-in-progress Android app that reminds you medications exactly when your body needs them - Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.</p>
+A work-in-progress Android app that reminds you medications exactly when your body needs them - Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.
+
+I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc using the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab.
 
 ## Screenshots
 
