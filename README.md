@@ -4,9 +4,14 @@
 
 <p align="center">An work-in-progress Android app that reminds you medications exactly when your body needs them - Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.</p>
 
+## Screenshots
+
+<p align="center"> <img src="docs/screenshots/Home.png" width="250"/>  <img src="docs/screenshots/AddMedication.png" width="250"/>  <img src="docs/screenshots/MedicationConfirm.png" width="250" /></p>
+
+
 ## Demo
 
-Coming soon.
+https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-bb57-70e2dbf0f98a.mp4
 
 ## Features
 - Adds medications with its duration and daily dosage.
