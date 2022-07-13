@@ -73,11 +73,11 @@ fun AddMedicationRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: (Medication) -> Unit) {
-    var medicationName by rememberSaveable { mutableStateOf("Hex") }
+    var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
     var endDate by rememberSaveable { mutableStateOf(Date().time) }
-    var isMorningSelected by rememberSaveable { mutableStateOf(true) }
+    var isMorningSelected by rememberSaveable { mutableStateOf(false) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }

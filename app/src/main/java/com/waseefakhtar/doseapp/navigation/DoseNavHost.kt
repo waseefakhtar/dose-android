@@ -49,6 +49,7 @@ fun DoseNavHost(
             onBackClicked = { navController.navigateUp() },
             navigateToHome = {
                 // TODO: Navigate to Home with no backstack.
+                navController.navigate(HomeDestination.route)
             }
         )
     }
