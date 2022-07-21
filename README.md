@@ -6,6 +6,10 @@ A work-in-progress Android app that reminds you medications exactly when your bo
 
 I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc using the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab.
 
+You can also install & test the latest APK 👇
+
+[![Dose](https://img.shields.io/badge/Dose%20APK-v1.0--alpha01-brightgreen?logo=android)](https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk) 
+
 ## Screenshots
 
 <p align="center"> <img src="docs/screenshots/Home.png" width="250"/>  <img src="docs/screenshots/AddMedication.png" width="250"/>  <img src="docs/screenshots/MedicationConfirm.png" width="250" /></p>
