@@ -8,7 +8,7 @@ I’m building it in public. So the idea is for everyone to contribute, leave co
 
 You can also install & test the latest APK 👇
 
-[![Dose](https://img.shields.io/badge/Dose%20APK-v1.0--alpha01-brightgreen?logo=android)](https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk) 
+[![Dose](https://img.shields.io/badge/Dose%20APK-v0.1-brightgreen?logo=android)](https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk) 
 
 ## Screenshots
 
