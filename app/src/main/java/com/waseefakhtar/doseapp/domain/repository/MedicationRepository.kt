@@ -1,9 +1,8 @@
 package com.waseefakhtar.doseapp.domain.repository
 
-import com.waseefakhtar.doseapp.data.MedicationDao
 import com.waseefakhtar.doseapp.domain.model.Medication
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
+import java.util.*
 
 interface MedicationRepository {
 
@@ -11,5 +10,5 @@ interface MedicationRepository {
 
     suspend fun deleteMedication(medication: Medication)
 
-    fun getMedicationsForDate(localDate: LocalDate): Flow<List<MedicationDao>>
+    fun getMedicationsForDate(date: Date): Flow<List<Medication>>
 }

@@ -1,9 +1,11 @@
 package com.waseefakhtar.doseapp.data.entity
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import java.util.*
 
+@Entity
 data class MedicationEntity(
     @PrimaryKey val id: Int,
     val name: String,
