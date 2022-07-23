@@ -20,11 +20,11 @@ You can also install & test the latest APK 👇
 https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-bb57-70e2dbf0f98a.mp4
 
 ## Features
-- Adds medications with its duration and daily dosage.
-- Displays a list of medications to take daily.
-- Reminds when it's time to take medication.
-- Shows history of dosage taken.
-- Shows medications in a calendar view.
+- [x] Adds medications with its duration and daily dosage.
+- [x] Displays a list of medications to take daily.
+- [ ] Reminds when it's time to take medication with notifications.
+- [ ] Shows history of dosage taken.
+- [ ] Shows medications in a calendar view.
 
 ## IDE Version
 Android Studio Chipmunk (2021.2.1)
