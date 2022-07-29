@@ -2,13 +2,30 @@
 
 <h1 align="center">Dose App 💊 [Work in progress 🚧]</h1>
 
+<p align="center">
+    <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> •
+    <a href="https://github.com/waseefakhtar/dose-android/blob/main/LICENSE">License</a> •
+    <a href="https://twitter.com/waseefakhtar">Twitter</a>
+    <br /><br />
+    <a href="https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk">
+        <img src="https://img.shields.io/badge/Dose%20APK-v0.1-brightgreen?logo=android" alt="Latest APK" />
+    </a>
+    <!--<a href="https://github.com/waseefakhtar/dose-android/releases/">
+        <img src="https://img.shields.io/badge/Dose%20APK-v0.1-brightgreen?logo=android" alt="Latest APK" />
+    </a>-->
+    <a href="https://github.com/waseefakhtar/dose-android/actions">
+        <img src="https://github.com/waseefakhtar/dose-android/workflows/Android%20CI/badge.svg?branch=main" alt="Build status" />
+    </a>
+    <a href="https://github.com/waseefakhtar/dose-android/contributors/">
+        <img src="https://img.shields.io/github/contributors/waseefakhtar/dose-android.svg" alt="Contributors" />
+    </a>
+</p>
+
 A work-in-progress Android app that reminds you medications exactly when your body needs them - Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.
 
 I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc using the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab.
 
-You can also install & test the latest APK 👇
-
-[![Dose](https://img.shields.io/badge/Dose%20APK-v0.1-brightgreen?logo=android)](https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk) 
+You can also install & test the latest APK <a href="https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk">here</a>. 
 
 ## Screenshots
 
@@ -20,11 +37,11 @@ You can also install & test the latest APK 👇
 https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-bb57-70e2dbf0f98a.mp4
 
 ## Features
-- Adds medications with its duration and daily dosage.
-- Displays a list of medications to take daily.
-- Reminds when it's time to take medication.
-- Shows history of dosage taken.
-- Shows medications in a calendar view.
+- [x] Adds medications with its duration and daily dosage.
+- [x] Displays a list of medications to take daily.
+- [ ] Reminds when it's time to take medication with notifications.
+- [ ] Shows history of dosage taken.
+- [ ] Shows medications in a calendar view.
 
 ## IDE Version
 Android Studio Chipmunk (2021.2.1)
