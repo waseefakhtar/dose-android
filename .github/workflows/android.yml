@@ -38,6 +38,9 @@ jobs:
 
     - name: Run tests
       run: ./gradlew test
+
+    - name: Lint check
+      run: ./gradlew ktlintCheck
     
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
