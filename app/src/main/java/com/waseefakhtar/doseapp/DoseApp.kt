@@ -3,8 +3,6 @@ package com.waseefakhtar.doseapp
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -20,7 +18,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -29,8 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -85,8 +79,8 @@ fun DoseApp() {
                         exit = slideOutVertically(targetOffsetY = { it }),
                         content = {
                             DoseFAB(navController)
-                        })
-
+                        }
+                    )
                 },
                 bottomBar = {
                     AnimatedVisibility(
@@ -98,7 +92,8 @@ fun DoseApp() {
                                 onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
                                 currentDestination = currentDestination
                             )
-                        })
+                        }
+                    )
                 }
             ) { padding ->
                 Row(
@@ -121,7 +116,6 @@ fun DoseApp() {
                     )
                 }
             }
-
         }
     }
 }
@@ -174,7 +168,8 @@ fun DoseFAB(navController: NavController) {
         onClick = {
             navController.navigate(AddMedicationDestination.route)
         },
-        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp))
+        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+    )
 }
 
 @Preview(showBackground = true)
