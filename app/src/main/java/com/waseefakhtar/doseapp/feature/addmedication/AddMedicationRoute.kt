@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
@@ -54,11 +55,11 @@ import com.waseefakhtar.doseapp.extension.toFormattedString
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
+import java.text.DateFormatSymbols
+import java.util.Calendar
+import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.text.DateFormatSymbols
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun AddMedicationRoute(
@@ -72,7 +73,10 @@ fun AddMedicationRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: (Medication) -> Unit) {
+fun AddMedicationScreen(
+    onBackClicked: (() -> Unit)? = null,
+    navigateToMedicationConfirm: ((Medication) -> Unit)? = null
+) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
@@ -90,7 +94,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
     ) {
         FloatingActionButton(
             onClick = {
-                onBackClicked()
+                if (onBackClicked != null) {
+                    onBackClicked()
+                }
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
         ) {
@@ -101,7 +107,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displaySmall
         )
-        
+
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
@@ -189,11 +195,11 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                     .fillMaxWidth()
                     .weight(1f),
                 selected = isMorningSelected,
-                onClick =  {
+                onClick = {
                     handleSelection(
-                        isSelected =  isMorningSelected,
+                        isSelected = isMorningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -202,12 +208,17 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Morning.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Morning.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
             FilterChip(
                 modifier = Modifier
@@ -216,9 +227,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isAfternoonSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isAfternoonSelected,
+                        isSelected = isAfternoonSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -227,12 +238,17 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Afternoon.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Afternoon.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
         }
         Row(
@@ -245,9 +261,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isEveningSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isEveningSelected,
+                        isSelected = isEveningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -256,12 +272,17 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Evening.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Evening.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
             FilterChip(
                 modifier = Modifier
@@ -270,9 +291,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isNightSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isNightSelected,
+                        isSelected = isNightSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -281,12 +302,17 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Night.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Night.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
         }
 
@@ -307,15 +333,21 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                     eveningSelection = isEveningSelected,
                     nightSelection = isNightSelected,
                     onInvalidate = {
-                        Toast.makeText(context, context.getString(R.string.value_is_empty, context.getString(it)), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.value_is_empty, context.getString(it)),
+                            Toast.LENGTH_LONG
+                        ).show()
                     },
                     onValidate = {
-                        navigateToMedicationConfirm(it)
+                        if (navigateToMedicationConfirm != null) {
+                            navigateToMedicationConfirm(it)
+                        }
                     }
                 )
             },
             shape = MaterialTheme.shapes.extraLarge
-            ) {
+        ) {
             Text(
                 text = stringResource(id = R.string.next),
                 style = MaterialTheme.typography.bodyLarge
@@ -374,7 +406,13 @@ private fun validateMedication(
     onValidate(newMedication)
 }
 
-private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimesOfDay: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
+private fun handleSelection(
+    isSelected: Boolean,
+    selectionCount: Int,
+    canSelectMoreTimesOfDay: Boolean,
+    onStateChange: (Int, Boolean) -> Unit,
+    onShowMaxSelectionError: () -> Unit
+) {
     if (isSelected) {
         onStateChange(selectionCount - 1, !isSelected)
     } else {
@@ -390,12 +428,20 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
     return selectionCount < numberOfDosage
 }
 
-private fun showMaxSelectionSnackbar(scope: CoroutineScope, numberOfDosage: String, context: Context) {
+private fun showMaxSelectionSnackBar(
+    scope: CoroutineScope,
+    numberOfDosage: String,
+    context: Context
+) {
     scope.launch {
         // TODO: Fix showing Snackbar.
         //SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
     }
-    Toast.makeText(context, "You're selecting ${(numberOfDosage.toIntOrNull() ?: 0) + 1} time(s) of days which is more than the number of dosage.", Toast.LENGTH_LONG).show()
+    Toast.makeText(
+        context,
+        "You're selecting ${(numberOfDosage.toIntOrNull() ?: 0) + 1} time(s) of days which is more than the number of dosage.",
+        Toast.LENGTH_LONG
+    ).show()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -489,4 +535,12 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
 
 fun Int.toMonthName(): String {
     return DateFormatSymbols().months[this]
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    MaterialTheme {
+        AddMedicationScreen()
+    }
 }
