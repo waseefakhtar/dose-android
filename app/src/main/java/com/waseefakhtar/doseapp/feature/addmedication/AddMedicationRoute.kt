@@ -57,22 +57,25 @@ import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (Medication) -> Unit,
     modifier: Modifier = Modifier,
-    //viewModel: CalendarViewModel = hiltViewModel()
+    // viewModel: CalendarViewModel = hiltViewModel()
 ) {
     AddMedicationScreen(onBackClicked, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: (Medication) -> Unit) {
+fun AddMedicationScreen(
+    onBackClicked: () -> Unit,
+    navigateToMedicationConfirm: (Medication) -> Unit
+) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
@@ -101,7 +104,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displaySmall
         )
-        
+
         Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
@@ -112,7 +115,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
             modifier = Modifier.fillMaxWidth(),
             value = medicationName,
             onValueChange = { medicationName = it },
-            //label = { Text(text = stringResource(id = R.string.medication_name)) },
+            // label = { Text(text = stringResource(id = R.string.medication_name)) },
             placeholder = { Text(text = "e.g. Hexamine") },
         )
 
@@ -170,7 +173,6 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
         Spacer(modifier = Modifier.padding(4.dp))
         EndDateTextField { endDate = it }
 
-
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = stringResource(id = R.string.times_of_day),
@@ -189,11 +191,11 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                     .fillMaxWidth()
                     .weight(1f),
                 selected = isMorningSelected,
-                onClick =  {
+                onClick = {
                     handleSelection(
-                        isSelected =  isMorningSelected,
+                        isSelected = isMorningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -206,8 +208,13 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Morning.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Morning.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
             FilterChip(
                 modifier = Modifier
@@ -216,9 +223,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isAfternoonSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isAfternoonSelected,
+                        isSelected = isAfternoonSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -231,8 +238,13 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Afternoon.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Afternoon.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
         }
         Row(
@@ -245,9 +257,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isEveningSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isEveningSelected,
+                        isSelected = isEveningSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -260,8 +272,13 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Evening.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Evening.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
             FilterChip(
                 modifier = Modifier
@@ -270,9 +287,9 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 selected = isNightSelected,
                 onClick = {
                     handleSelection(
-                        isSelected =  isNightSelected,
+                        isSelected = isNightSelected,
                         selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay =  canSelectMoreTimesOfDay(
+                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
                             selectionCount,
                             numberOfDosage.toIntOrNull() ?: 0
                         ),
@@ -285,8 +302,13 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                         }
                     )
                 },
-                label = { Text(text = TimesOfDay.Night.name)  },
-                selectedIcon = { Icon(imageVector = Icons.Default.Done, contentDescription = "Selected") }
+                label = { Text(text = TimesOfDay.Night.name) },
+                selectedIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Selected"
+                    )
+                }
             )
         }
 
@@ -307,7 +329,11 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                     eveningSelection = isEveningSelected,
                     nightSelection = isNightSelected,
                     onInvalidate = {
-                        Toast.makeText(context, context.getString(R.string.value_is_empty, context.getString(it)), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.value_is_empty, context.getString(it)),
+                            Toast.LENGTH_LONG
+                        ).show()
                     },
                     onValidate = {
                         navigateToMedicationConfirm(it)
@@ -315,7 +341,7 @@ fun AddMedicationScreen(onBackClicked: () -> Unit, navigateToMedicationConfirm: 
                 )
             },
             shape = MaterialTheme.shapes.extraLarge
-            ) {
+        ) {
             Text(
                 text = stringResource(id = R.string.next),
                 style = MaterialTheme.typography.bodyLarge
@@ -374,7 +400,13 @@ private fun validateMedication(
     onValidate(newMedication)
 }
 
-private fun handleSelection(isSelected: Boolean, selectionCount: Int, canSelectMoreTimesOfDay: Boolean, onStateChange: (Int, Boolean) -> Unit, onShowMaxSelectionError: () -> Unit) {
+private fun handleSelection(
+    isSelected: Boolean,
+    selectionCount: Int,
+    canSelectMoreTimesOfDay: Boolean,
+    onStateChange: (Int, Boolean) -> Unit,
+    onShowMaxSelectionError: () -> Unit
+) {
     if (isSelected) {
         onStateChange(selectionCount - 1, !isSelected)
     } else {
@@ -390,12 +422,20 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
     return selectionCount < numberOfDosage
 }
 
-private fun showMaxSelectionSnackbar(scope: CoroutineScope, numberOfDosage: String, context: Context) {
+private fun showMaxSelectionSnackbar(
+    scope: CoroutineScope,
+    numberOfDosage: String,
+    context: Context
+) {
     scope.launch {
         // TODO: Fix showing Snackbar.
-        //SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
+        // SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
     }
-    Toast.makeText(context, "You're selecting ${(numberOfDosage.toIntOrNull() ?: 0) + 1} time(s) of days which is more than the number of dosage.", Toast.LENGTH_LONG).show()
+    Toast.makeText(
+        context,
+        "You're selecting ${(numberOfDosage.toIntOrNull() ?: 0) + 1} time(s) of days which is more than the number of dosage.",
+        Toast.LENGTH_LONG
+    ).show()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -455,7 +495,6 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val currentDate = Date().toFormattedString()
     var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
 
-
     val context = LocalContext.current
 
     val calendar = Calendar.getInstance()
@@ -471,7 +510,6 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
             selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
             endDate(newDate.timeInMillis)
         }, year, month, day)
-
 
     TextField(
         modifier = Modifier.fillMaxWidth(),

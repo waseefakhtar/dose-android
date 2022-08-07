@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
-import androidx.navigation.NavType
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
@@ -32,7 +30,7 @@ fun MedicationConfirmRoute(
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
-    //viewModel: CalendarViewModel = hiltViewModel()
+    // viewModel: CalendarViewModel = hiltViewModel()
 ) {
     medication?.let {
         MedicationConfirmScreen(it, onBackClicked, navigateToHome)

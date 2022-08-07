@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.feature.home
 
-import android.graphics.Paint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -33,12 +30,12 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
-import java.util.*
+import java.util.Date
 
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
-    //viewModel: HomeViewModel = hiltViewModel()
+    // viewModel: HomeViewModel = hiltViewModel()
 ) {
     HomeScreen()
 }
@@ -84,11 +81,10 @@ fun DailyOverview() {
             .height(200.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer ,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.tertiary
         )
     ) {
-
 
         Row(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -96,7 +92,7 @@ fun DailyOverview() {
                     .padding(24.dp, 24.dp, 0.dp, 16.dp)
                     .fillMaxWidth(.36F),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+            ) {
 
                 Text(
                     text = "Your plan for today",
@@ -108,15 +104,15 @@ fun DailyOverview() {
                     text = "0 of 1 completed",
                     style = MaterialTheme.typography.titleSmall,
                 )
-
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End) {
+                horizontalArrangement = Arrangement.End
+            ) {
                 Image(
-                    painter = painterResource(id = R.drawable.doctor), contentDescription = "")
-
+                    painter = painterResource(id = R.drawable.doctor), contentDescription = ""
+                )
             }
         }
     }
@@ -157,12 +153,13 @@ fun MedicationCard(medication: Medication) {
             .height(100.dp),
         shape = RoundedCornerShape(30.dp),
         colors = cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant ,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     ) {
 
         Row(
-            modifier = Modifier.fillMaxSize()) {
+            modifier = Modifier.fillMaxSize()
+        ) {
 
             Column(
                 modifier = Modifier
@@ -182,7 +179,8 @@ fun MedicationCard(medication: Medication) {
 
             Row(
                 modifier = Modifier.fillMaxSize().padding(24.dp),
-                horizontalArrangement = Arrangement.End) {
+                horizontalArrangement = Arrangement.End
+            ) {
 
                 Button(
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -196,7 +194,6 @@ fun MedicationCard(medication: Medication) {
                     Text(
                         text = "Take now"
                     )
-
                 }
             }
         }
