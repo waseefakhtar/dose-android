@@ -64,8 +64,7 @@ import java.util.Date
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (Medication) -> Unit,
-    modifier: Modifier = Modifier,
-    // viewModel: CalendarViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
     AddMedicationScreen(onBackClicked, navigateToMedicationConfirm)
 }

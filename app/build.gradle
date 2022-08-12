@@ -53,6 +53,7 @@ android {
 dependencies {
     def nav_version = "2.5.0"
     def hilt_version = "2.42"
+    def androidx_hilt_version = "1.0.0"
     def gson_version = "2.9.0"
     def room_version = "2.4.2"
     def okhttp_version = "4.10.0"
@@ -79,8 +80,8 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
-    kapt "androidx.hilt:hilt-compiler:1.0.0"
-    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    kapt "androidx.hilt:hilt-compiler:$androidx_hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$androidx_hilt_version"
 
     // Gson
     implementation "com.google.code.gson:gson:$gson_version"
