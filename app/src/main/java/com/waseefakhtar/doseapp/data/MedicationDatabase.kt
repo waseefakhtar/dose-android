@@ -8,7 +8,7 @@ import com.waseefakhtar.doseapp.data.entity.MedicationEntity
     entities = [MedicationEntity::class],
     version = 1
 )
-abstract class MedicationDatabase: RoomDatabase() {
+abstract class MedicationDatabase : RoomDatabase() {
 
     abstract val dao: MedicationDao
 }

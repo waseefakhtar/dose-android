@@ -11,7 +11,7 @@ import java.util.*
 
 class MedicationRepositoryImpl(
     private val dao: MedicationDao
-): MedicationRepository {
+) : MedicationRepository {
 
     override suspend fun insertMedication(medication: Medication) {
         dao.insertMedication(medication.toMedicationEntity())

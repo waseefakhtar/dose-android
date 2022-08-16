@@ -10,7 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MedicationConfirmViewModel @Inject constructor(
     private val addMedicationUseCase: AddMedicationUseCase
-): ViewModel() {
+) : ViewModel() {
 
     fun addMedication(state: MedicationConfirmState) {
         viewModelScope.launch {
