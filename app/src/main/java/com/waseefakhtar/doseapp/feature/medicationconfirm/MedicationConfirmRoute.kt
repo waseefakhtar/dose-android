@@ -20,9 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
+import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmViewModel
 
 @Composable
 fun MedicationConfirmRoute(
@@ -30,17 +33,17 @@ fun MedicationConfirmRoute(
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
-    // viewModel: CalendarViewModel = hiltViewModel()
+    viewModel: MedicationConfirmViewModel = hiltViewModel()
 ) {
     medication?.let {
-        MedicationConfirmScreen(it, onBackClicked, navigateToHome)
+        MedicationConfirmScreen(it, viewModel, onBackClicked, navigateToHome)
     } ?: {
         // TODO: Show error and stay on AddMedication.
     }
 }
 
 @Composable
-fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, navigateToHome: () -> Unit) {
+fun MedicationConfirmScreen(medication: Medication, viewModel: MedicationConfirmViewModel, onBackClicked: () -> Unit, navigateToHome: () -> Unit) {
 
     Column(
         modifier = Modifier.padding(0.dp, 16.dp),
@@ -85,6 +88,9 @@ fun MedicationConfirmScreen(medication: Medication, onBackClicked: () -> Unit, n
             onClick = {
                 // TODO: Store new medication in DB.
                 // TODO: Navigate to Home.
+
+                viewModel.addMedication(MedicationConfirmState(medication))
+
                 navigateToHome()
             },
             shape = MaterialTheme.shapes.extraLarge
