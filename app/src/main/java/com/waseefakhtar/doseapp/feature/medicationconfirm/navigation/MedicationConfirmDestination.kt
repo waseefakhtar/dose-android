@@ -4,11 +4,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.waseefakhtar.doseapp.core.navigation.DoseNavigationDestination
-import com.waseefakhtar.doseapp.domain.model.AssetParamType
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.medicationconfirm.MedicationConfirmRoute
 
