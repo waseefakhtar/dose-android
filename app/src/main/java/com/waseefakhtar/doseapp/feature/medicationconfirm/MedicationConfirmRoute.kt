@@ -86,11 +86,7 @@ fun MedicationConfirmScreen(medication: Medication, viewModel: MedicationConfirm
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                // TODO: Store new medication in DB.
-                // TODO: Navigate to Home.
-
                 viewModel.addMedication(MedicationConfirmState(medication))
-
                 navigateToHome()
             },
             shape = MaterialTheme.shapes.extraLarge
