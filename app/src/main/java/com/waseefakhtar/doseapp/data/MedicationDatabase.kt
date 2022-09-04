@@ -2,7 +2,6 @@ package com.waseefakhtar.doseapp.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 

@@ -3,7 +3,7 @@ package com.waseefakhtar.doseapp.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.waseefakhtar.doseapp.util.TimesOfDay
-import java.util.*
+import java.util.Date
 
 @Entity
 data class MedicationEntity(
