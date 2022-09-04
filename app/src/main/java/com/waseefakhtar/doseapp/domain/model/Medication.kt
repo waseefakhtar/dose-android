@@ -10,7 +10,6 @@ import java.util.Date
 
 @Parcelize
 data class Medication(
-    val id: Int,
     val name: String,
     val dosage: Int,
     val recurrence: String,

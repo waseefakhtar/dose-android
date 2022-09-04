@@ -388,9 +388,9 @@ private fun validateMedication(
     if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
     if (nightSelection) timesOfDay.add(TimesOfDay.Night)
 
+    // TODO: Remove ID from Medication. Let MedicationEntity generate IDs automatically.
     val newMedication =
         Medication(
-            id = 1231,
             name = name,
             dosage = dosage,
             recurrence = recurrence,
