@@ -4,8 +4,8 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.waseefakhtar.doseapp.util.TimesOfDay
-import java.util.Date
 import java.util.Collections
+import java.util.Date
 
 class Converters {
     @TypeConverter
