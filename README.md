@@ -43,6 +43,13 @@ https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-b
 - [ ] Shows history of dosage taken.
 - [ ] Shows medications in a calendar view.
 
+## MAD Score
+<a href="https://madscorecard.withgoogle.com/scorecard/share/1233122117/">
+<img src="https://user-images.githubusercontent.com/4093820/186459147-1b2e7102-498f-4874-841b-2be88336c2a8.png"/> 
+<img src="https://user-images.githubusercontent.com/4093820/186459184-eda3a2c5-fe3c-4038-94e7-fbcb45e90946.png"/> 
+</a>
+
+
 ## IDE Version
 Android Studio Chipmunk (2021.2.1)
 
