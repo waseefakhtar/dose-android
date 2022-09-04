@@ -391,7 +391,6 @@ private fun validateMedication(
     // TODO: Remove ID from Medication. Let MedicationEntity generate IDs automatically.
     val newMedication =
         Medication(
-            id = 1231,
             name = name,
             dosage = dosage,
             recurrence = recurrence,

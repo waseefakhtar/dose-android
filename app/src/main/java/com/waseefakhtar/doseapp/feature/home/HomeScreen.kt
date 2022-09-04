@@ -131,8 +131,8 @@ fun DailyReview() {
     )
 
     // Demo Medication Card
+    // TODO: Remove when we retrieve data from DB.
     val medication = Medication(
-        id = 1234,
         name = "Hexamine",
         dosage = 2,
         recurrence = Recurrence.Daily.name,

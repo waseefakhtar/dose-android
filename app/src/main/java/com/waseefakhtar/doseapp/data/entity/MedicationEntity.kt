@@ -7,7 +7,7 @@ import java.util.Date
 
 @Entity
 data class MedicationEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val dosage: Int,
     val recurrence: String,
