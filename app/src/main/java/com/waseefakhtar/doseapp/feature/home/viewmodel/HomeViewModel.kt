@@ -7,10 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
-import com.waseefakhtar.doseapp.feature.medicationconfirm.usecase.AddMedicationUseCase
-import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -30,12 +27,12 @@ class HomeViewModel @Inject constructor(
 
     fun getUserName() {
         state = state.copy(userName = "Kathryn")
-        //TODO: Get user name from DB
+        // TODO: Get user name from DB
     }
 
     fun getGreeting() {
         state = state.copy(greeting = "Greeting")
-        //TODO: Get greeting by checking system time
+        // TODO: Get greeting by checking system time
     }
 
     fun loadMedications() {
@@ -49,10 +46,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun takeMedication(medication: Medication) {
-        //TODO: Take medication and update DB
+        // TODO: Take medication and update DB
     }
 
     fun getUserPlan() {
-        //TODO: Get user plan
+        // TODO: Get user plan
     }
 }
