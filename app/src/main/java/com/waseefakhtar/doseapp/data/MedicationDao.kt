@@ -22,8 +22,16 @@ interface MedicationDao {
         """
             SELECT *
             FROM medicationentity
+        """
+    )
+    fun getAllMedications(): Flow<List<MedicationEntity>>
+
+    @Query(
+        """
+            SELECT *
+            FROM medicationentity
             WHERE endDate > :date
         """
     )
-    fun getFoodsForDate(date: Date): Flow<List<MedicationEntity>>
+    fun getMedicationsForDate(date: Date): Flow<List<MedicationEntity>>
 }

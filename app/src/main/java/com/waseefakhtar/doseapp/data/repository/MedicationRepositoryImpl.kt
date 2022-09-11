@@ -21,8 +21,14 @@ class MedicationRepositoryImpl(
         dao.deleteMedication(medication.toMedicationEntity())
     }
 
+    override fun getAllMedications(): Flow<List<Medication>> {
+        return dao.getAllMedications().map { entities ->
+            entities.map { it.toMedication() }
+        }
+    }
+
     override fun getMedicationsForDate(date: Date): Flow<List<Medication>> {
-        return dao.getFoodsForDate(
+        return dao.getMedicationsForDate(
             date = date
         ).map { entities ->
             entities.map { it.toMedication() }
