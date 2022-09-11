@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.toFormattedString
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
 
@@ -150,7 +151,6 @@ fun MedicationCard(medication: Medication) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
             .padding(vertical = 8.dp),
         shape = RoundedCornerShape(30.dp),
         colors = cardColors(
@@ -159,34 +159,36 @@ fun MedicationCard(medication: Medication) {
     ) {
 
         Row(
-            modifier = Modifier.fillMaxSize()
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.Start
             ) {
-
                 Text(
                     text = medication.name,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "Next dose in 2 mins"
+                    text = medication.timesOfDay.joinToString(", ")
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Next dose in 2 mins",
+                    fontWeight = FontWeight.Bold)
             }
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.End
             ) {
 
                 Button(
-                    modifier = Modifier.align(Alignment.CenterVertically),
                     onClick = {
                         // TODO: Mark medication as taken
                         // TODO: Update DB with medication as taken and store with time.
