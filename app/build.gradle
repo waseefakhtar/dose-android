@@ -5,6 +5,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -59,7 +60,7 @@ dependencies {
     def material3_version = "1.0.0-alpha14"
     def lifecycle_version = "2.5.0"
     def activity_version = "1.5.0"
-    def firebase_version = "30.2.0"
+    def firebase_version = "30.4.1"
 
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -97,6 +98,7 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:$firebase_version"))
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
