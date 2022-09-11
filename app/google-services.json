@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "995841033966",
+    "project_id": "dose-7d65b",
+    "storage_bucket": "dose-7d65b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995841033966:android:f9fa2a4c671ec4993815ff",
+        "android_client_info": {
+          "package_name": "com.waseefakhtar.doseapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995841033966-bakjl4d4pno6501ep80jt2k5ebckb07r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGu4SyesfQSfxSehK-5TZF8nj0Rzgn-UA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995841033966-bakjl4d4pno6501ep80jt2k5ebckb07r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
