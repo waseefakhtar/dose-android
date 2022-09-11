@@ -6,19 +6,27 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
 import com.waseefakhtar.doseapp.feature.medicationconfirm.usecase.AddMedicationUseCase
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val addMedicationUseCase: AddMedicationUseCase
+    private val getMedicationsUseCase: GetMedicationsUseCase
 ) : ViewModel() {
 
     var state by mutableStateOf(HomeState())
         private set
+
+    init {
+        loadMedications()
+    }
 
     fun getUserName() {
         state = state.copy(userName = "Kathryn")
@@ -30,8 +38,14 @@ class HomeViewModel @Inject constructor(
         //TODO: Get greeting by checking system time
     }
 
-    fun getMedications() {
-        //TODO: Get medications from DB
+    fun loadMedications() {
+        viewModelScope.launch {
+            getMedicationsUseCase.getMedications().onEach { medicationList ->
+                state = state.copy(
+                    medications = medicationList
+                )
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun takeMedication(medication: Medication) {
