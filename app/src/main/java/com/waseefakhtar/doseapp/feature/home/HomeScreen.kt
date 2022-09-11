@@ -48,7 +48,7 @@ fun HomeScreen(state: HomeState) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Greeting()
-        DailyOverview()
+        DailyOverview(state)
         DailyMedications(state)
     }
 }
@@ -73,7 +73,7 @@ fun Greeting() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverview() {
+fun DailyOverview(state: HomeState) {
 
     Card(
         modifier = Modifier
@@ -101,7 +101,7 @@ fun DailyOverview() {
                 )
 
                 Text(
-                    text = "0 of 1 completed",
+                    text = "0 of ${state.medications.size} completed",
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
