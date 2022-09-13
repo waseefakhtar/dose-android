@@ -13,5 +13,5 @@ class CalendarViewModel @Inject constructor() : ViewModel() {
     var state by mutableStateOf(CalendarState())
         private set
 
-    //TODO: Fill out when Calendar feature is implemented
+    // TODO: Fill out when Calendar feature is implemented
 }
