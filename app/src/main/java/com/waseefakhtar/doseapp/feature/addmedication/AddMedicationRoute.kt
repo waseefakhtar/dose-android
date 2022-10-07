@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
@@ -59,6 +60,12 @@ import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
 import java.util.Calendar
 import java.util.Date
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {})
+}
 
 @Composable
 fun AddMedicationRoute(
