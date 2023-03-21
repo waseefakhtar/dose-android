@@ -7,8 +7,7 @@ import javax.inject.Inject
 class AddMedicationUseCase @Inject constructor(
     private val repository: MedicationRepository
 ) {
-
-    suspend fun addMedication(medication: Medication) {
-        repository.insertMedication(medication)
+    suspend fun addMedication(medication: Medication) : Long{
+        return repository.insertMedication(medication)
     }
 }

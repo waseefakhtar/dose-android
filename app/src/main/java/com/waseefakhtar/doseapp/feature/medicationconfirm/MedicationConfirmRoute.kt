@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.medicationconfirm
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +16,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,7 +46,26 @@ fun MedicationConfirmRoute(
 }
 
 @Composable
-fun MedicationConfirmScreen(medication: Medication, viewModel: MedicationConfirmViewModel, onBackClicked: () -> Unit, navigateToHome: () -> Unit) {
+fun MedicationConfirmScreen(
+    medication: Medication,
+    viewModel: MedicationConfirmViewModel,
+    onBackClicked: () -> Unit,
+    navigateToHome: () -> Unit
+) {
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel
+            .isMedicationSaved
+            .collect {
+                Toast.makeText(
+                    context,
+                    "Success add new medication",
+                    Toast.LENGTH_SHORT,
+                ).show()
+                navigateToHome()
+            }
+    }
 
     Column(
         modifier = Modifier.padding(0.dp, 16.dp),
@@ -70,7 +92,13 @@ fun MedicationConfirmScreen(medication: Medication, viewModel: MedicationConfirm
         )
 
         Text(
-            text = stringResource(R.string.all_set, medication.dosage, medication.name, medication.recurrence.lowercase(), medication.endDate.toFormattedString()),
+            text = stringResource(
+                R.string.all_set,
+                medication.dosage,
+                medication.name,
+                medication.recurrence.lowercase(),
+                medication.endDate.toFormattedString()
+            ),
             style = MaterialTheme.typography.titleMedium
         )
     }
@@ -87,7 +115,6 @@ fun MedicationConfirmScreen(medication: Medication, viewModel: MedicationConfirm
                 .align(Alignment.CenterHorizontally),
             onClick = {
                 viewModel.addMedication(MedicationConfirmState(medication))
-                navigateToHome()
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {
