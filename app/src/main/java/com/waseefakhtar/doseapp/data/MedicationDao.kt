@@ -13,7 +13,7 @@ import java.util.Date
 interface MedicationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedication(medicationEntity: MedicationEntity) : Long
+    suspend fun insertMedication(medicationEntity: MedicationEntity): Long
 
     @Delete
     suspend fun deleteMedication(medicationEntity: MedicationEntity)

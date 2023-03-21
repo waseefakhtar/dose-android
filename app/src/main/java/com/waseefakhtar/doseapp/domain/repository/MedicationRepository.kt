@@ -6,7 +6,7 @@ import java.util.Date
 
 interface MedicationRepository {
 
-    suspend fun insertMedication(medication: Medication) : Long
+    suspend fun insertMedication(medication: Medication): Long
 
     suspend fun deleteMedication(medication: Medication)
 
