@@ -215,7 +215,7 @@ fun AddMedicationScreen(
                     )
                 },
                 label = { Text(text = TimesOfDay.Morning.name) },
-                selectedIcon = {
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Selected"
@@ -245,7 +245,7 @@ fun AddMedicationScreen(
                     )
                 },
                 label = { Text(text = TimesOfDay.Afternoon.name) },
-                selectedIcon = {
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Selected"
@@ -279,7 +279,7 @@ fun AddMedicationScreen(
                     )
                 },
                 label = { Text(text = TimesOfDay.Evening.name) },
-                selectedIcon = {
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Selected"
@@ -309,7 +309,7 @@ fun AddMedicationScreen(
                     )
                 },
                 label = { Text(text = TimesOfDay.Night.name) },
-                selectedIcon = {
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Selected"
