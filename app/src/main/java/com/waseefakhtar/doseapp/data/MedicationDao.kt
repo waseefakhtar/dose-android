@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
@@ -17,6 +18,9 @@ interface MedicationDao {
 
     @Delete
     suspend fun deleteMedication(medicationEntity: MedicationEntity)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateMedication(medicationEntity: MedicationEntity)
 
     @Query(
         """

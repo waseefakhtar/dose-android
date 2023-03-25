@@ -10,6 +10,8 @@ interface MedicationRepository {
 
     suspend fun deleteMedication(medication: Medication)
 
+    suspend fun updateMedication(medication: Medication)
+
     fun getAllMedications(): Flow<List<Medication>>
 
     fun getMedicationsForDate(date: Date): Flow<List<Medication>>
