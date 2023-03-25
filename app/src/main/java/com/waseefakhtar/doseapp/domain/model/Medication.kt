@@ -10,11 +10,13 @@ import java.util.Date
 
 @Parcelize
 data class Medication(
+    val id: Long,
     val name: String,
     val dosage: Int,
     val recurrence: String,
     val endDate: Date,
     val timesOfDay: List<TimesOfDay>,
+    val medicationTaken: Boolean
 ) : Parcelable
 
 class AssetParamType : NavType<Medication>(isNullableAllowed = false) {

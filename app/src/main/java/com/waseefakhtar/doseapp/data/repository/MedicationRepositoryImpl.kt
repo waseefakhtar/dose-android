@@ -21,6 +21,10 @@ class MedicationRepositoryImpl(
         dao.deleteMedication(medication.toMedicationEntity())
     }
 
+    override suspend fun updateMedication(medication: Medication) {
+        dao.updateMedication(medication.copy(medicationTaken = true).toMedicationEntity())
+    }
+
     override fun getAllMedications(): Flow<List<Medication>> {
         return dao.getAllMedications().map { entities ->
             entities.map { it.toMedication() }

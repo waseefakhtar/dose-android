@@ -5,20 +5,24 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 
 fun MedicationEntity.toMedication(): Medication {
     return Medication(
+        id = id,
         name = name,
         dosage = dosage,
         recurrence = recurrence,
         endDate = endDate,
         timesOfDay = timesOfDay,
+        medicationTaken = medicationTaken
     )
 }
 
 fun Medication.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
+        id = id,
         name = name,
         dosage = dosage,
         recurrence = recurrence,
         endDate = endDate,
-        timesOfDay = timesOfDay
+        timesOfDay = timesOfDay,
+        medicationTaken = medicationTaken
     )
 }

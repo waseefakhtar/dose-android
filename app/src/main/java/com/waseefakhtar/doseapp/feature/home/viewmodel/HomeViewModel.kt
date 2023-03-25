@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
+import com.waseefakhtar.doseapp.feature.home.usecase.UpdateMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getMedicationsUseCase: GetMedicationsUseCase
+    private val getMedicationsUseCase: GetMedicationsUseCase,
+    private val updateMedicationUseCase: UpdateMedicationUseCase
 ) : ViewModel() {
 
     var state by mutableStateOf(HomeState())
@@ -46,7 +48,9 @@ class HomeViewModel @Inject constructor(
     }
 
     fun takeMedication(medication: Medication) {
-        // TODO: Take medication and update DB
+        viewModelScope.launch {
+            updateMedicationUseCase.updateMedication(medication)
+        }
     }
 
     fun getUserPlan() {

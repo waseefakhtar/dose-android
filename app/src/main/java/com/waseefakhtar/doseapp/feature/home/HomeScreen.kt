@@ -38,17 +38,17 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-    HomeScreen(state)
+    HomeScreen(state, viewModel)
 }
 
 @Composable
-fun HomeScreen(state: HomeState) {
+fun HomeScreen(state: HomeState, viewModel: HomeViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Greeting()
         DailyOverview(state)
-        DailyMedications(state)
+        DailyMedications(state, viewModel)
     }
 }
 
@@ -100,7 +100,7 @@ fun DailyOverview(state: HomeState) {
                 )
 
                 Text(
-                    text = "0 of ${state.medications.size} completed",
+                    text = "${state.medications.filter { it.medicationTaken }.size} of ${state.medications.size} completed",
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -118,7 +118,7 @@ fun DailyOverview(state: HomeState) {
 }
 
 @Composable
-fun DailyMedications(state: HomeState) {
+fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
 
     Text(
         modifier = Modifier
@@ -134,17 +134,16 @@ fun DailyMedications(state: HomeState) {
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
         items(
-            items = state.medications,
+            items = state.medications.sortedBy { it.medicationTaken },
             itemContent = {
-                MedicationCard(medication = it)
+                MedicationCard(medication = it, viewModel)
             }
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MedicationCard(medication: Medication) {
+fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
 
     Card(
         modifier = Modifier
@@ -189,15 +188,19 @@ fun MedicationCard(medication: Medication) {
 
                 Button(
                     onClick = {
-                        // TODO: Mark medication as taken
-                        // TODO: Update DB with medication as taken and store with time.
-                        // TODO: Cross the name of the token and disable the button with text "Taken"
-                    }
+                        viewModel.takeMedication(medication)
+                    },
+                    enabled = !medication.medicationTaken
                 ) {
-
-                    Text(
-                        text = "Take now"
-                    )
+                    if (medication.medicationTaken) {
+                        Text(
+                            text = "Taken"
+                        )
+                    } else {
+                        Text(
+                            text = "Take now"
+                        )
+                    }
                 }
             }
         }
