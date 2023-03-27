@@ -32,7 +32,7 @@ import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationCo
 
 @Composable
 fun MedicationConfirmRoute(
-    medication: Medication?,
+    medication: List<Medication>?,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,7 +47,7 @@ fun MedicationConfirmRoute(
 
 @Composable
 fun MedicationConfirmScreen(
-    medication: Medication,
+    medications: List<Medication>,
     viewModel: MedicationConfirmViewModel,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit
@@ -91,6 +91,7 @@ fun MedicationConfirmScreen(
             style = MaterialTheme.typography.displaySmall
         )
 
+        val medication = medications.first()
         Text(
             text = stringResource(
                 R.string.all_set,
@@ -114,7 +115,7 @@ fun MedicationConfirmScreen(
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                viewModel.addMedication(MedicationConfirmState(medication))
+                viewModel.addMedication(MedicationConfirmState(medications))
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {

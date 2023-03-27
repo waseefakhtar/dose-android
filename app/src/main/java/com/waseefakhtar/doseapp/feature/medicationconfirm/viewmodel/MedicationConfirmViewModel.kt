@@ -14,13 +14,13 @@ class MedicationConfirmViewModel @Inject constructor(
     private val addMedicationUseCase: AddMedicationUseCase
 ) : ViewModel() {
 
-    private val _isMedicationSaved = MutableSharedFlow<Long>()
+    private val _isMedicationSaved = MutableSharedFlow<Unit>()
     val isMedicationSaved = _isMedicationSaved.asSharedFlow()
 
     fun addMedication(state: MedicationConfirmState) {
         viewModelScope.launch {
-            val medication = state.medication
-            _isMedicationSaved.emit(addMedicationUseCase.addMedication(medication))
+            val medications = state.medications
+            _isMedicationSaved.emit(addMedicationUseCase.addMedication(medications))
         }
     }
 }

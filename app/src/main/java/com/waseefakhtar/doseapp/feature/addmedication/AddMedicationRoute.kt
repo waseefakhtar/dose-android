@@ -49,9 +49,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
@@ -70,17 +72,19 @@ fun DefaultPreview() {
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
-    navigateToMedicationConfirm: (Medication) -> Unit,
-    modifier: Modifier = Modifier
+    navigateToMedicationConfirm: (List<Medication>) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
-    AddMedicationScreen(onBackClicked, navigateToMedicationConfirm)
+    AddMedicationScreen(onBackClicked, viewModel, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicationScreen(
     onBackClicked: () -> Unit,
-    navigateToMedicationConfirm: (Medication) -> Unit
+    viewModel: AddMedicationViewModel,
+    navigateToMedicationConfirm: (List<Medication>) -> Unit
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
@@ -343,7 +347,8 @@ fun AddMedicationScreen(
                     },
                     onValidate = {
                         navigateToMedicationConfirm(it)
-                    }
+                    },
+                    viewModel = viewModel
                 )
             },
             shape = MaterialTheme.shapes.extraLarge
@@ -366,7 +371,8 @@ private fun validateMedication(
     eveningSelection: Boolean,
     nightSelection: Boolean,
     onInvalidate: (Int) -> Unit,
-    onValidate: (Medication) -> Unit
+    onValidate: (List<Medication>) -> Unit,
+    viewModel: AddMedicationViewModel
 ) {
     if (name.isEmpty()) {
         onInvalidate(R.string.medication_name)
@@ -394,17 +400,9 @@ private fun validateMedication(
     if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
     if (nightSelection) timesOfDay.add(TimesOfDay.Night)
 
-    val newMedication =
-        Medication(
-            id = System.currentTimeMillis(),
-            name = name,
-            dosage = dosage,
-            recurrence = recurrence,
-            endDate = Date(endDate),
-            timesOfDay = timesOfDay,
-            medicationTaken = false
-        )
-    onValidate(newMedication)
+    val medications = viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
+
+    onValidate(medications)
 }
 
 private fun handleSelection(
