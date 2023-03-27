@@ -25,7 +25,7 @@ fun NavGraphBuilder.medicationConfirmGraph(navController: NavController, bottomB
             bottomBarVisibility.value = false
             fabVisibility.value = false
         }
-        val medication = navController.previousBackStackEntry?.arguments?.getParcelable<Medication>(MEDICATION)
+        val medication = navController.previousBackStackEntry?.arguments?.getParcelableArrayList<Medication>(MEDICATION)
         MedicationConfirmRoute(medication, onBackClicked, navigateToHome)
     }
 }

@@ -1,13 +1,12 @@
 package com.waseefakhtar.doseapp.navigation
 
-import android.net.Uri
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.Gson
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
@@ -37,8 +36,10 @@ fun DoseNavHost(
             onBackClicked = { navController.navigateUp() },
             navigateToMedicationConfirm = {
                 // TODO: Replace with medication id
-                navController.currentBackStackEntry?.arguments?.putParcelable(MEDICATION, it)
-                val medicationJson = Uri.encode(Gson().toJson(it))
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(MEDICATION, ArrayList(it))
+                navController.currentBackStackEntry?.arguments?.putAll(bundle)
+
                 navController.navigate(MedicationConfirmDestination.route)
             }
         )

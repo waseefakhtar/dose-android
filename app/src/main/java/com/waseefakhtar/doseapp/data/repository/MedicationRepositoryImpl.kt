@@ -13,8 +13,10 @@ class MedicationRepositoryImpl(
     private val dao: MedicationDao
 ) : MedicationRepository {
 
-    override suspend fun insertMedication(medication: Medication): Long {
-        return dao.insertMedication(medication.toMedicationEntity())
+    override suspend fun insertMedications(medications: List<Medication>) {
+        medications.map { it.toMedicationEntity() }.forEach {
+            dao.insertMedication(it)
+        }
     }
 
     override suspend fun deleteMedication(medication: Medication) {

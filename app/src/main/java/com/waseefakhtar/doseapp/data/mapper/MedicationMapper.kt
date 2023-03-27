@@ -11,18 +11,20 @@ fun MedicationEntity.toMedication(): Medication {
         recurrence = recurrence,
         endDate = endDate,
         timesOfDay = timesOfDay,
-        medicationTaken = medicationTaken
+        medicationTaken = medicationTaken,
+        date = date
     )
 }
 
 fun Medication.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
-        id = id,
+        id = id ?: 0L,
         name = name,
         dosage = dosage,
         recurrence = recurrence,
         endDate = endDate,
         timesOfDay = timesOfDay,
-        medicationTaken = medicationTaken
+        medicationTaken = medicationTaken,
+        date = date
     )
 }
