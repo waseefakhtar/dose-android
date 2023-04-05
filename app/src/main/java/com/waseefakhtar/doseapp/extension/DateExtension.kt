@@ -1,10 +1,10 @@
 package com.waseefakhtar.doseapp.extension
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.Instant
 import java.util.Locale
 
-fun Date.toFormattedString(): String {
+fun Instant.toFormattedString(): String {
     val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
     return sdf.format(this)
 }

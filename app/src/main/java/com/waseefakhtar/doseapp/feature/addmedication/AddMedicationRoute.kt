@@ -60,6 +60,7 @@ import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
+import java.time.Instant
 import java.util.Calendar
 import java.util.Date
 
@@ -400,7 +401,7 @@ private fun validateMedication(
     if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
     if (nightSelection) timesOfDay.add(TimesOfDay.Night)
 
-    val medications = viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
+    val medications = viewModel.createMedications(name, dosage, recurrence, Instant.ofEpochMilli(endDate), timesOfDay)
 
     onValidate(medications)
 }

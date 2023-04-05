@@ -1,20 +1,23 @@
 package com.waseefakhtar.doseapp.feature.addmedication.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import java.util.Calendar
-import java.util.Date
+import java.time.Instant
 
 class AddMedicationViewModel : ViewModel() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun createMedications(
         name: String,
         dosage: Int,
         recurrence: String,
-        endDate: Date,
+        endDate: Instant,
         timesOfDay: List<TimesOfDay>,
-        startDate: Date = Date()
+        startDate: Instant? = Instant.now()
     ): List<Medication> {
 
         // Determine the recurrence interval based on the selected recurrence
@@ -26,12 +29,12 @@ class AddMedicationViewModel : ViewModel() {
         }
 
         val oneDayInMillis = 86400 * 1000 // Number of milliseconds in one day
-        val numOccurrences = ((endDate.time + oneDayInMillis - startDate.time) / (interval * oneDayInMillis)).toInt() + 1
+        val numOccurrences = ((endDate.toEpochMilli() + oneDayInMillis - (startDate?.toEpochMilli() ?: 0)) / (interval * oneDayInMillis)).toInt() + 1
 
         // Create a Medication object for each occurrence and add it to a list
         val medications = mutableListOf<Medication>()
         val calendar = Calendar.getInstance()
-        calendar.time = startDate
+        calendar.timeInMillis = startDate?.toEpochMilli() ?: 0
         for (i in 0 until numOccurrences) {
             for (timeOfDay in timesOfDay) {
                 val medication = Medication(
@@ -42,7 +45,7 @@ class AddMedicationViewModel : ViewModel() {
                     endDate = endDate,
                     timesOfDay = listOf(timeOfDay),
                     medicationTaken = false,
-                    date = calendar.time
+                    date = Instant.ofEpochMilli(calendar.timeInMillis)
                 )
                 medications.add(medication)
             }

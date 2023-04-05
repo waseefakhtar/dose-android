@@ -1,9 +1,12 @@
 package com.waseefakhtar.doseapp.data
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.waseefakhtar.doseapp.util.TimesOfDay
+import java.time.Instant
 import java.util.Collections
 import java.util.Date
 
@@ -13,9 +16,21 @@ class Converters {
         return value?.let { Date(it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    @TypeConverter
+    fun fromInstant(value: Long?): Instant? {
+        return value?.let { Instant.ofEpochMilli(it) }
+    }
+
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? {
         return date?.time
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @TypeConverter
+    fun instantToTimeStamp(instant: Instant?): Long? {
+        return instant?.toEpochMilli()
     }
 
     var gson = Gson()
