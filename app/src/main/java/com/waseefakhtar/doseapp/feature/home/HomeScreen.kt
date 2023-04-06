@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
+import com.waseefakhtar.doseapp.util.getTimeRemaining
 
 @Composable
 fun HomeRoute(
@@ -174,7 +176,10 @@ fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Next dose in 2 mins",
+                    text = stringResource(
+                        id = R.string.time_remaining,
+                        getTimeRemaining(medication)
+                    ),
                     fontWeight = FontWeight.Bold
                 )
             }
