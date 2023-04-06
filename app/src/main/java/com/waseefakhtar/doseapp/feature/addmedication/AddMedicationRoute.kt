@@ -2,8 +2,10 @@ package com.waseefakhtar.doseapp.feature.addmedication
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Build
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -488,6 +490,7 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EndDateTextField(endDate: (Long) -> Unit) {
     Text(
@@ -498,7 +501,7 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
-    val currentDate = Date().toFormattedString()
+    val currentDate = Instant.now().toFormattedString()
     var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
 
     val context = LocalContext.current
