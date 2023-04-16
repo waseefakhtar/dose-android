@@ -31,6 +31,7 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
+import com.waseefakhtar.doseapp.util.getTimeRemaining
 
 @Composable
 fun HomeRoute(
@@ -174,7 +175,7 @@ fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Next dose in 2 mins",
+                    text = getTimeRemaining(medication),
                     fontWeight = FontWeight.Bold
                 )
             }

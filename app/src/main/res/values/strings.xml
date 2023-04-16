@@ -13,5 +13,9 @@
     <string name="all_done">All done!</string>
     <string name="all_set">You\'re now set to take %1$s dose of %2$s %3$s until %4$s.</string>
     <string name="confirm">Confirm</string>
-
+    <string name="time_remaining">Next dose in %1$s %2$s</string>
+    <string name="days">days</string>
+    <string name="hours">hours</string>
+    <string name="minutes">minutes</string>
+    <string name="take_dose_now">Take your dose now</string>
 </resources>

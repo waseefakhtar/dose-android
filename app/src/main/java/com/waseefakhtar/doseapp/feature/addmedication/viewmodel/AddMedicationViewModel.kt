@@ -42,7 +42,7 @@ class AddMedicationViewModel : ViewModel() {
                     endDate = endDate,
                     timesOfDay = listOf(timeOfDay),
                     medicationTaken = false,
-                    date = calendar.time
+                    date = getDateAndTimeFor(timeOfDay, calendar)
                 )
                 medications.add(medication)
             }
@@ -52,5 +52,26 @@ class AddMedicationViewModel : ViewModel() {
         }
 
         return medications
+    }
+
+    private fun getDateAndTimeFor(timeOfDay: TimesOfDay, calendar: Calendar): Date {
+        return when (timeOfDay) {
+            TimesOfDay.Morning -> {
+                calendar.set(Calendar.HOUR_OF_DAY, 8)
+                calendar.time
+            }
+            TimesOfDay.Afternoon -> {
+                calendar.set(Calendar.HOUR_OF_DAY, 13)
+                calendar.time
+            }
+            TimesOfDay.Evening -> {
+                calendar.set(Calendar.HOUR_OF_DAY, 18)
+                calendar.time
+            }
+            TimesOfDay.Night -> {
+                calendar.set(Calendar.HOUR_OF_DAY, 22)
+                calendar.time
+            }
+        }
     }
 }
