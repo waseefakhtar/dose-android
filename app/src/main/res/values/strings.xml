@@ -18,4 +18,7 @@
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>
     <string name="take_dose_now">Take your dose now</string>
+    <string name="delete_title">DELETE</string>
+    <string name="delete_warning">Do you want to delete the reminder for %1$s?</string>
+    <string name="close_dialog">Cancel</string>
 </resources>

@@ -1,7 +1,14 @@
 package com.waseefakhtar.doseapp.feature.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,12 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,13 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.feature.home.dialogs.DeleteDialog
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
 import com.waseefakhtar.doseapp.util.getTimeRemaining
 
 @Composable
 fun HomeRoute(
-    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
@@ -44,12 +52,43 @@ fun HomeRoute(
 
 @Composable
 fun HomeScreen(state: HomeState, viewModel: HomeViewModel) {
+
+    AnimatedVisibility(
+        visible = state.isDeleteDialogShown,
+        enter = slideInVertically(
+            initialOffsetY = {
+                100
+            },
+            animationSpec = tween(300)
+        ),
+        exit = slideOutVertically  (
+            animationSpec = tween(0),
+            targetOffsetY = {
+                -100
+            }
+        ),
+    ) {
+        DeleteDialog(
+            medication = state.medicationToDelete,
+            onDelete = {
+                viewModel.deleteMedication(state.medicationToDelete)
+            },
+            onDismiss = {
+                viewModel.closeDialog()
+            })
+    }
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Greeting()
         DailyOverview(state)
-        DailyMedications(state, viewModel)
+        DailyMedications(
+            state = state,
+            viewModel = viewModel,
+            showDeleteDialog = {
+                viewModel.showDialog(it)
+            }
+        )
     }
 }
 
@@ -71,7 +110,6 @@ fun Greeting() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyOverview(state: HomeState) {
 
@@ -119,7 +157,11 @@ fun DailyOverview(state: HomeState) {
 }
 
 @Composable
-fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
+fun DailyMedications(
+    state: HomeState,
+    viewModel: HomeViewModel,
+    showDeleteDialog : (medication : Medication) -> Unit
+) {
 
     Text(
         modifier = Modifier
@@ -137,73 +179,95 @@ fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
         items(
             items = state.medications.sortedBy { it.medicationTaken },
             itemContent = {
-                MedicationCard(medication = it, viewModel)
+                MedicationCard(
+                    medication = it,
+                    viewModel = viewModel,
+                    showDeleteDialog = showDeleteDialog
+                )
             }
         )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
+fun MedicationCard(
+    showDeleteDialog: (medication : Medication) -> Unit,
+    medication: Medication,
+    viewModel: HomeViewModel,
+) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(30.dp))
             .padding(vertical = 8.dp),
         shape = RoundedCornerShape(30.dp),
         colors = cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = medication.name,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = medication.timesOfDay.joinToString(", ")
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = getTimeRemaining(medication),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.End
+        Box(
+            Modifier
+                .pointerInput(Unit){
+                    detectTapGestures(
+                        onLongPress = {
+                            showDeleteDialog(medication)
+                        }
+                    )
+                }
+        ){
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Button(
-                    onClick = {
-                        viewModel.takeMedication(medication)
-                    },
-                    enabled = !medication.medicationTaken
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    if (medication.medicationTaken) {
-                        Text(
-                            text = "Taken"
-                        )
-                    } else {
-                        Text(
-                            text = "Take now"
-                        )
+                    Text(
+                        text = medication.name,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = medication.timesOfDay.joinToString(", ")
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = getTimeRemaining(medication),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+
+                    Button(
+                        onClick = {
+                            viewModel.takeMedication(medication)
+                        },
+                        enabled = !medication.medicationTaken
+                    ) {
+                        if (medication.medicationTaken) {
+                            Text(
+                                text = "Taken"
+                            )
+                        } else {
+                            Text(
+                                text = "Take now"
+                            )
+                        }
                     }
                 }
             }
         }
+
+
     }
 }

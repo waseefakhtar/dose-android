@@ -27,6 +27,8 @@ class HomeViewModel @Inject constructor(
         loadMedications()
     }
 
+
+
     fun getUserName() {
         state = state.copy(userName = "Kathryn")
         // TODO: Get user name from DB
@@ -55,5 +57,24 @@ class HomeViewModel @Inject constructor(
 
     fun getUserPlan() {
         // TODO: Get user plan
+    }
+
+    fun showDialog(medication: Medication){
+        state = state.copy(isDeleteDialogShown = true, medicationToDelete = medication)
+    }
+
+    fun closeDialog(){
+        state = state.copy(isDeleteDialogShown = false, medicationToDelete = null)
+    }
+
+    fun deleteMedication(medication: Medication?){
+        state = state.copy(isDeleteDialogShown = false, medicationToDelete = null)
+
+        viewModelScope.launch {
+            medication?.let {
+                updateMedicationUseCase.deleteMedication(it)
+            }
+
+        }
     }
 }

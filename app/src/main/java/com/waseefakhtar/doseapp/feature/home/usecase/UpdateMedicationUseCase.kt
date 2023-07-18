@@ -8,6 +8,9 @@ class UpdateMedicationUseCase @Inject constructor(
     private val repository: MedicationRepository
 ) {
 
+    suspend fun deleteMedication(medication: Medication){
+        return repository.deleteMedication(medication)
+    }
     suspend fun updateMedication(medication: Medication) {
         return repository.updateMedication(medication)
     }
