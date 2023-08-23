@@ -32,6 +32,10 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
 import com.waseefakhtar.doseapp.util.getTimeRemaining
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
+import java.util.Calendar
 
 @Composable
 fun HomeRoute(
@@ -48,7 +52,6 @@ fun HomeScreen(state: HomeState, viewModel: HomeViewModel) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Greeting()
-        DailyOverview(state)
         DailyMedications(state, viewModel)
     }
 }
@@ -71,9 +74,8 @@ fun Greeting() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverview(state: HomeState) {
+fun DailyOverview(medicationsToday: List<Medication>) {
 
     Card(
         modifier = Modifier
@@ -101,7 +103,7 @@ fun DailyOverview(state: HomeState) {
                 )
 
                 Text(
-                    text = "${state.medications.filter { it.medicationTaken }.size} of ${state.medications.size} completed",
+                    text = "${medicationsToday.filter { it.medicationTaken }.size} of ${medicationsToday.size} completed",
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -121,26 +123,91 @@ fun DailyOverview(state: HomeState) {
 @Composable
 fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
 
-    Text(
-        modifier = Modifier
-            .padding(4.dp, 12.dp, 8.dp, 0.dp)
-            .fillMaxWidth(),
-        text = "Today".uppercase(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.titleMedium,
-    )
+    val medicationList = state.medications.sortedBy { it.date }
+    val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
+        val calendar = Calendar.getInstance()
+        val medicationsToday = medicationList.filter {
+            val medicationDate = it.date
+            calendar.time = medicationDate
+            val medicationDay = calendar.get(Calendar.DAY_OF_YEAR)
+
+            val todayCalendar = Calendar.getInstance()
+            val todayDay = todayCalendar.get(Calendar.DAY_OF_YEAR)
+
+            medicationDay == todayDay
+        }
+
+        add(MedicationListItem.DailyOverviewItem(medicationsToday))
+
+        if (medicationsToday.isNotEmpty()) {
+            add(MedicationListItem.HeaderItem("Today"))
+            addAll(medicationsToday.map { MedicationListItem.MedicationItem(it) })
+        }
+
+        // Find medications for this week and add "This Week" header
+        val startOfWeekThisWeek = Calendar.getInstance()
+        startOfWeekThisWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        val endOfWeekThisWeek = startOfWeekThisWeek.clone() as Calendar
+        endOfWeekThisWeek.add(Calendar.DAY_OF_WEEK, 6)
+        val medicationsThisWeek = medicationList.filter {
+            val medicationDate = it.date // Change this to the appropriate attribute
+            medicationDate in startOfWeekThisWeek.time..endOfWeekThisWeek.time && !medicationsToday.contains(it)
+        }
+        if (medicationsThisWeek.isNotEmpty()) {
+            add(MedicationListItem.HeaderItem("This Week"))
+            addAll(medicationsThisWeek.map { MedicationListItem.MedicationItem(it) })
+        }
+
+        // Find medications for next week and add "Next Week" header
+        val startOfWeekNextWeek = Calendar.getInstance()
+        startOfWeekNextWeek.time = endOfWeekThisWeek.time // Use the end of current week as start of next week
+        startOfWeekNextWeek.add(Calendar.DAY_OF_MONTH, 1)
+        val endOfWeekNextWeek = startOfWeekNextWeek.clone() as Calendar
+        endOfWeekNextWeek.add(Calendar.DAY_OF_MONTH, 6)
+        val medicationsNextWeek = medicationList.filter {
+            val medicationDate = it.date // Change this to the appropriate attribute
+            medicationDate in startOfWeekNextWeek.time..endOfWeekNextWeek.time
+        }
+        if (medicationsNextWeek.isNotEmpty()) {
+            add(MedicationListItem.HeaderItem("Next Week"))
+            addAll(medicationsNextWeek.map { MedicationListItem.MedicationItem(it) })
+        }
+    }
 
     LazyColumn(
         modifier = Modifier,
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
         items(
-            items = state.medications.sortedBy { it.medicationTaken },
+            items = combinedList,
             itemContent = {
-                MedicationCard(medication = it, viewModel)
+                when (it) {
+                    is MedicationListItem.DailyOverviewItem -> {
+                        DailyOverview(it.medicationsToday)
+                    }
+                    is MedicationListItem.HeaderItem -> {
+                        Text(
+                            modifier = Modifier
+                                .padding(4.dp, 12.dp, 8.dp, 0.dp)
+                                .fillMaxWidth(),
+                            text = it.headerText.uppercase(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                    is MedicationListItem.MedicationItem -> {
+                        MedicationCard(medication = it.medication, viewModel)
+                    }
+                }
             }
         )
     }
+}
+
+sealed class MedicationListItem {
+    data class DailyOverviewItem(val medicationsToday: List<Medication>): MedicationListItem()
+    data class MedicationItem(val medication: Medication) : MedicationListItem()
+    data class HeaderItem(val headerText: String) : MedicationListItem()
 }
 
 @Composable
