@@ -101,8 +101,6 @@ fun AddMedicationScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        println(endDate)
-
         FloatingActionButton(
             onClick = {
                 onBackClicked()
