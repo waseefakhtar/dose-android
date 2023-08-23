@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +31,6 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
 import com.waseefakhtar.doseapp.util.getTimeRemaining
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 import java.util.Calendar
 
 @Composable
@@ -205,7 +201,7 @@ fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
 }
 
 sealed class MedicationListItem {
-    data class DailyOverviewItem(val medicationsToday: List<Medication>): MedicationListItem()
+    data class DailyOverviewItem(val medicationsToday: List<Medication>) : MedicationListItem()
     data class MedicationItem(val medication: Medication) : MedicationListItem()
     data class HeaderItem(val headerText: String) : MedicationListItem()
 }
