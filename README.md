@@ -25,7 +25,13 @@ A work-in-progress Android app that reminds you medications exactly when your bo
 
 I’m building it in public. So the idea is for everyone to contribute, leave comments, suggest ideas, etc using the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab.
 
-You can also install & test the latest APK <a href="https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk">here</a>. 
+You can also install & test the latest APK <a href="https://github.com/waseefakhtar/dose-android/blob/main/docs/release/app.apk">here</a>.
+
+## Blog Post
+https://www.waseefakhtar.com/android/form-using-jetpack-compose-and-material-design/
+
+## YouTube Tutorial
+https://www.youtube.com/watch?v=taWNluAoyaE
 
 ## Screenshots
 
