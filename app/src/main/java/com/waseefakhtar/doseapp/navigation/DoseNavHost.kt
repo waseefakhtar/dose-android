@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
@@ -38,8 +39,9 @@ fun DoseNavHost(
                 // TODO: Replace with medication id
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(MEDICATION, ArrayList(it))
-                navController.currentBackStackEntry?.arguments?.putAll(bundle)
-
+                navController.currentBackStackEntry?.savedStateHandle.apply {
+                     this?.set(MEDICATION, bundle)
+                }
                 navController.navigate(MedicationConfirmDestination.route)
             }
         )

@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.medicationconfirm.navigation
 
+import android.os.Bundle
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
@@ -25,7 +26,8 @@ fun NavGraphBuilder.medicationConfirmGraph(navController: NavController, bottomB
             bottomBarVisibility.value = false
             fabVisibility.value = false
         }
-        val medication = navController.previousBackStackEntry?.arguments?.getParcelableArrayList<Medication>(MEDICATION)
-        MedicationConfirmRoute(medication, onBackClicked, navigateToHome)
+        val medicationBundle = navController.previousBackStackEntry?.savedStateHandle?.get<Bundle>(MEDICATION)
+        val medicationList = medicationBundle?.getParcelableArrayList<Medication>(MEDICATION)
+        MedicationConfirmRoute(medicationList, onBackClicked, navigateToHome)
     }
 }
