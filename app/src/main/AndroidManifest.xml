@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -26,7 +27,8 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name=".MedicationNotificationReceiver" />
+        <receiver android:name=".NotificationActionReceiver" />
+        <receiver android:name=".MedicationNotificationReceiver" android:enabled="true" />
     </application>
 
 </manifest>

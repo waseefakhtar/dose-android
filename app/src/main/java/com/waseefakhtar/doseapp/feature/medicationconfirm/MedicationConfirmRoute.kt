@@ -115,7 +115,7 @@ fun MedicationConfirmScreen(
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
-                viewModel.addMedication(MedicationConfirmState(medications))
+                viewModel.addMedication(context, MedicationConfirmState(medications))
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {

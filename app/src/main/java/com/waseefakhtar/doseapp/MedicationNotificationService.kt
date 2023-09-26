@@ -1,16 +1,45 @@
 package com.waseefakhtar.doseapp
 
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.waseefakhtar.doseapp.domain.model.Medication
 
 class MedicationNotificationService(
     private val context: Context
 ) {
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    fun scheduleNotification(medication: Medication) {
+        val intent = Intent(context, MedicationNotificationReceiver::class.java)
+        intent.putExtra(MEDICATION_INTENT, medication)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            3,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        )
+
+        val alarmService = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = medication.date.time
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                alarmService.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    time,
+                    pendingIntent
+                )
+            } catch (exception: SecurityException) {
+                // TODO: Log exception in Crashlytics.
+            }
+        }
+    }
 
     fun showNotification() {
         val activityIntent = Intent(context, MainActivity::class.java)
@@ -21,7 +50,7 @@ class MedicationNotificationService(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         )
 
-        val receiverIntent = Intent(context, MedicationNotificationReceiver::class.java)
+        val receiverIntent = Intent(context, NotificationActionReceiver::class.java)
         val takenPendingIntent = PendingIntent.getBroadcast(
             context,
             2,
