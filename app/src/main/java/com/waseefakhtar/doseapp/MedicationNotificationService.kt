@@ -17,6 +17,7 @@ class MedicationNotificationService(
         val intent = Intent(context, MedicationNotificationReceiver::class.java)
         intent.putExtra(MEDICATION_INTENT, medication)
 
+        // TODO: Replace medication.hashCode() with medication.id when medication.id is fixed.
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             medication.hashCode(),
