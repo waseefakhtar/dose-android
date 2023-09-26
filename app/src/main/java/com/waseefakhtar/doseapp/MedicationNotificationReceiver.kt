@@ -24,18 +24,18 @@ class MedicationNotificationReceiver: BroadcastReceiver() {
         val activityIntent = Intent(context, MainActivity::class.java)
         val activityPendingIntent = PendingIntent.getActivity(
             context,
-            medication.date.hashCode(),
+            1,
             activityIntent,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         )
 
         val receiverIntent = Intent(context, NotificationActionReceiver::class.java)
-        val takenPendingIntent = PendingIntent.getBroadcast(
+        /*val takenPendingIntent = PendingIntent.getBroadcast(
             context,
             2,
             receiverIntent,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        )
+        )*/
 
         // TODO: Add action.
         val notification = NotificationCompat.Builder(context,
@@ -53,6 +53,6 @@ class MedicationNotificationReceiver: BroadcastReceiver() {
 
         // TODO: Use medication id as notification id.
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, notification)
+        notificationManager.notify(medication.hashCode(), notification)
     }
 }

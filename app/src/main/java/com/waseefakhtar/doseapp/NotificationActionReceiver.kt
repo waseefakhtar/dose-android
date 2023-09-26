@@ -8,10 +8,7 @@ class NotificationActionReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
-            val service = MedicationNotificationService(it)
-
-            // TODO: Update notification action from "Take now" to "Taken"
-            service.showNotification()
+            // TODO: Update notification action from "Take now" to "Taken" and update DB.
         }
 
     }
