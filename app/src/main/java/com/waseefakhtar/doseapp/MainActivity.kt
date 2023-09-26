@@ -9,8 +9,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val service = MedicationNotificationService(applicationContext)
-        service.showNotification()
         setContent {
             DoseApp()
         }

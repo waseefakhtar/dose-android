@@ -20,7 +20,7 @@ class MedicationNotificationService(
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            3,
+            medication.id?.toInt() ?: medication.hashCode(),
             intent,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         )
