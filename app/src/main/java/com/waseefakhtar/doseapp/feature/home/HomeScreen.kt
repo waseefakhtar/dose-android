@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,11 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
 import com.waseefakhtar.doseapp.util.getTimeRemaining
@@ -44,22 +48,22 @@ import java.util.Calendar
 
 @Composable
 fun HomeRoute(
+    navController: NavController,
     askNotificationPermission: Boolean,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
     PermissionDialog(askNotificationPermission)
-    HomeScreen(state, viewModel)
+    HomeScreen(navController, state, viewModel)
 }
 
 @Composable
-fun HomeScreen(state: HomeState, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController, state: HomeState, viewModel: HomeViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Greeting()
-        DailyMedications(state, viewModel)
+        DailyMedications(navController, state, viewModel)
     }
 }
 
@@ -81,8 +85,9 @@ fun Greeting() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverview(medicationsToday: List<Medication>) {
+fun DailyOverviewCard(navController: NavController, medicationsToday: List<Medication>) {
 
     Card(
         modifier = Modifier
@@ -92,7 +97,10 @@ fun DailyOverview(medicationsToday: List<Medication>) {
         colors = cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.tertiary
-        )
+        ),
+        onClick = {
+            navController.navigate(AddMedicationDestination.route)
+        }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -126,8 +134,58 @@ fun DailyOverview(medicationsToday: List<Medication>) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
+fun EmptyCard(navController: NavController) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        shape = RoundedCornerShape(36.dp),
+        colors = cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.tertiary
+        ),
+        onClick = {
+            navController.navigate(AddMedicationDestination.route)
+        }
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp, 24.dp, 0.dp, 16.dp)
+                    .fillMaxWidth(.50F),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                Text(
+                    text = "Welcome!",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+
+                Text(
+                    text = "No medications added yet? Tap to get started and stay on top of your medication schedule.",
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.doctor), contentDescription = ""
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DailyMedications(navController: NavController, state: HomeState, viewModel: HomeViewModel) {
 
     val medicationList = state.medications.sortedBy { it.date }
     val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
@@ -143,7 +201,7 @@ fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
             medicationDay == todayDay
         }
 
-        add(MedicationListItem.DailyOverviewItem(medicationsToday))
+        add(MedicationListItem.DailyOverviewItem(medicationsToday, medicationList.isEmpty()))
 
         if (medicationsToday.isNotEmpty()) {
             add(MedicationListItem.HeaderItem("Today"))
@@ -189,7 +247,10 @@ fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
             itemContent = {
                 when (it) {
                     is MedicationListItem.DailyOverviewItem -> {
-                        DailyOverview(it.medicationsToday)
+                        when (it.isMedicationListEmpty) {
+                            true -> EmptyCard(navController)
+                            false -> DailyOverviewCard(navController, it.medicationsToday)
+                        }
                     }
                     is MedicationListItem.HeaderItem -> {
                         Text(
@@ -211,7 +272,7 @@ fun DailyMedications(state: HomeState, viewModel: HomeViewModel) {
 }
 
 sealed class MedicationListItem {
-    data class DailyOverviewItem(val medicationsToday: List<Medication>) : MedicationListItem()
+    data class DailyOverviewItem(val medicationsToday: List<Medication>, val isMedicationListEmpty: Boolean) : MedicationListItem()
     data class MedicationItem(val medication: Medication) : MedicationListItem()
     data class HeaderItem(val headerText: String) : MedicationListItem()
 }
