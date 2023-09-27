@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
+import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
@@ -28,7 +29,7 @@ fun DoseNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeGraph(bottomBarVisibility, fabVisibility)
+        homeGraph(navController, bottomBarVisibility, fabVisibility)
         calendarGraph(bottomBarVisibility, fabVisibility)
         addMedicationGraph(
             bottomBarVisibility = bottomBarVisibility,
@@ -38,8 +39,9 @@ fun DoseNavHost(
                 // TODO: Replace with medication id
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(MEDICATION, ArrayList(it))
-                navController.currentBackStackEntry?.arguments?.putAll(bundle)
-
+                navController.currentBackStackEntry?.savedStateHandle.apply {
+                    this?.set(MEDICATION, bundle)
+                }
                 navController.navigate(MedicationConfirmDestination.route)
             }
         )
@@ -50,6 +52,9 @@ fun DoseNavHost(
             onBackClicked = { navController.navigateUp() },
             navigateToHome = {
                 // TODO: Navigate to Home with no backstack.
+                navController.currentBackStackEntry?.savedStateHandle.apply {
+                    this?.set(ASK_NOTIFICATION_PERMISSION, true)
+                }
                 navController.navigate(HomeDestination.route)
             }
         )

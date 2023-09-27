@@ -1,5 +1,7 @@
 package com.waseefakhtar.doseapp.feature.home
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
@@ -35,10 +44,12 @@ import java.util.Calendar
 
 @Composable
 fun HomeRoute(
+    askNotificationPermission: Boolean,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+    PermissionDialog(askNotificationPermission)
     HomeScreen(state, viewModel)
 }
 
@@ -83,7 +94,6 @@ fun DailyOverview(medicationsToday: List<Medication>) {
             contentColor = MaterialTheme.colorScheme.tertiary
         )
     ) {
-
         Row(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -267,6 +277,37 @@ fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PermissionDialog(askNotificationPermission: Boolean) {
+    if (askNotificationPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
+        val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        if (!notificationPermissionState.status.isGranted) {
+            AlertDialog(
+                icon = {
+                    Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
+                },
+                title = {
+                    Text(text = "Notification Permission Required")
+                },
+                text = {
+                    Text(text = "To ensure you never miss your medication, please grant the notification permission.")
+                },
+                onDismissRequest = { },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            notificationPermissionState.launchPermissionRequest()
+                        }
+                    ) {
+                        Text("Allow")
+                    }
+                }
+            )
         }
     }
 }
