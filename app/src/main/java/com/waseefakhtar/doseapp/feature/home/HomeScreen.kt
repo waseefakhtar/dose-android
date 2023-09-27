@@ -63,7 +63,6 @@ fun HomeScreen(navController: NavController, state: HomeState, viewModel: HomeVi
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Greeting()
         DailyMedications(navController, state, viewModel)
     }
 }
