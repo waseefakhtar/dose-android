@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.MedicationNotificationService
-import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
 import com.waseefakhtar.doseapp.feature.medicationconfirm.usecase.AddMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

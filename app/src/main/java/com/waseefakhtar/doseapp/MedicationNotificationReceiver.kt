@@ -10,11 +10,11 @@ import androidx.core.app.NotificationCompat
 import com.waseefakhtar.doseapp.domain.model.Medication
 
 const val MEDICATION_INTENT = "medication_intent"
-class MedicationNotificationReceiver: BroadcastReceiver() {
+class MedicationNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
-            intent?.getParcelableExtra<Medication>(MEDICATION_INTENT)?.let {medication ->
+            intent?.getParcelableExtra<Medication>(MEDICATION_INTENT)?.let { medication ->
                 showNotification(it, medication)
             }
         }
@@ -38,7 +38,8 @@ class MedicationNotificationReceiver: BroadcastReceiver() {
         )*/
 
         // TODO: Add action.
-        val notification = NotificationCompat.Builder(context,
+        val notification = NotificationCompat.Builder(
+            context,
             MedicationNotificationService.MEDICATION_CHANNEL_ID
         )
             .setSmallIcon(R.drawable.ic_dose)

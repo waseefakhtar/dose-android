@@ -4,13 +4,13 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
-import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
+import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
@@ -40,7 +40,7 @@ fun DoseNavHost(
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(MEDICATION, ArrayList(it))
                 navController.currentBackStackEntry?.savedStateHandle.apply {
-                     this?.set(MEDICATION, bundle)
+                    this?.set(MEDICATION, bundle)
                 }
                 navController.navigate(MedicationConfirmDestination.route)
             }
