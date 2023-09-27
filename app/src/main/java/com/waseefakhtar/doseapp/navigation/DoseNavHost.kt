@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavHostController
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
