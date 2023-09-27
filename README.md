@@ -45,9 +45,8 @@ https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-b
 ## Features
 - [x] Adds medications with its duration and daily dosage.
 - [x] Displays a list of medications to take daily.
-- [ ] Reminds when it's time to take medication with notifications.
-- [ ] Shows history of dosage taken.
-- [ ] Shows medications in a calendar view.
+- [x] Reminds when it's time to take medication with local notifications.
+- [ ] Shows history of medications.
 
 ## MAD Score
 <a href="https://madscorecard.withgoogle.com/scorecard/share/1233122117/">
