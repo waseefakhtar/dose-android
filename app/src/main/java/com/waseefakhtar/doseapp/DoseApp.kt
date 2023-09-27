@@ -83,7 +83,7 @@ fun DoseApp() {
                     )
                 },
                 bottomBar = {
-                    AnimatedVisibility(
+                    /*AnimatedVisibility(
                         visible = bottomBarVisibility.value,
                         enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { it }),
@@ -93,7 +93,7 @@ fun DoseApp() {
                                 currentDestination = currentDestination
                             )
                         }
-                    )
+                    )*/
                 }
             ) { padding ->
                 Row(
