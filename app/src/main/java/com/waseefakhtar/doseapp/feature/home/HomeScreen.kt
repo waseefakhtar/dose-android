@@ -58,7 +58,7 @@ fun HomeScreen(state: HomeState, viewModel: HomeViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Greeting()
+        //Greeting()
         DailyMedications(state, viewModel)
     }
 }
