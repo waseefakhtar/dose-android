@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
@@ -53,17 +56,18 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
-    PermissionDialog(askNotificationPermission)
-    HomeScreen(navController, state, viewModel)
+    PermissionDialog(analyticsHelper, askNotificationPermission)
+    HomeScreen(navController, analyticsHelper, state, viewModel)
 }
 
 @Composable
-fun HomeScreen(navController: NavController, state: HomeState, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DailyMedications(navController, state, viewModel)
+        DailyMedications(navController, analyticsHelper, state, viewModel)
     }
 }
 
@@ -87,7 +91,7 @@ fun Greeting() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverviewCard(navController: NavController, medicationsToday: List<Medication>) {
+fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHelper, medicationsToday: List<Medication>) {
 
     Card(
         modifier = Modifier
@@ -99,6 +103,7 @@ fun DailyOverviewCard(navController: NavController, medicationsToday: List<Medic
             contentColor = MaterialTheme.colorScheme.tertiary
         ),
         onClick = {
+            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_DAILY_OVERVIEW)
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
@@ -136,8 +141,8 @@ fun DailyOverviewCard(navController: NavController, medicationsToday: List<Medic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyCard(navController: NavController) {
-
+fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
+    analyticsHelper.logEvent(AnalyticsEvents.EMPTY_CARD_SHOWN)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,6 +153,7 @@ fun EmptyCard(navController: NavController) {
             contentColor = MaterialTheme.colorScheme.tertiary
         ),
         onClick = {
+            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_EMPTY_CARD)
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
@@ -185,7 +191,7 @@ fun EmptyCard(navController: NavController) {
 }
 
 @Composable
-fun DailyMedications(navController: NavController, state: HomeState, viewModel: HomeViewModel) {
+fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
 
     val medicationList = state.medications.sortedBy { it.date }
     val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
@@ -248,8 +254,8 @@ fun DailyMedications(navController: NavController, state: HomeState, viewModel: 
                 when (it) {
                     is MedicationListItem.DailyOverviewItem -> {
                         when (it.isMedicationListEmpty) {
-                            true -> EmptyCard(navController)
-                            false -> DailyOverviewCard(navController, it.medicationsToday)
+                            true -> EmptyCard(navController, analyticsHelper)
+                            false -> DailyOverviewCard(navController, analyticsHelper, it.medicationsToday)
                         }
                     }
                     is MedicationListItem.HeaderItem -> {
@@ -263,7 +269,7 @@ fun DailyMedications(navController: NavController, state: HomeState, viewModel: 
                         )
                     }
                     is MedicationListItem.MedicationItem -> {
-                        MedicationCard(medication = it.medication, viewModel)
+                        MedicationCard(it.medication, viewModel, analyticsHelper)
                     }
                 }
             }
@@ -278,7 +284,7 @@ sealed class MedicationListItem {
 }
 
 @Composable
-fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
+fun MedicationCard(medication: Medication, viewModel: HomeViewModel, analyticsHelper: AnalyticsHelper) {
 
     Card(
         modifier = Modifier
@@ -323,6 +329,7 @@ fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
 
                 Button(
                     onClick = {
+                        analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
                         viewModel.takeMedication(medication)
                     },
                     enabled = !medication.medicationTaken
@@ -344,10 +351,16 @@ fun MedicationCard(medication: Medication, viewModel: HomeViewModel) {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionDialog(askNotificationPermission: Boolean) {
+fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission: Boolean) {
     if (askNotificationPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
-        val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS) { isGranted ->
+            when (isGranted) {
+                true -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
+                false -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
+            }
+        }
         if (!notificationPermissionState.status.isGranted) {
+            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
             AlertDialog(
                 icon = {
                     Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
@@ -358,11 +371,14 @@ fun PermissionDialog(askNotificationPermission: Boolean) {
                 text = {
                     Text(text = "To ensure you never miss your medication, please grant the notification permission.")
                 },
-                onDismissRequest = { },
+                onDismissRequest = {
+                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
+                },
                 confirmButton = {
                     Button(
                         onClick = {
                             notificationPermissionState.launchPermissionRequest()
+                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
                         }
                     ) {
                         Text("Allow")

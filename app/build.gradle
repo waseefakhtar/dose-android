@@ -66,7 +66,7 @@ dependencies {
     def material3_version = "1.2.0-alpha06"
     def lifecycle_version = "2.7.0-alpha01"
     def activity_version = "1.8.0-alpha07"
-    def firebase_version = "30.4.1"
+    def firebase_version = "32.3.1"
     def accompanist_permissions_version = "0.33.2-alpha"
 
     implementation "androidx.core:core-ktx:$core_version"

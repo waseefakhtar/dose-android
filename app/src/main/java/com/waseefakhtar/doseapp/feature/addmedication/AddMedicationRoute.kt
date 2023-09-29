@@ -51,6 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
@@ -76,7 +78,8 @@ fun AddMedicationRoute(
     modifier: Modifier = Modifier,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
-    AddMedicationScreen(onBackClicked, viewModel, navigateToMedicationConfirm)
+    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
+    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,6 +87,7 @@ fun AddMedicationRoute(
 fun AddMedicationScreen(
     onBackClicked: () -> Unit,
     viewModel: AddMedicationViewModel,
+    analyticsHelper: AnalyticsHelper,
     navigateToMedicationConfirm: (List<Medication>) -> Unit
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
@@ -103,6 +107,7 @@ fun AddMedicationScreen(
     ) {
         FloatingActionButton(
             onClick = {
+                analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
                 onBackClicked()
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
@@ -339,14 +344,19 @@ fun AddMedicationScreen(
                     eveningSelection = isEveningSelected,
                     nightSelection = isNightSelected,
                     onInvalidate = {
+                        val invalidatedValue = context.getString(it)
                         Toast.makeText(
                             context,
-                            context.getString(R.string.value_is_empty, context.getString(it)),
+                            context.getString(R.string.value_is_empty, invalidatedValue),
                             Toast.LENGTH_LONG
                         ).show()
+
+                        val event = String.format(AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED, invalidatedValue)
+                        analyticsHelper.logEvent(event)
                     },
                     onValidate = {
                         navigateToMedicationConfirm(it)
+                        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
                     },
                     viewModel = viewModel
                 )

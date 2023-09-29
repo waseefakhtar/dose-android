@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 
 class MedicationNotificationService(
@@ -34,9 +36,11 @@ class MedicationNotificationService(
                     pendingIntent
                 )
             } catch (exception: SecurityException) {
-                // TODO: Log exception in Crashlytics.
+                FirebaseCrashlytics.getInstance().recordException(exception)
             }
         }
+
+        AnalyticsHelper.getInstance(context).trackNotificationScheduled(medication)
     }
 
     companion object {

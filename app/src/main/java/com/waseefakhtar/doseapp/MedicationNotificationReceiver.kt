@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 
 const val MEDICATION_INTENT = "medication_intent"
@@ -55,5 +56,7 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
         // TODO: Use medication id as notification id.
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(medication.hashCode(), notification)
+
+        AnalyticsHelper.getInstance(context).trackNotificationScheduled(medication)
     }
 }
