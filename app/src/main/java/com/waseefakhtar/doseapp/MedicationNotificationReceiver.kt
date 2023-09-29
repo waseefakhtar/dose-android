@@ -6,13 +6,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
-import java.util.Date
 
 const val MEDICATION_INTENT = "medication_intent"
 class MedicationNotificationReceiver : BroadcastReceiver() {

@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.internal.model.CrashlyticsReport
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 

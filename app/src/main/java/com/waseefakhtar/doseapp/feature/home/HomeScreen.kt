@@ -39,7 +39,6 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
@@ -60,11 +59,11 @@ fun HomeRoute(
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
     PermissionDialog(analyticsHelper, askNotificationPermission)
-    HomeScreen(navController, analyticsHelper,  state, viewModel)
+    HomeScreen(navController, analyticsHelper, state, viewModel)
 }
 
 @Composable
-fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper,  state: HomeState, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -359,7 +358,6 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
                 true -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
                 false -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
             }
-
         }
         if (!notificationPermissionState.status.isGranted) {
             analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
