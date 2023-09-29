@@ -44,3 +44,4 @@ class AnalyticsHelper private constructor(context: Context) {
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, params)
     }
 }
+
