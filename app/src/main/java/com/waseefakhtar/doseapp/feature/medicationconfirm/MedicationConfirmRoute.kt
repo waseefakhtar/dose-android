@@ -24,7 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
@@ -38,10 +41,11 @@ fun MedicationConfirmRoute(
     modifier: Modifier = Modifier,
     viewModel: MedicationConfirmViewModel = hiltViewModel()
 ) {
+    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     medication?.let {
-        MedicationConfirmScreen(it, viewModel, onBackClicked, navigateToHome)
+        MedicationConfirmScreen(it, viewModel, analyticsHelper, onBackClicked, navigateToHome)
     } ?: {
-        // TODO: Show error and stay on AddMedication.
+        FirebaseCrashlytics.getInstance().log("Error: Cannot show MedicationConfirmScreen. Medication is null.")
     }
 }
 
@@ -49,6 +53,7 @@ fun MedicationConfirmRoute(
 fun MedicationConfirmScreen(
     medications: List<Medication>,
     viewModel: MedicationConfirmViewModel,
+    analyticsHelper: AnalyticsHelper,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit
 ) {
@@ -64,6 +69,7 @@ fun MedicationConfirmScreen(
                     Toast.LENGTH_SHORT,
                 ).show()
                 navigateToHome()
+                analyticsHelper.logEvent(AnalyticsEvents.MEDICATIONS_SAVED)
             }
     }
 
@@ -73,6 +79,7 @@ fun MedicationConfirmScreen(
     ) {
         FloatingActionButton(
             onClick = {
+                analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_CONFIRM_ON_BACK_CLICKED)
                 onBackClicked()
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
@@ -115,6 +122,7 @@ fun MedicationConfirmScreen(
                 .height(56.dp)
                 .align(Alignment.CenterHorizontally),
             onClick = {
+                analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_CONFIRM_ON_CONFIRM_CLICKED)
                 viewModel.addMedication(context, MedicationConfirmState(medications))
             },
             shape = MaterialTheme.shapes.extraLarge
