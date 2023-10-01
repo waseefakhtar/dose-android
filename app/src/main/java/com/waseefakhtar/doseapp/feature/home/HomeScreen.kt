@@ -207,8 +207,6 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             medicationDay == todayDay
         }
 
-        add(MedicationListItem.DailyOverviewItem(medicationsToday, medicationList.isEmpty()))
-
         if (medicationsToday.isNotEmpty()) {
             add(MedicationListItem.HeaderItem("Today"))
             addAll(medicationsToday.map { MedicationListItem.MedicationItem(it) })
@@ -242,6 +240,9 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             add(MedicationListItem.HeaderItem("Next Week"))
             addAll(medicationsNextWeek.map { MedicationListItem.MedicationItem(it) })
         }
+
+        val hasMedicationItem = any { it is MedicationListItem.MedicationItem }
+        add(0, MedicationListItem.OverviewItem(medicationsToday, !hasMedicationItem))
     }
 
     LazyColumn(
@@ -252,7 +253,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             items = combinedList,
             itemContent = {
                 when (it) {
-                    is MedicationListItem.DailyOverviewItem -> {
+                    is MedicationListItem.OverviewItem -> {
                         when (it.isMedicationListEmpty) {
                             true -> EmptyCard(navController, analyticsHelper)
                             false -> DailyOverviewCard(navController, analyticsHelper, it.medicationsToday)
@@ -278,7 +279,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 }
 
 sealed class MedicationListItem {
-    data class DailyOverviewItem(val medicationsToday: List<Medication>, val isMedicationListEmpty: Boolean) : MedicationListItem()
+    data class OverviewItem(val medicationsToday: List<Medication>, val isMedicationListEmpty: Boolean) : MedicationListItem()
     data class MedicationItem(val medication: Medication) : MedicationListItem()
     data class HeaderItem(val headerText: String) : MedicationListItem()
 }
