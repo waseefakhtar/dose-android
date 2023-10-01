@@ -77,7 +77,7 @@ fun DeleteDialog(
                     ) {
                         Text(
                             text = stringResource(id = R.string.delete_title),
-                            color = MaterialTheme.colorScheme.background
+                            color = MaterialTheme.colorScheme.surface
                         )
                     }
 
