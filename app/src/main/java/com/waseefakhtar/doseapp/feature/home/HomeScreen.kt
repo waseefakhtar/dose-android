@@ -182,7 +182,9 @@ fun DailyMedications(
                 MedicationCard(
                     medication = it,
                     viewModel = viewModel,
-                    showDeleteDialog = showDeleteDialog
+                    showDeleteDialog = {
+                        showDeleteDialog(it)
+                    }
                 )
             }
         )
@@ -192,7 +194,7 @@ fun DailyMedications(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MedicationCard(
-    showDeleteDialog: (medication : Medication) -> Unit,
+    showDeleteDialog: () -> Unit,
     medication: Medication,
     viewModel: HomeViewModel,
 ) {
@@ -212,7 +214,7 @@ fun MedicationCard(
                 .pointerInput(Unit){
                     detectTapGestures(
                         onLongPress = {
-                            showDeleteDialog(medication)
+                            showDeleteDialog()
                         }
                     )
                 }
