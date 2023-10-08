@@ -101,24 +101,29 @@ fun AddMedicationScreen(
 
     Column(
         modifier = Modifier
-            .padding(0.dp, 16.dp)
+            .padding(0.dp, 0.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        FloatingActionButton(
-            onClick = {
-                analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
-                onBackClicked()
-            },
-            elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            FloatingActionButton(
+                onClick = {
+                    analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
+                    onBackClicked()
+                },
+                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+            ) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+            Text(
+                text = stringResource(id = R.string.add_medication),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.displaySmall
+            )
         }
-        Text(
-            text = stringResource(id = R.string.add_medication),
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.displaySmall
-        )
 
         Spacer(modifier = Modifier.padding(8.dp))
 
