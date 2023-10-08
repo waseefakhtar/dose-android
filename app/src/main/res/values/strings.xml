@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dose App</string>
+    <string name="app_name">Dose</string>
     <string name="home">Home</string>
     <string name="calendar">Calendar</string>
     <string name="add_medication">Add Medication</string>
