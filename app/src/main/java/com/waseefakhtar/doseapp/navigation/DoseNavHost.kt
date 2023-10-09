@@ -15,6 +15,7 @@ import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.medicationConfirmGraph
+import com.waseefakhtar.doseapp.util.navigateSingleTop
 
 @Composable
 fun DoseNavHost(
@@ -51,11 +52,10 @@ fun DoseNavHost(
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() },
             navigateToHome = {
-                // TODO: Navigate to Home with no backstack.
                 navController.currentBackStackEntry?.savedStateHandle.apply {
                     this?.set(ASK_NOTIFICATION_PERMISSION, true)
                 }
-                navController.navigate(HomeDestination.route)
+                navController.navigateSingleTop(HomeDestination.route)
             }
         )
     }
