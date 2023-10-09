@@ -11,6 +11,7 @@ import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 
 const val MEDICATION_INTENT = "medication_intent"
+const val MEDICATION_NOTIFICATION = "medication_notification"
 class MedicationNotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -23,6 +24,7 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
 
     private fun showNotification(context: Context, medication: Medication) {
         val activityIntent = Intent(context, MainActivity::class.java)
+        activityIntent.putExtra(MEDICATION_NOTIFICATION, true)
         val activityPendingIntent = PendingIntent.getActivity(
             context,
             1,
