@@ -101,7 +101,7 @@ fun AddMedicationScreen(
 
     Column(
         modifier = Modifier
-            .padding(0.dp, 0.dp)
+            .padding(0.dp, 16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -136,7 +136,7 @@ fun AddMedicationScreen(
             value = medicationName,
             onValueChange = { medicationName = it },
             // label = { Text(text = stringResource(id = R.string.medication_name)) },
-            placeholder = { Text(text = "e.g. Hexamine") },
+            placeholder = { Text(text = "e.g. Risperdal, 4mg") },
         )
 
         Spacer(modifier = Modifier.padding(4.dp))

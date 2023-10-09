@@ -27,4 +27,6 @@ object AnalyticsEvents {
     const val ADD_MEDICATION_ON_BACK_CLICKED = "add_medication_on_back_clicked"
     const val ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED = "add_medication_medication_%s_invalidated"
     const val ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM = "add_medication_navigating_to_medication_confirm"
+
+    const val REMINDER_NOTIFICATION_CLICKED = "reminder_notification_clicked"
 }
