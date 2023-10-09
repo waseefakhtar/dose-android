@@ -101,7 +101,7 @@ fun AddMedicationScreen(
 
     Column(
         modifier = Modifier
-            .padding(0.dp, 0.dp)
+            .padding(0.dp, 16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

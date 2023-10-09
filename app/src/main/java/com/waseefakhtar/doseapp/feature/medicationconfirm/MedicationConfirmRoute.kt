@@ -65,7 +65,7 @@ fun MedicationConfirmScreen(
             .collect {
                 Toast.makeText(
                     context,
-                    "Success add new medication",
+                    "${medications.first().name} is now set up for timely reminders.",
                     Toast.LENGTH_SHORT,
                 ).show()
                 navigateToHome()
@@ -112,7 +112,9 @@ fun MedicationConfirmScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .padding(0.dp, 16.dp)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
 
