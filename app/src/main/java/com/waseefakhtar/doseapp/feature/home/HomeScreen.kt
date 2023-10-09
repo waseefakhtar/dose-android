@@ -98,6 +98,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = 8.dp)
             .height(200.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
