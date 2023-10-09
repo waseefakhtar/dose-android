@@ -27,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -361,31 +363,39 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
             }
         }
         if (!notificationPermissionState.status.isGranted) {
-            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
-            AlertDialog(
-                icon = {
-                    Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
-                },
-                title = {
-                    Text(text = "Notification Permission Required")
-                },
-                text = {
-                    Text(text = "To ensure you never miss your medication, please grant the notification permission.")
-                },
-                onDismissRequest = {
-                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            notificationPermissionState.launchPermissionRequest()
-                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+            val openAlertDialog = remember { mutableStateOf(true) }
+
+            when {
+                openAlertDialog.value -> {
+                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
+                    AlertDialog(
+                        icon = {
+                            Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
+                        },
+                        title = {
+                            Text(text = "Notification Permission Required")
+                        },
+                        text = {
+                            Text(text = "To ensure you never miss your medication, please grant the notification permission.")
+                        },
+                        onDismissRequest = {
+                            openAlertDialog.value = false
+                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    notificationPermissionState.launchPermissionRequest()
+                                    openAlertDialog.value = false
+                                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+                                }
+                            ) {
+                                Text("Allow")
+                            }
                         }
-                    ) {
-                        Text("Allow")
-                    }
+                    )
                 }
-            )
+            }
         }
     }
 }
