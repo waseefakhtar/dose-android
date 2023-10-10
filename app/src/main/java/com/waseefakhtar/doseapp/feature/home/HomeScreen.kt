@@ -273,7 +273,13 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                         )
                     }
                     is MedicationListItem.MedicationItem -> {
-                        MedicationCard(it.medication, viewModel, analyticsHelper)
+                        MedicationCard(
+                            it.medication,
+                            onTakeButtonClicked = { medication ->
+                                analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
+                                viewModel.takeMedication(medication)
+                            }
+                        )
                     }
                 }
             }
@@ -285,72 +291,6 @@ sealed class MedicationListItem {
     data class OverviewItem(val medicationsToday: List<Medication>, val isMedicationListEmpty: Boolean) : MedicationListItem()
     data class MedicationItem(val medication: Medication) : MedicationListItem()
     data class HeaderItem(val headerText: String) : MedicationListItem()
-}
-
-@Composable
-fun MedicationCard(medication: Medication, viewModel: HomeViewModel, analyticsHelper: AnalyticsHelper) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(30.dp),
-        colors = cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
-    ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = medication.name,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = medication.timesOfDay.joinToString(", ")
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = getTimeRemaining(medication),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.End
-            ) {
-
-                Button(
-                    onClick = {
-                        analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
-                        viewModel.takeMedication(medication)
-                    },
-                    enabled = !medication.medicationTaken
-                ) {
-                    if (medication.medicationTaken) {
-                        Text(
-                            text = "Taken"
-                        )
-                    } else {
-                        Text(
-                            text = "Take now"
-                        )
-                    }
-                }
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
