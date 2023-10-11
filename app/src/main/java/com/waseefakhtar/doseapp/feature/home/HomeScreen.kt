@@ -27,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +48,6 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
-import com.waseefakhtar.doseapp.util.getTimeRemaining
 import java.util.Calendar
 
 @Composable
@@ -96,6 +97,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = 8.dp)
             .height(200.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
@@ -270,7 +272,13 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                         )
                     }
                     is MedicationListItem.MedicationItem -> {
-                        MedicationCard(it.medication, viewModel, analyticsHelper)
+                        MedicationCard(
+                            it.medication,
+                            onTakeButtonClicked = { medication ->
+                                analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
+                                viewModel.takeMedication(medication)
+                            }
+                        )
                     }
                 }
             }
@@ -284,72 +292,6 @@ sealed class MedicationListItem {
     data class HeaderItem(val headerText: String) : MedicationListItem()
 }
 
-@Composable
-fun MedicationCard(medication: Medication, viewModel: HomeViewModel, analyticsHelper: AnalyticsHelper) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(30.dp),
-        colors = cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
-    ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = medication.name,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = medication.timesOfDay.joinToString(", ")
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = getTimeRemaining(medication),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.End
-            ) {
-
-                Button(
-                    onClick = {
-                        analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
-                        viewModel.takeMedication(medication)
-                    },
-                    enabled = !medication.medicationTaken
-                ) {
-                    if (medication.medicationTaken) {
-                        Text(
-                            text = "Taken"
-                        )
-                    } else {
-                        Text(
-                            text = "Take now"
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission: Boolean) {
@@ -361,31 +303,39 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
             }
         }
         if (!notificationPermissionState.status.isGranted) {
-            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
-            AlertDialog(
-                icon = {
-                    Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
-                },
-                title = {
-                    Text(text = "Notification Permission Required")
-                },
-                text = {
-                    Text(text = "To ensure you never miss your medication, please grant the notification permission.")
-                },
-                onDismissRequest = {
-                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            notificationPermissionState.launchPermissionRequest()
-                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+            val openAlertDialog = remember { mutableStateOf(true) }
+
+            when {
+                openAlertDialog.value -> {
+                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
+                    AlertDialog(
+                        icon = {
+                            Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
+                        },
+                        title = {
+                            Text(text = "Notification Permission Required")
+                        },
+                        text = {
+                            Text(text = "To ensure you never miss your medication, please grant the notification permission.")
+                        },
+                        onDismissRequest = {
+                            openAlertDialog.value = false
+                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    notificationPermissionState.launchPermissionRequest()
+                                    openAlertDialog.value = false
+                                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+                                }
+                            ) {
+                                Text("Allow")
+                            }
                         }
-                    ) {
-                        Text("Allow")
-                    }
+                    )
                 }
-            )
+            }
         }
     }
 }

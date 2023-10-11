@@ -72,7 +72,7 @@ fun DoseApp() {
             val fabVisibility = rememberSaveable { (mutableStateOf(true)) }
 
             Scaffold(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(16.dp, 0.dp),
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onBackground,
                 floatingActionButton = {
