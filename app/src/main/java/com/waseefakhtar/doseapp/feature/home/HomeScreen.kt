@@ -48,7 +48,6 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
-import com.waseefakhtar.doseapp.util.getTimeRemaining
 import java.util.Calendar
 
 @Composable

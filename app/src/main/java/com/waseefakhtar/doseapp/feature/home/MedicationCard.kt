@@ -97,7 +97,6 @@ private fun MedicationCardTakeNowPreview() {
             date = Date(),
         )
     ) {
-
     }
 }
 
@@ -116,6 +115,5 @@ private fun MedicationCardTakenPreview() {
             date = Date(),
         )
     ) {
-
     }
 }
