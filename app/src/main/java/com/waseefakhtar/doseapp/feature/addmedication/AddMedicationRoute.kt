@@ -477,6 +477,7 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
             onExpandedChange = { expanded = !expanded },
         ) {
             TextField(
+                modifier = Modifier.menuAnchor(),
                 readOnly = true,
                 value = selectedOptionText,
                 onValueChange = {},
