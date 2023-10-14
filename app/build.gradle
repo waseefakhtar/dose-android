@@ -55,17 +55,17 @@ dependencies {
     // Before updating, check Kotlin compatibility with Compose Compiler: https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
     // Also check Jetpack libraries update to go along with it: https://developer.android.com/jetpack/androidx/versions/all-channel
 
-    def compose_ui_version = "1.6.0-alpha04"
-    def nav_version = "2.7.1"
+    def compose_ui_version = "1.6.0-alpha07"
+    def nav_version = "2.7.4"
     def hilt_version = "2.47"
     def androidx_hilt_version = "1.0.0"
-    def gson_version = "2.9.0"
-    def room_version = "2.6.0-beta01"
+    def gson_version = "2.9.1"
+    def room_version = "2.6.0-rc01"
     def okhttp_version = "4.10.0"
-    def core_version = "1.12.0-rc01"
+    def core_version = "1.12.0"
     def material3_version = "1.2.0-alpha06"
-    def lifecycle_version = "2.7.0-alpha01"
-    def activity_version = "1.8.0-alpha07"
+    def lifecycle_version = "2.7.0-alpha02"
+    def activity_version = "1.8.0"
     def firebase_version = "32.3.1"
     def accompanist_permissions_version = "0.33.2-alpha"
 
