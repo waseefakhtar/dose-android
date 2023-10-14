@@ -9,12 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
-import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.medicationConfirmGraph
+import com.waseefakhtar.doseapp.util.navigateSingleTop
 
 @Composable
 fun DoseNavHost(
@@ -32,6 +32,7 @@ fun DoseNavHost(
         homeGraph(navController, bottomBarVisibility, fabVisibility)
         calendarGraph(bottomBarVisibility, fabVisibility)
         addMedicationGraph(
+            navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() },
@@ -51,11 +52,7 @@ fun DoseNavHost(
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() },
             navigateToHome = {
-                // TODO: Navigate to Home with no backstack.
-                navController.currentBackStackEntry?.savedStateHandle.apply {
-                    this?.set(ASK_NOTIFICATION_PERMISSION, true)
-                }
-                navController.navigate(HomeDestination.route)
+                navController.navigateSingleTop(HomeDestination.route)
             }
         )
     }
