@@ -20,7 +20,7 @@ fun NavGraphBuilder.homeGraph(navController: NavController, bottomBarVisibility:
             bottomBarVisibility.value = true
             fabVisibility.value = true
         }
-        val askNotificationPermission = navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>(ASK_NOTIFICATION_PERMISSION) ?: false
+        val askNotificationPermission = navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>(ASK_NOTIFICATION_PERMISSION) ?: false
         HomeRoute(navController, askNotificationPermission)
     }
 }
