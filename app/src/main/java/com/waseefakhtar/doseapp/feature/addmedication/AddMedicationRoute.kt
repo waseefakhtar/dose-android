@@ -36,6 +36,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -106,7 +108,7 @@ fun AddMedicationScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .padding(top = 8.dp, bottom = 16.dp),
+                    .padding(vertical = 8.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
@@ -123,7 +125,8 @@ fun AddMedicationScreen(
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.displaySmall
                     )
-                })
+                }
+            )
         },
         bottomBar = {
             Button(
