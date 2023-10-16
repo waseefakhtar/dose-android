@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -98,6 +101,11 @@ fun AddMedicationScreen(
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Column(
         modifier = Modifier
@@ -132,7 +140,9 @@ fun AddMedicationScreen(
             style = MaterialTheme.typography.bodyLarge
         )
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
             value = medicationName,
             onValueChange = { medicationName = it },
             // label = { Text(text = stringResource(id = R.string.medication_name)) },
@@ -356,7 +366,10 @@ fun AddMedicationScreen(
                             Toast.LENGTH_LONG
                         ).show()
 
-                        val event = String.format(AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED, invalidatedValue)
+                        val event = String.format(
+                            AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
+                            invalidatedValue
+                        )
                         analyticsHelper.logEvent(event)
                     },
                     onValidate = {
@@ -415,7 +428,8 @@ private fun validateMedication(
     if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
     if (nightSelection) timesOfDay.add(TimesOfDay.Night)
 
-    val medications = viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
+    val medications =
+        viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
 
     onValidate(medications)
 }
