@@ -35,7 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +46,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,7 +80,6 @@ fun DefaultPreview() {
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
@@ -93,11 +97,16 @@ fun AddMedicationScreen(
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
-    var endDate by rememberSaveable { mutableStateOf(Date().time) }
+    var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
     var isMorningSelected by rememberSaveable { mutableStateOf(false) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Column(
         modifier = Modifier
@@ -132,7 +141,9 @@ fun AddMedicationScreen(
             style = MaterialTheme.typography.bodyLarge
         )
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
             value = medicationName,
             onValueChange = { medicationName = it },
             // label = { Text(text = stringResource(id = R.string.medication_name)) },
@@ -199,7 +210,7 @@ fun AddMedicationScreen(
             style = MaterialTheme.typography.bodyLarge
         )
 
-        var selectionCount by rememberSaveable { mutableStateOf(0) }
+        var selectionCount by rememberSaveable { mutableIntStateOf(0) }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
@@ -356,7 +367,10 @@ fun AddMedicationScreen(
                             Toast.LENGTH_LONG
                         ).show()
 
-                        val event = String.format(AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED, invalidatedValue)
+                        val event = String.format(
+                            AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
+                            invalidatedValue
+                        )
                         analyticsHelper.logEvent(event)
                     },
                     onValidate = {
@@ -415,7 +429,8 @@ private fun validateMedication(
     if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
     if (nightSelection) timesOfDay.add(TimesOfDay.Night)
 
-    val medications = viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
+    val medications =
+        viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
 
     onValidate(medications)
 }
@@ -519,9 +534,9 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val context = LocalContext.current
 
     val calendar = Calendar.getInstance()
-    val year: Int = calendar.get(Calendar.YEAR)
-    val month: Int = calendar.get(Calendar.MONTH)
-    val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
+    val year: Int = calendar[Calendar.YEAR]
+    val month: Int = calendar[Calendar.MONTH]
+    val day: Int = calendar[Calendar.DAY_OF_MONTH]
     calendar.time = Date()
 
     val datePickerDialog =
