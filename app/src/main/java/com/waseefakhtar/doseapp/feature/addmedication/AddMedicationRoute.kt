@@ -1,8 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -59,14 +57,14 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
+import com.waseefakhtar.doseapp.util.MONTH_NAME_DAY_YEAR_DATE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.text.DateFormatSymbols
 import java.util.Calendar
 import java.util.Date
 
@@ -528,39 +526,26 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
-    val currentDate = Date().toFormattedString()
-    var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
+    val currentDate = CalendarInformation(Calendar.getInstance())
+    var selectedDate by rememberSaveable(
+        stateSaver = CalendarInformation.getStateSaver()
+    ) { mutableStateOf(currentDate) }
 
-    val context = LocalContext.current
-
-    val calendar = Calendar.getInstance()
-    val year: Int = calendar[Calendar.YEAR]
-    val month: Int = calendar[Calendar.MONTH]
-    val day: Int = calendar[Calendar.DAY_OF_MONTH]
-    calendar.time = Date()
-
-    val datePickerDialog =
-        DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            val newDate = Calendar.getInstance()
-            newDate.set(year, month, dayOfMonth)
-            selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
-            endDate(newDate.timeInMillis)
-        }, year, month, day)
+    DatePickerDialogComponent(
+        isPressed,
+        selectedDate,
+        onSelectedDate = {
+            selectedDate = it
+            endDate(it.getTimeInMillis())
+        }
+    )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         readOnly = true,
-        value = selectedDate,
+        value = selectedDate.getDateFormatted(MONTH_NAME_DAY_YEAR_DATE_FORMAT),
         onValueChange = {},
         trailingIcon = { Icons.Default.DateRange },
         interactionSource = interactionSource
     )
-
-    if (isPressed) {
-        datePickerDialog.show()
-    }
-}
-
-fun Int.toMonthName(): String {
-    return DateFormatSymbols().months[this]
 }

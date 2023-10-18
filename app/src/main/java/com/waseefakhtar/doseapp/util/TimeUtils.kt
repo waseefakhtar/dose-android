@@ -9,6 +9,8 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
+const val MONTH_NAME_DAY_YEAR_DATE_FORMAT = "MMMM dd, yyyy"
+
 @Composable
 fun getTimeRemaining(medication: Medication): String {
     val currentTime = Calendar.getInstance().time
