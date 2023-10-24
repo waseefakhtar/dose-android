@@ -526,7 +526,6 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     var shouldDisplay by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-
     if (isPressed) {
         shouldDisplay = true
     }
