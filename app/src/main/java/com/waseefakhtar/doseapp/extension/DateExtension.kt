@@ -8,3 +8,8 @@ fun Date.toFormattedString(): String {
     val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
     return sdf.format(this)
 }
+
+fun Long.dateInMillisToFormattedString(): String {
+    val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
+    return sdf.format(this)
+}
