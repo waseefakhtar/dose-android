@@ -122,7 +122,8 @@ fun AddMedicationScreen(
                     ) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }, title = {
+                },
+                title = {
                     Text(
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(id = R.string.add_medication),
