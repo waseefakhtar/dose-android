@@ -1,8 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -34,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,15 +58,13 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.extension.dateInMillisToFormattedString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.text.DateFormatSymbols
-import java.util.Calendar
 import java.util.Date
 
 @Preview(showBackground = true)
@@ -235,7 +232,7 @@ fun AddMedicationScreen(
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -265,7 +262,7 @@ fun AddMedicationScreen(
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -299,7 +296,7 @@ fun AddMedicationScreen(
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -329,7 +326,7 @@ fun AddMedicationScreen(
                             selectionCount = count
                         },
                         onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            showMaxSelectionSnackBar(scope, numberOfDosage, context)
                         }
                     )
                 },
@@ -457,7 +454,7 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
     return selectionCount < numberOfDosage
 }
 
-private fun showMaxSelectionSnackbar(
+private fun showMaxSelectionSnackBar(
     scope: CoroutineScope,
     numberOfDosage: String,
     context: Context
@@ -518,6 +515,7 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EndDateTextField(endDate: (Long) -> Unit) {
     Text(
@@ -525,27 +523,22 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         style = MaterialTheme.typography.bodyLarge
     )
 
+    var shouldDisplay by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
-    val currentDate = Date().toFormattedString()
-    var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
+    if (isPressed) {
+        shouldDisplay = true
+    }
 
-    val context = LocalContext.current
+    val datePickerState =
+        rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
 
-    val calendar = Calendar.getInstance()
-    val year: Int = calendar[Calendar.YEAR]
-    val month: Int = calendar[Calendar.MONTH]
-    val day: Int = calendar[Calendar.DAY_OF_MONTH]
-    calendar.time = Date()
-
-    val datePickerDialog =
-        DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            val newDate = Calendar.getInstance()
-            newDate.set(year, month, dayOfMonth)
-            selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
-            endDate(newDate.timeInMillis)
-        }, year, month, day)
+    var selectedDate by rememberSaveable {
+        mutableStateOf(
+            datePickerState.selectedDateMillis!!.dateInMillisToFormattedString()
+        )
+    }
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
@@ -556,11 +549,15 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         interactionSource = interactionSource
     )
 
-    if (isPressed) {
-        datePickerDialog.show()
-    }
-}
-
-fun Int.toMonthName(): String {
-    return DateFormatSymbols().months[this]
+    DatePickerDialog(
+        state = datePickerState,
+        shouldDisplay = shouldDisplay,
+        onConfirmClicked = { selectedDateInMillis ->
+            selectedDate = selectedDateInMillis.dateInMillisToFormattedString()
+            endDate(selectedDateInMillis)
+        },
+        dismissRequest = {
+            shouldDisplay = false
+        }
+    )
 }
