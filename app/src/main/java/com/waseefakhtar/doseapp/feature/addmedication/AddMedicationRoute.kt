@@ -1,8 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -39,7 +37,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +48,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,14 +61,14 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
+import com.waseefakhtar.doseapp.util.MONTH_NAME_DAY_YEAR_DATE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.text.DateFormatSymbols
 import java.util.Calendar
 import java.util.Date
 
@@ -79,7 +82,6 @@ fun DefaultPreview() {
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
@@ -97,12 +99,17 @@ fun AddMedicationScreen(
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
-    var endDate by rememberSaveable { mutableStateOf(Date().time) }
+    var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
     var isMorningSelected by rememberSaveable { mutableStateOf(false) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold(
         topBar = {
@@ -186,7 +193,9 @@ fun AddMedicationScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
             TextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 value = medicationName,
                 onValueChange = { medicationName = it },
                 placeholder = { Text(text = "e.g. Risperdal, 4mg") },
@@ -526,39 +535,26 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
-    val currentDate = Date().toFormattedString()
-    var selectedDate by rememberSaveable { mutableStateOf(currentDate) }
+    val currentDate = CalendarInformation(Calendar.getInstance())
+    var selectedDate by rememberSaveable(
+        stateSaver = CalendarInformation.getStateSaver()
+    ) { mutableStateOf(currentDate) }
 
-    val context = LocalContext.current
-
-    val calendar = Calendar.getInstance()
-    val year: Int = calendar.get(Calendar.YEAR)
-    val month: Int = calendar.get(Calendar.MONTH)
-    val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
-    calendar.time = Date()
-
-    val datePickerDialog =
-        DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            val newDate = Calendar.getInstance()
-            newDate.set(year, month, dayOfMonth)
-            selectedDate = "${month.toMonthName()} $dayOfMonth, $year"
-            endDate(newDate.timeInMillis)
-        }, year, month, day)
+    DatePickerDialogComponent(
+        isPressed,
+        selectedDate,
+        onSelectedDate = {
+            selectedDate = it
+            endDate(it.getTimeInMillis())
+        }
+    )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         readOnly = true,
-        value = selectedDate,
+        value = selectedDate.getDateFormatted(MONTH_NAME_DAY_YEAR_DATE_FORMAT),
         onValueChange = {},
         trailingIcon = { Icons.Default.DateRange },
         interactionSource = interactionSource
     )
-
-    if (isPressed) {
-        datePickerDialog.show()
-    }
-}
-
-fun Int.toMonthName(): String {
-    return DateFormatSymbols().months[this]
 }
