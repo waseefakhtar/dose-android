@@ -30,19 +30,19 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -100,290 +100,296 @@ fun AddMedicationScreen(
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
-    Column(
-        modifier = Modifier
-            .padding(0.dp, 16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
-                    onBackClicked()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                modifier = Modifier
+                    .padding(vertical = 16.dp),
+                navigationIcon = {
+                    FloatingActionButton(
+                        onClick = {
+                            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
+                            onBackClicked()
+                        },
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
                 },
-                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
-            ) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
-            }
-            Text(
-                text = stringResource(id = R.string.add_medication),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.displaySmall
+                title = {
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = stringResource(id = R.string.add_medication),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                }
             )
-        }
+        },
+        bottomBar = {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .height(56.dp),
+                onClick = {
+                    validateMedication(
+                        name = medicationName,
+                        dosage = numberOfDosage.toIntOrNull() ?: 0,
+                        recurrence = recurrence,
+                        endDate = endDate,
+                        morningSelection = isMorningSelected,
+                        afternoonSelection = isAfternoonSelected,
+                        eveningSelection = isEveningSelected,
+                        nightSelection = isNightSelected,
+                        onInvalidate = {
+                            val invalidatedValue = context.getString(it)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.value_is_empty, invalidatedValue),
+                                Toast.LENGTH_LONG
+                            ).show()
 
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Text(
-            text = stringResource(id = R.string.medication_name),
-            style = MaterialTheme.typography.bodyLarge
-        )
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-            value = medicationName,
-            onValueChange = { medicationName = it },
-            // label = { Text(text = stringResource(id = R.string.medication_name)) },
-            placeholder = { Text(text = "e.g. Risperdal, 4mg") },
-        )
-
-        Spacer(modifier = Modifier.padding(4.dp))
-
-        var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            val maxDose = 3
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            val event = String.format(
+                                AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
+                                invalidatedValue
+                            )
+                            analyticsHelper.logEvent(event)
+                        },
+                        onValidate = {
+                            navigateToMedicationConfirm(it)
+                            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
+                        },
+                        viewModel = viewModel
+                    )
+                },
+                shape = MaterialTheme.shapes.extraLarge
             ) {
                 Text(
-                    text = stringResource(id = R.string.dose_per_day),
+                    text = stringResource(id = R.string.next),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                TextField(
-                    modifier = Modifier.width(128.dp),
-                    value = numberOfDosage,
-                    onValueChange = {
-                        if (it.length < maxDose) {
-                            isMaxDoseError = false
-                            numberOfDosage = it
-                        } else {
-                            isMaxDoseError = true
-                        }
-                    },
-                    trailingIcon = {
-                        if (isMaxDoseError) {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
-                                contentDescription = "Error",
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    },
-                    placeholder = { Text(text = "e.g. 1") },
-                    isError = isMaxDoseError,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
             }
-            RecurrenceDropdownMenu { recurrence = it }
         }
-
-        if (isMaxDoseError) {
-            Text(
-                text = "You cannot have more than 99 dosage per day.",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(4.dp))
-        EndDateTextField { endDate = it }
-
-        Spacer(modifier = Modifier.padding(4.dp))
-        Text(
-            text = stringResource(id = R.string.times_of_day),
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        var selectionCount by rememberSaveable { mutableIntStateOf(0) }
-        val scope = rememberCoroutineScope()
-        val context = LocalContext.current
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            FilterChip(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                selected = isMorningSelected,
-                onClick = {
-                    handleSelection(
-                        isSelected = isMorningSelected,
-                        selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                            selectionCount,
-                            numberOfDosage.toIntOrNull() ?: 0
-                        ),
-                        onStateChange = { count, selected ->
-                            isMorningSelected = selected
-                            selectionCount = count
-                        },
-                        onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
-                        }
-                    )
-                },
-                label = { Text(text = TimesOfDay.Morning.name) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Selected"
-                    )
-                }
-            )
-            FilterChip(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                selected = isAfternoonSelected,
-                onClick = {
-                    handleSelection(
-                        isSelected = isAfternoonSelected,
-                        selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                            selectionCount,
-                            numberOfDosage.toIntOrNull() ?: 0
-                        ),
-                        onStateChange = { count, selected ->
-                            isAfternoonSelected = selected
-                            selectionCount = count
-                        },
-                        onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
-                        }
-                    )
-                },
-                label = { Text(text = TimesOfDay.Afternoon.name) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Selected"
-                    )
-                }
-            )
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            FilterChip(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                selected = isEveningSelected,
-                onClick = {
-                    handleSelection(
-                        isSelected = isEveningSelected,
-                        selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                            selectionCount,
-                            numberOfDosage.toIntOrNull() ?: 0
-                        ),
-                        onStateChange = { count, selected ->
-                            isEveningSelected = selected
-                            selectionCount = count
-                        },
-                        onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
-                        }
-                    )
-                },
-                label = { Text(text = TimesOfDay.Evening.name) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Selected"
-                    )
-                }
-            )
-            FilterChip(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                selected = isNightSelected,
-                onClick = {
-                    handleSelection(
-                        isSelected = isNightSelected,
-                        selectionCount = selectionCount,
-                        canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                            selectionCount,
-                            numberOfDosage.toIntOrNull() ?: 0
-                        ),
-                        onStateChange = { count, selected ->
-                            isNightSelected = selected
-                            selectionCount = count
-                        },
-                        onShowMaxSelectionError = {
-                            showMaxSelectionSnackbar(scope, numberOfDosage, context)
-                        }
-                    )
-                },
-                label = { Text(text = TimesOfDay.Night.name) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Selected"
-                    )
-                }
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(8.dp))
-        Button(
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .align(Alignment.CenterHorizontally),
-            onClick = {
-                validateMedication(
-                    name = medicationName,
-                    dosage = numberOfDosage.toIntOrNull() ?: 0,
-                    recurrence = recurrence,
-                    endDate = endDate,
-                    morningSelection = isMorningSelected,
-                    afternoonSelection = isAfternoonSelected,
-                    eveningSelection = isEveningSelected,
-                    nightSelection = isNightSelected,
-                    onInvalidate = {
-                        val invalidatedValue = context.getString(it)
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.value_is_empty, invalidatedValue),
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                        val event = String.format(
-                            AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
-                            invalidatedValue
-                        )
-                        analyticsHelper.logEvent(event)
-                    },
-                    onValidate = {
-                        navigateToMedicationConfirm(it)
-                        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
-                    },
-                    viewModel = viewModel
-                )
-            },
-            shape = MaterialTheme.shapes.extraLarge
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
             Text(
-                text = stringResource(id = R.string.next),
+                text = stringResource(id = R.string.medication_name),
                 style = MaterialTheme.typography.bodyLarge
             )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                value = medicationName,
+                onValueChange = { medicationName = it },
+                placeholder = { Text(text = "e.g. Risperdal, 4mg") },
+            )
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                val maxDose = 3
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.dose_per_day),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    TextField(
+                        modifier = Modifier.width(128.dp),
+                        value = numberOfDosage,
+                        onValueChange = {
+                            if (it.length < maxDose) {
+                                isMaxDoseError = false
+                                numberOfDosage = it
+                            } else {
+                                isMaxDoseError = true
+                            }
+                        },
+                        trailingIcon = {
+                            if (isMaxDoseError) {
+                                Icon(
+                                    imageVector = Icons.Filled.Info,
+                                    contentDescription = "Error",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        placeholder = { Text(text = "e.g. 1") },
+                        isError = isMaxDoseError,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
+                RecurrenceDropdownMenu { recurrence = it }
+            }
+
+            if (isMaxDoseError) {
+                Text(
+                    text = "You cannot have more than 99 dosage per day.",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(4.dp))
+            EndDateTextField { endDate = it }
+
+            Spacer(modifier = Modifier.padding(4.dp))
+            Text(
+                text = stringResource(id = R.string.times_of_day),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            var selectionCount by rememberSaveable { mutableStateOf(0) }
+            val scope = rememberCoroutineScope()
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    selected = isMorningSelected,
+                    onClick = {
+                        handleSelection(
+                            isSelected = isMorningSelected,
+                            selectionCount = selectionCount,
+                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
+                                selectionCount,
+                                numberOfDosage.toIntOrNull() ?: 0
+                            ),
+                            onStateChange = { count, selected ->
+                                isMorningSelected = selected
+                                selectionCount = count
+                            },
+                            onShowMaxSelectionError = {
+                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            }
+                        )
+                    },
+                    label = { Text(text = TimesOfDay.Morning.name) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Selected"
+                        )
+                    }
+                )
+                FilterChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    selected = isAfternoonSelected,
+                    onClick = {
+                        handleSelection(
+                            isSelected = isAfternoonSelected,
+                            selectionCount = selectionCount,
+                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
+                                selectionCount,
+                                numberOfDosage.toIntOrNull() ?: 0
+                            ),
+                            onStateChange = { count, selected ->
+                                isAfternoonSelected = selected
+                                selectionCount = count
+                            },
+                            onShowMaxSelectionError = {
+                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            }
+                        )
+                    },
+                    label = { Text(text = TimesOfDay.Afternoon.name) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Selected"
+                        )
+                    }
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    selected = isEveningSelected,
+                    onClick = {
+                        handleSelection(
+                            isSelected = isEveningSelected,
+                            selectionCount = selectionCount,
+                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
+                                selectionCount,
+                                numberOfDosage.toIntOrNull() ?: 0
+                            ),
+                            onStateChange = { count, selected ->
+                                isEveningSelected = selected
+                                selectionCount = count
+                            },
+                            onShowMaxSelectionError = {
+                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            }
+                        )
+                    },
+                    label = { Text(text = TimesOfDay.Evening.name) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Selected"
+                        )
+                    }
+                )
+                FilterChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    selected = isNightSelected,
+                    onClick = {
+                        handleSelection(
+                            isSelected = isNightSelected,
+                            selectionCount = selectionCount,
+                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
+                                selectionCount,
+                                numberOfDosage.toIntOrNull() ?: 0
+                            ),
+                            onStateChange = { count, selected ->
+                                isNightSelected = selected
+                                selectionCount = count
+                            },
+                            onShowMaxSelectionError = {
+                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                            }
+                        )
+                    },
+                    label = { Text(text = TimesOfDay.Night.name) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Selected"
+                        )
+                    }
+                )
+            }
         }
     }
 }
