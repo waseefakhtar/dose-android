@@ -34,19 +34,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -115,7 +111,7 @@ fun AddMedicationScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 16.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
@@ -128,6 +124,7 @@ fun AddMedicationScreen(
                     }
                 }, title = {
                     Text(
+                        modifier = Modifier.padding(16.dp),
                         text = stringResource(id = R.string.add_medication),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.displaySmall
@@ -139,7 +136,7 @@ fun AddMedicationScreen(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 16.dp)
                     .height(56.dp),
                 onClick = {
                     validateMedication(
@@ -392,7 +389,6 @@ fun AddMedicationScreen(
                     }
                 )
             }
-
         }
     }
 }
