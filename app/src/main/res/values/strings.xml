@@ -18,4 +18,6 @@
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>
     <string name="take_dose_now">Take your dose now</string>
+    <string name="confirmButton">OK</string>
+    <string name="dismissButton">Cancel</string>
 </resources>
