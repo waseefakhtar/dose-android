@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -8,8 +9,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.extension.dateInMillisToFormattedString
 
 
 /**
@@ -48,7 +52,13 @@ fun DatePickerDialog(
             content = {
                 DatePicker(
                     state = state,
-                    showModeToggle = false
+                    showModeToggle = false,
+                    headline = {
+                        Text(
+                            modifier = Modifier.padding(start = 16.dp),
+                            text = state.selectedDateMillis!!.dateInMillisToFormattedString()
+                        )
+                    }
                 )
             }
         )
