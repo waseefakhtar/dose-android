@@ -44,13 +44,14 @@ import androidx.navigation.compose.rememberNavController
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
+import com.waseefakhtar.doseapp.feature.history.HistoryDestination
+import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.navigation.DoseNavHost
 import com.waseefakhtar.doseapp.navigation.DoseTopLevelNavigation
 import com.waseefakhtar.doseapp.navigation.TOP_LEVEL_DESTINATIONS
 import com.waseefakhtar.doseapp.navigation.TopLevelDestination
 import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DoseApp() {
     DoseAppTheme {
@@ -71,6 +72,9 @@ fun DoseApp() {
             val bottomBarVisibility = rememberSaveable { (mutableStateOf(true)) }
             val fabVisibility = rememberSaveable { (mutableStateOf(true)) }
 
+            val context = LocalContext.current
+            val analyticsHelper = AnalyticsHelper.getInstance(context)
+
             Scaffold(
                 modifier = Modifier.padding(16.dp, 0.dp),
                 containerColor = Color.Transparent,
@@ -81,7 +85,7 @@ fun DoseApp() {
                         enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { it }),
                         content = {
-                            DoseFAB(navController)
+                            DoseFAB(navController, analyticsHelper)
                         }
                     )
                 },
@@ -93,7 +97,8 @@ fun DoseApp() {
                         content = {
                             DoseBottomBar(
                                 onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
-                                currentDestination = currentDestination
+                                currentDestination = currentDestination,
+                                analyticsHelper = analyticsHelper
                             )
                         }
                     )
@@ -126,7 +131,8 @@ fun DoseApp() {
 @Composable
 private fun DoseBottomBar(
     onNavigateToTopLevelDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?
+    currentDestination: NavDestination?,
+    analyticsHelper: AnalyticsHelper
 ) {
     // Wrap the navigation bar in a surface so the color behind the system
     // navigation is equal to the container color of the navigation bar.
@@ -145,7 +151,9 @@ private fun DoseBottomBar(
                     currentDestination?.hierarchy?.any { it.route == destination.route } == true
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { onNavigateToTopLevelDestination(destination) },
+                    onClick = {
+                        trackTabClicked(analyticsHelper, destination.route)
+                        onNavigateToTopLevelDestination(destination) },
                     icon = {
                         Icon(
                             if (selected) {
@@ -163,9 +171,18 @@ private fun DoseBottomBar(
     }
 }
 
+private fun trackTabClicked(analyticsHelper: AnalyticsHelper, route: String) {
+    if (route == HomeDestination.route) {
+        analyticsHelper.logEvent(AnalyticsEvents.HOME_TAB_CLICKED)
+    }
+
+    if (route == HistoryDestination.route) {
+        analyticsHelper.logEvent(AnalyticsEvents.HISTORY_TAB_CLICKED)
+    }
+}
+
 @Composable
-fun DoseFAB(navController: NavController) {
-    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
+fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
     ExtendedFloatingActionButton(
         text = { Text(text = stringResource(id = R.string.add_medication)) },
         icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },

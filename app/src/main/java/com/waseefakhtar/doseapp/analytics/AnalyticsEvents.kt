@@ -32,6 +32,9 @@ object AnalyticsEvents {
 
     const val MEDICATION_DETAIL_ON_BACK_CLICKED = "medication_detail_on_back_clicked"
     const val MEDICATION_DETAIL_TAKEN_CLICKED = "medication_detail_taken_clicked"
-    const val MEDICATION_DETAIL_SKIPPED_CLICKED = "medication_detail_taken_clicked"
+    const val MEDICATION_DETAIL_SKIPPED_CLICKED = "medication_detail_skipped_clicked"
     const val MEDICATION_DETAIL_DONE_CLICKED = "medication_detail_done_clicked"
+
+    const val HOME_TAB_CLICKED = "home_tab_clicked"
+    const val HISTORY_TAB_CLICKED = "history_tab_clicked"
 }
