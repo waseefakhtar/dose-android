@@ -99,7 +99,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
-            .height(200.dp),
+            .height(156.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -110,12 +110,13 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp, 24.dp, 0.dp, 16.dp)
-                    .fillMaxWidth(.36F),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
 
                 Text(
@@ -278,10 +279,6 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                             medication =  it.medication,
                             navigateToMedicationDetail = { medication ->
                                 navigateToMedicationDetail(medication)
-                            },
-                            onTakeButtonClicked = { medication ->
-                                analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
-                                viewModel.takeMedication(medication)
                             }
                         )
                     }

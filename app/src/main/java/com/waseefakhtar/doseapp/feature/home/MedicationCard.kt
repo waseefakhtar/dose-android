@@ -3,14 +3,14 @@ package com.waseefakhtar.doseapp.feature.home
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,14 +20,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.util.getTimeRemaining
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import java.util.Date
 
 @Composable
 fun MedicationCard(
     medication: Medication,
-    navigateToMedicationDetail: (Medication) -> Unit,
-    onTakeButtonClicked: (Medication) -> Unit
+    navigateToMedicationDetail: (Medication) -> Unit
 ) {
 
     Card(
@@ -44,47 +44,34 @@ fun MedicationCard(
     ) {
 
         Row(
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column(
                 modifier = Modifier
-                    .weight(2f)
-                    .padding(16.dp),
+                    .weight(2f),
                 horizontalAlignment = Alignment.Start
             ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    text = medication.date.toFormattedDateString().uppercase(),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
                 Text(
                     text = medication.name,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = medication.timesOfDay.joinToString(", ")
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = getTimeRemaining(medication),
-                    fontWeight = FontWeight.Bold
+                    text = "Scheduled at ${medication.date.toFormattedTimeString()}",
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
-            Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 16.dp),
-                onClick = { onTakeButtonClicked(medication) },
-                enabled = !medication.medicationTaken
-            ) {
-                if (medication.medicationTaken) {
-                    Text(
-                        text = "Taken"
-                    )
-                } else {
-                    Text(
-                        text = "Take now"
-                    )
-                }
-            }
+            Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
         }
     }
 }
@@ -102,9 +89,8 @@ private fun MedicationCardTakeNowPreview() {
             timesOfDay = listOf(),
             medicationTaken = false,
             date = Date(),
-        ), { }
-    ) {
-    }
+        )
+    ) { }
 }
 
 @Preview
@@ -120,7 +106,6 @@ private fun MedicationCardTakenPreview() {
             timesOfDay = listOf(),
             medicationTaken = true,
             date = Date(),
-        ), { }
-    ) {
-    }
+        )
+    ) { }
 }
