@@ -22,4 +22,5 @@
     <string name="skipped">Skipped</string>
     <string name="done">Done</string>
     <string name="history">History</string>
+    <string name="no_history_yet">No history yet</string>
 </resources>

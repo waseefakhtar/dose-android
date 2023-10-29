@@ -3,6 +3,7 @@ package com.waseefakhtar.doseapp.feature.history
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -76,6 +78,16 @@ fun MedicationList(analyticsHelper: AnalyticsHelper, state: HistoryState, naviga
     val filteredMedicationList = state.medications.filter { it.date.hasPassed() }
     val sortedMedicationList: List<MedicationListItem> = filteredMedicationList.sortedBy { it.date }.map { MedicationListItem.MedicationItem(it) }
 
+    when (true) {
+        true -> EmptyView()
+        false -> MedicationLazyColumn(sortedMedicationList, navigateToMedicationDetail)
+    }
+
+
+}
+
+@Composable
+fun MedicationLazyColumn(sortedMedicationList: List<MedicationListItem>, navigateToMedicationDetail: (Medication) -> Unit) {
     LazyColumn(
         modifier = Modifier,
         contentPadding = PaddingValues(vertical = 8.dp)
@@ -107,6 +119,24 @@ fun MedicationList(analyticsHelper: AnalyticsHelper, state: HistoryState, naviga
                     }
                 }
             }
+        )
+    }
+}
+
+@Composable
+fun EmptyView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.headlineMedium,
+            text = stringResource(id = R.string.no_history_yet),
+            color = MaterialTheme.colorScheme.tertiary
         )
     }
 }
