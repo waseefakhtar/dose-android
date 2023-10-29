@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.navigation
 
-import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
@@ -10,7 +9,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.waseefakhtar.doseapp.R
-import com.waseefakhtar.doseapp.feature.calendar.navigation.CalendarDestination
 import com.waseefakhtar.doseapp.feature.history.HistoryDestination
 import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 

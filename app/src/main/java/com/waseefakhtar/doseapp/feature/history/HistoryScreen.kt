@@ -43,7 +43,7 @@ fun HistoryRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(analyticsHelper: AnalyticsHelper , state: HistoryState, navigateToMedicationDetail: (Medication) -> Unit) {
+fun HistoryScreen(analyticsHelper: AnalyticsHelper, state: HistoryState, navigateToMedicationDetail: (Medication) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,9 +67,6 @@ fun HistoryScreen(analyticsHelper: AnalyticsHelper , state: HistoryState, naviga
             MedicationList(analyticsHelper, state, navigateToMedicationDetail)
         }
     }
-
-
-
 }
 
 @Composable
@@ -78,12 +75,10 @@ fun MedicationList(analyticsHelper: AnalyticsHelper, state: HistoryState, naviga
     val filteredMedicationList = state.medications.filter { it.date.hasPassed() }
     val sortedMedicationList: List<MedicationListItem> = filteredMedicationList.sortedBy { it.date }.map { MedicationListItem.MedicationItem(it) }
 
-    when (true) {
+    when (sortedMedicationList.isEmpty()) {
         true -> EmptyView()
         false -> MedicationLazyColumn(sortedMedicationList, navigateToMedicationDetail)
     }
-
-
 }
 
 @Composable
@@ -96,9 +91,7 @@ fun MedicationLazyColumn(sortedMedicationList: List<MedicationListItem>, navigat
             items = sortedMedicationList,
             itemContent = {
                 when (it) {
-                    is MedicationListItem.OverviewItem -> {
-
-                    }
+                    is MedicationListItem.OverviewItem -> { }
                     is MedicationListItem.HeaderItem -> {
                         Text(
                             modifier = Modifier
@@ -140,4 +133,3 @@ fun EmptyView() {
         )
     }
 }
-
