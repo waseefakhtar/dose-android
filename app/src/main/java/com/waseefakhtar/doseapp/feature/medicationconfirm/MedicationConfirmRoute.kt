@@ -29,7 +29,7 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmViewModel
 
@@ -105,7 +105,7 @@ fun MedicationConfirmScreen(
                 medication.dosage,
                 medication.name,
                 medication.recurrence.lowercase(),
-                medication.endDate.toFormattedString()
+                medication.endDate.toFormattedDateString()
             ),
             style = MaterialTheme.typography.titleMedium
         )

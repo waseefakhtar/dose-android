@@ -43,7 +43,8 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDetailViewModel
 
 @Composable
@@ -160,8 +161,17 @@ fun MedicationDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.titleLarge,
+                text = medication.date.toFormattedDateString(),
+                color = MaterialTheme.colorScheme.primary
+            )
+
             Box(
                 modifier = Modifier
+                    .padding(16.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
@@ -177,15 +187,14 @@ fun MedicationDetailScreen(
                 text = medication.name,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.primary
             )
 
             Text(
-                text = medication.date.toFormattedString(),
+                text = "${medication.dosage} dose at ${medication.date.toFormattedTimeString()}",
                 style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.primary
             )
-
         }
     }
 }
