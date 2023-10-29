@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.hasPassed
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import java.util.Date
@@ -65,8 +66,18 @@ fun MedicationCard(
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
+
+                val medicationStatusText = when {
+                    medication.date.hasPassed() -> if (medication.medicationTaken) {
+                        "Taken"
+                    } else {
+                        "Skipped"
+                    }
+                    else -> "Scheduled"
+                } + " at ${medication.date.toFormattedTimeString()}"
+
                 Text(
-                    text = "Scheduled at ${medication.date.toFormattedTimeString()}",
+                    text = medicationStatusText,
                     color = MaterialTheme.colorScheme.primary
                 )
             }

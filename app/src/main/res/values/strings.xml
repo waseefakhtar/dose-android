@@ -21,4 +21,5 @@
     <string name="taken">Taken</string>
     <string name="skipped">Skipped</string>
     <string name="done">Done</string>
+    <string name="history">History</string>
 </resources>
