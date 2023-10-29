@@ -110,7 +110,8 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
-        Row(modifier = Modifier.fillMaxSize(),
+        Row(
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -276,7 +277,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                     }
                     is MedicationListItem.MedicationItem -> {
                         MedicationCard(
-                            medication =  it.medication,
+                            medication = it.medication,
                             navigateToMedicationDetail = { medication ->
                                 navigateToMedicationDetail(medication)
                             }

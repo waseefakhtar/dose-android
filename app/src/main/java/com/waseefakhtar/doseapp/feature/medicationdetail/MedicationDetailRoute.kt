@@ -105,7 +105,8 @@ fun MedicationDetailScreen(
                             }
                             analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_TAKEN_CLICKED)
                             viewModel.updateMedication(medication, isTakenTapped)
-                        }) {
+                        }
+                    ) {
                         Text(
                             text = stringResource(id = R.string.taken),
                             style = MaterialTheme.typography.bodyLarge
@@ -120,7 +121,8 @@ fun MedicationDetailScreen(
                             }
                             analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_SKIPPED_CLICKED)
                             viewModel.updateMedication(medication, isTakenTapped)
-                        }) {
+                        }
+                    ) {
                         Text(
                             text = stringResource(id = R.string.skipped),
                             style = MaterialTheme.typography.bodyLarge
@@ -141,7 +143,6 @@ fun MedicationDetailScreen(
                             "Medication Logged",
                             Toast.LENGTH_SHORT,
                         ).show()
-
                     },
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
@@ -160,7 +161,6 @@ fun MedicationDetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
 
             Text(
                 modifier = Modifier.padding(16.dp),

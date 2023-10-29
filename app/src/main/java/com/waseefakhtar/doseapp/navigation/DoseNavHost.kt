@@ -32,7 +32,7 @@ fun DoseNavHost(
         modifier = modifier,
     ) {
         homeGraph(
-            navController =  navController,
+            navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
             navigateToMedicationDetail = {
