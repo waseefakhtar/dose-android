@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.waseefakhtar.doseapp.core.navigation.DoseNavigationDestination
+import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.home.HomeRoute
 
 const val ASK_NOTIFICATION_PERMISSION = "notification_permission"
@@ -14,13 +15,13 @@ object HomeDestination : DoseNavigationDestination {
     override val destination = "home_destination"
 }
 
-fun NavGraphBuilder.homeGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>) {
+fun NavGraphBuilder.homeGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, navigateToMedicationDetail: (Medication) -> Unit) {
     composable(route = HomeDestination.route) {
         LaunchedEffect(null) {
             bottomBarVisibility.value = true
             fabVisibility.value = true
         }
         val askNotificationPermission = navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>(ASK_NOTIFICATION_PERMISSION) ?: false
-        HomeRoute(navController, askNotificationPermission)
+        HomeRoute(navController, askNotificationPermission, navigateToMedicationDetail)
     }
 }

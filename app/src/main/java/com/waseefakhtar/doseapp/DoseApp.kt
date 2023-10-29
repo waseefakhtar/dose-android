@@ -173,7 +173,8 @@ fun DoseFAB(navController: NavController) {
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_FAB)
             navController.navigate(AddMedicationDestination.route)
         },
-        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.tertiary
     )
 }
 

@@ -54,21 +54,22 @@ import java.util.Calendar
 fun HomeRoute(
     navController: NavController,
     askNotificationPermission: Boolean,
+    navigateToMedicationDetail: (Medication) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
     PermissionDialog(analyticsHelper, askNotificationPermission)
-    HomeScreen(navController, analyticsHelper, state, viewModel)
+    HomeScreen(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
 }
 
 @Composable
-fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DailyMedications(navController, analyticsHelper, state, viewModel)
+        DailyMedications(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
     }
 }
 
@@ -98,7 +99,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
-            .height(200.dp),
+            .height(156.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -109,12 +110,14 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp, 24.dp, 0.dp, 16.dp)
-                    .fillMaxWidth(.36F),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
 
                 Text(
@@ -192,8 +195,9 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
+fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
 
     val medicationList = state.medications.sortedBy { it.date }
     val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
@@ -273,10 +277,9 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                     }
                     is MedicationListItem.MedicationItem -> {
                         MedicationCard(
-                            it.medication,
-                            onTakeButtonClicked = { medication ->
-                                analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
-                                viewModel.takeMedication(medication)
+                            medication = it.medication,
+                            navigateToMedicationDetail = { medication ->
+                                navigateToMedicationDetail(medication)
                             }
                         )
                     }

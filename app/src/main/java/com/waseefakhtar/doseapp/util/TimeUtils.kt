@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -18,7 +18,7 @@ fun getTimeRemaining(medication: Medication): String {
     val timeDiff = abs(currentTime.time - dateBefore.time)
 
     // If the medication is scheduled for a future date, display days remaining
-    if (medication.date.toFormattedString() != medication.endDate.toFormattedString()) {
+    if (medication.date.toFormattedDateString() != medication.endDate.toFormattedDateString()) {
         val daysRemaining = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) + 1L
         return stringResource(id = R.string.time_remaining, daysRemaining, stringResource(id = R.string.days))
     }

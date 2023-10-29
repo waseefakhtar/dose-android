@@ -29,4 +29,9 @@ object AnalyticsEvents {
     const val ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM = "add_medication_navigating_to_medication_confirm"
 
     const val REMINDER_NOTIFICATION_CLICKED = "reminder_notification_clicked"
+
+    const val MEDICATION_DETAIL_ON_BACK_CLICKED = "medication_detail_on_back_clicked"
+    const val MEDICATION_DETAIL_TAKEN_CLICKED = "medication_detail_taken_clicked"
+    const val MEDICATION_DETAIL_SKIPPED_CLICKED = "medication_detail_taken_clicked"
+    const val MEDICATION_DETAIL_DONE_CLICKED = "medication_detail_done_clicked"
 }

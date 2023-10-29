@@ -14,6 +14,8 @@ import com.waseefakhtar.doseapp.feature.home.navigation.homeGraph
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MedicationConfirmDestination
 import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.medicationConfirmGraph
+import com.waseefakhtar.doseapp.feature.medicationdetail.MedicationDetailDestination
+import com.waseefakhtar.doseapp.feature.medicationdetail.medicationDetailGraph
 import com.waseefakhtar.doseapp.util.navigateSingleTop
 
 @Composable
@@ -29,7 +31,25 @@ fun DoseNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        homeGraph(navController, bottomBarVisibility, fabVisibility)
+        homeGraph(
+            navController = navController,
+            bottomBarVisibility = bottomBarVisibility,
+            fabVisibility = fabVisibility,
+            navigateToMedicationDetail = {
+                val bundle = Bundle()
+                bundle.putParcelable(MEDICATION, it)
+                navController.currentBackStackEntry?.savedStateHandle.apply {
+                    this?.set(MEDICATION, bundle)
+                }
+                navController.navigate(MedicationDetailDestination.route)
+            }
+        )
+        medicationDetailGraph(
+            navController = navController,
+            bottomBarVisibility = bottomBarVisibility,
+            fabVisibility = fabVisibility,
+            onBackClicked = { navController.navigateUp() }
+        )
         calendarGraph(bottomBarVisibility, fabVisibility)
         addMedicationGraph(
             navController = navController,
