@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.medicationdetail
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,21 +33,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
+import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedString
+import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDetailViewModel
 
 @Composable
 fun MedicationDetailRoute(
     medication: Medication?,
     onBackClicked: () -> Unit,
+    viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
     medication?.let {
-        MedicationDetailScreen(medication, onBackClicked)
+        MedicationDetailScreen(medication, viewModel, onBackClicked)
     }
 }
 
@@ -54,11 +61,14 @@ fun MedicationDetailRoute(
 @Composable
 fun MedicationDetailScreen(
     medication: Medication,
+    viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
 ) {
-    var isTakenTapped by remember { mutableStateOf(false) }
-    var isSkippedTapped by remember { mutableStateOf(false) }
+    var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
+    var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
 
+    val context = LocalContext.current
+    val analyticsHelper = AnalyticsHelper.getInstance(context)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,7 +77,7 @@ fun MedicationDetailScreen(
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
-                            //analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
+                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_ON_BACK_CLICKED)
                             onBackClicked()
                         },
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
@@ -92,6 +102,8 @@ fun MedicationDetailScreen(
                             if (isTakenTapped) {
                                 isSkippedTapped = false
                             }
+                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_TAKEN_CLICKED)
+                            viewModel.updateMedication(medication, isTakenTapped)
                         }) {
                         Text(
                             text = stringResource(id = R.string.taken),
@@ -105,6 +117,8 @@ fun MedicationDetailScreen(
                             if (isSkippedTapped) {
                                 isTakenTapped = false
                             }
+                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_SKIPPED_CLICKED)
+                            viewModel.updateMedication(medication, isTakenTapped)
                         }) {
                         Text(
                             text = stringResource(id = R.string.skipped),
@@ -118,7 +132,16 @@ fun MedicationDetailScreen(
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .height(56.dp),
-                    onClick = { },
+                    onClick = {
+                        analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
+                        onBackClicked()
+                        Toast.makeText(
+                            context,
+                            "Medication Logged",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+
+                    },
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(

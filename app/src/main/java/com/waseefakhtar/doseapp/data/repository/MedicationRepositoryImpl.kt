@@ -24,7 +24,7 @@ class MedicationRepositoryImpl(
     }
 
     override suspend fun updateMedication(medication: Medication) {
-        dao.updateMedication(medication.copy(medicationTaken = true).toMedicationEntity())
+        dao.updateMedication(medication.toMedicationEntity())
     }
 
     override fun getAllMedications(): Flow<List<Medication>> {
