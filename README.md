@@ -44,7 +44,9 @@ https://user-images.githubusercontent.com/4093820/178681202-8ebd6102-5dc5-4e91-b
 - [x] Adds medications with its duration and daily dosage.
 - [x] Displays a list of medications to take daily.
 - [x] Reminds when it's time to take medication with local notifications.
-- [ ] Shows history of medications.
+- [x] Shows history of medications.
+
+Got any crazy new ideas? Head over to the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab and start a new discussion.
 
 ## MAD Score
 <a href="https://madscorecard.withgoogle.com/scorecard/share/1233122117/">
