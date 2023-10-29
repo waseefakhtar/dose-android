@@ -54,21 +54,22 @@ import java.util.Calendar
 fun HomeRoute(
     navController: NavController,
     askNotificationPermission: Boolean,
+    navigateToMedicationDetail: (Medication) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
     PermissionDialog(analyticsHelper, askNotificationPermission)
-    HomeScreen(navController, analyticsHelper, state, viewModel)
+    HomeScreen(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
 }
 
 @Composable
-fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DailyMedications(navController, analyticsHelper, state, viewModel)
+        DailyMedications(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
     }
 }
 
@@ -192,8 +193,9 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel) {
+fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
 
     val medicationList = state.medications.sortedBy { it.date }
     val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
@@ -273,7 +275,10 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                     }
                     is MedicationListItem.MedicationItem -> {
                         MedicationCard(
-                            it.medication,
+                            medication =  it.medication,
+                            navigateToMedicationDetail = { medication ->
+                                navigateToMedicationDetail(medication)
+                            },
                             onTakeButtonClicked = { medication ->
                                 analyticsHelper.logEvent(AnalyticsEvents.TAKE_MEDICATION_CLICKED)
                                 viewModel.takeMedication(medication)

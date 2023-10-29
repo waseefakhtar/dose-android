@@ -18,4 +18,7 @@
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>
     <string name="take_dose_now">Take your dose now</string>
+    <string name="taken">Taken</string>
+    <string name="skipped">Skipped</string>
+    <string name="done">Done</string>
 </resources>

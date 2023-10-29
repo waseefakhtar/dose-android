@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,13 +26,17 @@ import java.util.Date
 @Composable
 fun MedicationCard(
     medication: Medication,
+    navigateToMedicationDetail: (Medication) -> Unit,
     onTakeButtonClicked: (Medication) -> Unit
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                navigateToMedicationDetail(medication)
+            },
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -64,7 +69,9 @@ fun MedicationCard(
             }
 
             Button(
-                modifier = Modifier.weight(1f).padding(end = 16.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp),
                 onClick = { onTakeButtonClicked(medication) },
                 enabled = !medication.medicationTaken
             ) {
@@ -95,7 +102,7 @@ private fun MedicationCardTakeNowPreview() {
             timesOfDay = listOf(),
             medicationTaken = false,
             date = Date(),
-        )
+        ), { }
     ) {
     }
 }
@@ -113,7 +120,7 @@ private fun MedicationCardTakenPreview() {
             timesOfDay = listOf(),
             medicationTaken = true,
             date = Date(),
-        )
+        ), { }
     ) {
     }
 }
