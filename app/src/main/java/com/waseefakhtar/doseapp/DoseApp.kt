@@ -3,7 +3,6 @@ package com.waseefakhtar.doseapp
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -44,13 +42,14 @@ import androidx.navigation.compose.rememberNavController
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
+import com.waseefakhtar.doseapp.feature.history.HistoryDestination
+import com.waseefakhtar.doseapp.feature.home.navigation.HomeDestination
 import com.waseefakhtar.doseapp.navigation.DoseNavHost
 import com.waseefakhtar.doseapp.navigation.DoseTopLevelNavigation
 import com.waseefakhtar.doseapp.navigation.TOP_LEVEL_DESTINATIONS
 import com.waseefakhtar.doseapp.navigation.TopLevelDestination
 import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DoseApp() {
     DoseAppTheme {
@@ -71,6 +70,9 @@ fun DoseApp() {
             val bottomBarVisibility = rememberSaveable { (mutableStateOf(true)) }
             val fabVisibility = rememberSaveable { (mutableStateOf(true)) }
 
+            val context = LocalContext.current
+            val analyticsHelper = AnalyticsHelper.getInstance(context)
+
             Scaffold(
                 modifier = Modifier.padding(16.dp, 0.dp),
                 containerColor = Color.Transparent,
@@ -81,22 +83,23 @@ fun DoseApp() {
                         enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { it }),
                         content = {
-                            DoseFAB(navController)
+                            DoseFAB(navController, analyticsHelper)
                         }
                     )
                 },
                 bottomBar = {
-                    /*AnimatedVisibility(
+                    AnimatedVisibility(
                         visible = bottomBarVisibility.value,
                         enter = slideInVertically(initialOffsetY = { it }),
                         exit = slideOutVertically(targetOffsetY = { it }),
                         content = {
                             DoseBottomBar(
                                 onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
-                                currentDestination = currentDestination
+                                currentDestination = currentDestination,
+                                analyticsHelper = analyticsHelper
                             )
                         }
-                    )*/
+                    )
                 }
             ) { padding ->
                 Row(
@@ -126,7 +129,8 @@ fun DoseApp() {
 @Composable
 private fun DoseBottomBar(
     onNavigateToTopLevelDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?
+    currentDestination: NavDestination?,
+    analyticsHelper: AnalyticsHelper
 ) {
     // Wrap the navigation bar in a surface so the color behind the system
     // navigation is equal to the container color of the navigation bar.
@@ -145,7 +149,11 @@ private fun DoseBottomBar(
                     currentDestination?.hierarchy?.any { it.route == destination.route } == true
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { onNavigateToTopLevelDestination(destination) },
+                    onClick =
+                    {
+                        trackTabClicked(analyticsHelper, destination.route)
+                        onNavigateToTopLevelDestination(destination)
+                    },
                     icon = {
                         Icon(
                             if (selected) {
@@ -163,9 +171,18 @@ private fun DoseBottomBar(
     }
 }
 
+private fun trackTabClicked(analyticsHelper: AnalyticsHelper, route: String) {
+    if (route == HomeDestination.route) {
+        analyticsHelper.logEvent(AnalyticsEvents.HOME_TAB_CLICKED)
+    }
+
+    if (route == HistoryDestination.route) {
+        analyticsHelper.logEvent(AnalyticsEvents.HISTORY_TAB_CLICKED)
+    }
+}
+
 @Composable
-fun DoseFAB(navController: NavController) {
-    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
+fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
     ExtendedFloatingActionButton(
         text = { Text(text = stringResource(id = R.string.add_medication)) },
         icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
