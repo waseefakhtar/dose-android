@@ -9,6 +9,10 @@ fun Date.toFormattedDateString(): String {
     val sdf = SimpleDateFormat("EEEE, LLLL dd", Locale.getDefault())
     return sdf.format(this)
 }
+fun Long.toFormattedDateString(): String {
+    val sdf = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
+    return sdf.format(this)
+}
 
 fun Date.toFormattedTimeString(): String {
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())

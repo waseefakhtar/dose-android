@@ -31,9 +31,11 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,9 +59,8 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
-import com.waseefakhtar.doseapp.util.MONTH_NAME_DAY_YEAR_DATE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
@@ -536,6 +537,7 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EndDateTextField(endDate: (Long) -> Unit) {
     Text(
@@ -543,27 +545,50 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         style = MaterialTheme.typography.bodyLarge
     )
 
+    var shouldDisplay by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
+    if (isPressed) {
+        shouldDisplay = true
+    }
 
-    val currentDate = CalendarInformation(Calendar.getInstance())
-    var selectedDate by rememberSaveable(
-        stateSaver = CalendarInformation.getStateSaver()
-    ) { mutableStateOf(currentDate) }
+    val today = Calendar.getInstance()
+    today.set(Calendar.HOUR_OF_DAY, 0)
+    today.set(Calendar.MINUTE, 0)
+    today.set(Calendar.SECOND, 0)
+    today.set(Calendar.MILLISECOND, 0)
+    val currentDayMillis = today.timeInMillis
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis(),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= currentDayMillis
+            }
+        }
+    )
 
-    DatePickerDialogComponent(
-        isPressed,
-        selectedDate,
-        onSelectedDate = {
-            selectedDate = it
-            endDate(it.getTimeInMillis())
+    var selectedDate by rememberSaveable {
+        mutableStateOf(
+            datePickerState.selectedDateMillis?.toFormattedDateString() ?: ""
+        )
+    }
+
+    EndDatePickerDialog(
+        state = datePickerState,
+        shouldDisplay = shouldDisplay,
+        onConfirmClicked = { selectedDateInMillis ->
+            selectedDate = selectedDateInMillis.toFormattedDateString()
+            endDate(selectedDateInMillis)
+        },
+        dismissRequest = {
+            shouldDisplay = false
         }
     )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         readOnly = true,
-        value = selectedDate.getDateFormatted(MONTH_NAME_DAY_YEAR_DATE_FORMAT),
+        value = selectedDate,
         onValueChange = {},
         trailingIcon = { Icons.Default.DateRange },
         interactionSource = interactionSource
