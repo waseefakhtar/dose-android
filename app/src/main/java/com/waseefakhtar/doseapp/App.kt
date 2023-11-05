@@ -19,10 +19,10 @@ class App : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 MedicationNotificationService.MEDICATION_CHANNEL_ID,
-                "Medication Reminder",
+                getString(R.string.medication_reminder),
                 NotificationManager.IMPORTANCE_HIGH
             )
-            channel.description = "Notifications for medication reminder"
+            channel.description = getString(R.string.notifications_for_medication_reminder)
 
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)

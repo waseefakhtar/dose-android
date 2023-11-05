@@ -46,8 +46,8 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
             MedicationNotificationService.MEDICATION_CHANNEL_ID
         )
             .setSmallIcon(R.drawable.ic_dose)
-            .setContentTitle("Medication Reminder")
-            .setContentText("It is time to take your medication, ${medication.name}. Open the app to log it.")
+            .setContentTitle(context.getString(R.string.medication_reminder))
+            .setContentText(context.getString(R.string.medication_reminder_time, medication.name))
             .setContentIntent(activityPendingIntent)
             /*.addAction(
                 R.drawable.doctor,

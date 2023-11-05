@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -121,13 +122,17 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             ) {
 
                 Text(
-                    text = "Your plan for today",
+                    text = stringResource(R.string.your_plan_for_today),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                 )
 
                 Text(
-                    text = "${medicationsToday.filter { it.medicationTaken }.size} of ${medicationsToday.size} completed",
+                    text = stringResource(
+                        id = R.string.daily_medicine_log,
+                        medicationsToday.filter { it.medicationTaken }.size,
+                        medicationsToday.size
+                    ),
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -171,13 +176,13 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
             ) {
 
                 Text(
-                    text = "Welcome!",
+                    text = stringResource(R.string.welcome),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                 )
 
                 Text(
-                    text = "No medications added yet? Tap to get started and stay on top of your medication schedule.",
+                    text = stringResource(R.string.home_screen_empty_card_message),
                     style = MaterialTheme.typography.titleSmall,
                 )
             }
@@ -214,7 +219,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
         }
 
         if (medicationsToday.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem("Today"))
+            add(MedicationListItem.HeaderItem(stringResource(R.string.today)))
             addAll(medicationsToday.map { MedicationListItem.MedicationItem(it) })
         }
 
@@ -228,7 +233,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             medicationDate in startOfWeekThisWeek.time..endOfWeekThisWeek.time && !medicationsToday.contains(it)
         }
         if (medicationsThisWeek.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem("This Week"))
+            add(MedicationListItem.HeaderItem(stringResource(R.string.this_week)))
             addAll(medicationsThisWeek.map { MedicationListItem.MedicationItem(it) })
         }
 
@@ -243,7 +248,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             medicationDate in startOfWeekNextWeek.time..endOfWeekNextWeek.time
         }
         if (medicationsNextWeek.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem("Next Week"))
+            add(MedicationListItem.HeaderItem(stringResource(R.string.next_week)))
             addAll(medicationsNextWeek.map { MedicationListItem.MedicationItem(it) })
         }
 
@@ -313,13 +318,16 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
                     analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
                     AlertDialog(
                         icon = {
-                            Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notifications")
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = stringResource(R.string.notifications)
+                            )
                         },
                         title = {
-                            Text(text = "Notification Permission Required")
+                            Text(text = stringResource(R.string.notification_permission_required))
                         },
                         text = {
-                            Text(text = "To ensure you never miss your medication, please grant the notification permission.")
+                            Text(text = stringResource(R.string.notification_permission_required_description_message))
                         },
                         onDismissRequest = {
                             openAlertDialog.value = false
@@ -333,7 +341,7 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
                                     analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
                                 }
                             ) {
-                                Text("Allow")
+                                Text(stringResource(R.string.allow))
                             }
                         }
                     )

@@ -185,7 +185,7 @@ private fun trackTabClicked(analyticsHelper: AnalyticsHelper, route: String) {
 fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
     ExtendedFloatingActionButton(
         text = { Text(text = stringResource(id = R.string.add_medication)) },
-        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add)) },
         onClick = {
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_FAB)
             navController.navigate(AddMedicationDestination.route)
