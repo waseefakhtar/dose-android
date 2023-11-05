@@ -65,7 +65,10 @@ fun MedicationConfirmScreen(
             .collect {
                 Toast.makeText(
                     context,
-                    "${medications.first().name} is now set up for timely reminders.",
+                    context.getString(
+                        R.string.medication_timely_reminders_setup_message,
+                        medications.first().name
+                    ),
                     Toast.LENGTH_SHORT,
                 ).show()
                 navigateToHome()
@@ -84,7 +87,10 @@ fun MedicationConfirmScreen(
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = stringResource(id = R.string.back)
+            )
         }
     }
 

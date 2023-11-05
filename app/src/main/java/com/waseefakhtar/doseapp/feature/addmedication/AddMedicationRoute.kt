@@ -120,7 +120,10 @@ fun AddMedicationScreen(
                         },
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
+                        )
                     }
                 },
                 title = {
@@ -196,7 +199,11 @@ fun AddMedicationScreen(
                     .focusRequester(focusRequester),
                 value = medicationName,
                 onValueChange = { medicationName = it },
-                placeholder = { Text(text = "e.g. Risperdal, 4mg") },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.medication_name_hint)
+                    )
+                },
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
@@ -229,12 +236,16 @@ fun AddMedicationScreen(
                             if (isMaxDoseError) {
                                 Icon(
                                     imageVector = Icons.Filled.Info,
-                                    contentDescription = "Error",
+                                    contentDescription = stringResource(R.string.error),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
-                        placeholder = { Text(text = "e.g. 1") },
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.dosage_hint)
+                            )
+                        },
                         isError = isMaxDoseError,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -244,7 +255,7 @@ fun AddMedicationScreen(
 
             if (isMaxDoseError) {
                 Text(
-                    text = "You cannot have more than 99 dosage per day.",
+                    text = stringResource(R.string.max_dosage_error_message),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -291,7 +302,7 @@ fun AddMedicationScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Selected"
+                            contentDescription = stringResource(R.string.selected_content_description)
                         )
                     }
                 )
@@ -321,7 +332,7 @@ fun AddMedicationScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Selected"
+                            contentDescription = stringResource(R.string.selected_content_description)
                         )
                     }
                 )
@@ -355,7 +366,7 @@ fun AddMedicationScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Selected"
+                            contentDescription = stringResource(R.string.selected_content_description)
                         )
                     }
                 )
@@ -385,7 +396,7 @@ fun AddMedicationScreen(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Selected"
+                            contentDescription = stringResource(R.string.selected_content_description)
                         )
                     }
                 )
@@ -470,9 +481,12 @@ private fun showMaxSelectionSnackbar(
         // TODO: Fix showing Snackbar.
         // SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
     }
+
+    val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
+
     Toast.makeText(
         context,
-        "You're selecting ${(numberOfDosage.toIntOrNull() ?: 0) + 1} time(s) of days which is more than the number of dosage.",
+        context.getString(R.string.dosage_and_frequency_mismatch_error_message, dosage),
         Toast.LENGTH_LONG
     ).show()
 }

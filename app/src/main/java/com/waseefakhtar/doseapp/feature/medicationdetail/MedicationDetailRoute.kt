@@ -83,7 +83,10 @@ fun MedicationDetailScreen(
                         },
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back)
+                        )
                     }
                 },
                 title = { }
@@ -140,7 +143,7 @@ fun MedicationDetailScreen(
                         onBackClicked()
                         Toast.makeText(
                             context,
-                            "Medication Logged",
+                            context.getString(R.string.medication_logged),
                             Toast.LENGTH_SHORT,
                         ).show()
                     },
@@ -191,7 +194,11 @@ fun MedicationDetailScreen(
             )
 
             Text(
-                text = "${medication.dosage} dose at ${medication.date.toFormattedTimeString()}",
+                text = stringResource(
+                    id = R.string.medication_dose_details,
+                    medication.dosage,
+                    medication.date.toFormattedTimeString()
+                ),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
