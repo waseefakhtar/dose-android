@@ -72,17 +72,18 @@ import java.util.Date
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {})
+    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {}, showSnackbar = {})
 }
 
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
+    showSnackbar: (String) -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
-    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm)
+    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm, showSnackbar)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +92,8 @@ fun AddMedicationScreen(
     onBackClicked: () -> Unit,
     viewModel: AddMedicationViewModel,
     analyticsHelper: AnalyticsHelper,
-    navigateToMedicationConfirm: (List<Medication>) -> Unit
+    navigateToMedicationConfirm: (List<Medication>) -> Unit,
+    showSnackbar: (String) -> Unit
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
@@ -155,11 +157,12 @@ fun AddMedicationScreen(
                         nightSelection = isNightSelected,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.value_is_empty, invalidatedValue),
-                                Toast.LENGTH_LONG
-                            ).show()
+                            showSnackbar.invoke(
+                                context.getString(
+                                    R.string.value_is_empty,
+                                    invalidatedValue
+                                )
+                            )
 
                             val event = String.format(
                                 AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
@@ -295,7 +298,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
                             }
                         )
                     },
@@ -325,7 +328,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
                             }
                         )
                     },
@@ -359,7 +362,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
                             }
                         )
                     },
@@ -389,7 +392,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
                             }
                         )
                     },
@@ -474,22 +477,17 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
 }
 
 private fun showMaxSelectionSnackbar(
-    scope: CoroutineScope,
     numberOfDosage: String,
-    context: Context
+    context: Context,
+    showSnackbar: (String) -> Unit
 ) {
-    scope.launch {
-        // TODO: Fix showing Snackbar.
-        // SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
-    }
-
     val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
-
-    Toast.makeText(
-        context,
-        context.getString(R.string.dosage_and_frequency_mismatch_error_message, dosage),
-        Toast.LENGTH_LONG
-    ).show()
+    showSnackbar.invoke(
+        context.getString(
+            R.string.dosage_and_frequency_mismatch_error_message,
+            dosage
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

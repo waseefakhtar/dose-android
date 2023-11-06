@@ -22,9 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +54,12 @@ import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDet
 fun MedicationDetailRoute(
     medication: Medication?,
     onBackClicked: () -> Unit,
-    viewModel: MedicationDetailViewModel = hiltViewModel()
+    viewModel: MedicationDetailViewModel = hiltViewModel(),
+    showSnackbar: (String) -> Unit,
+
 ) {
     medication?.let {
-        MedicationDetailScreen(medication, viewModel, onBackClicked)
+        MedicationDetailScreen(medication, viewModel, onBackClicked, showSnackbar)
     }
 }
 
@@ -64,6 +69,8 @@ fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
+    showSnackbar: (String) -> Unit,
+
 ) {
     var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
     var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
@@ -140,12 +147,8 @@ fun MedicationDetailScreen(
                         .height(56.dp),
                     onClick = {
                         analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
+                        showSnackbar.invoke(context.getString(R.string.medication_logged))
                         onBackClicked()
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.medication_logged),
-                            Toast.LENGTH_SHORT,
-                        ).show()
                     },
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
