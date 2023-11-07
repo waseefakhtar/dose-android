@@ -66,7 +66,7 @@ fun DoseApp() {
             color = MaterialTheme.colorScheme.background
         ) {
             // For the snackbar
-            var openMySnackbar by remember { mutableStateOf(false) }
+            var snackbarVisibility by remember { mutableStateOf(false) }
             var snackbarMessage by remember { mutableStateOf("") }
 
             val navController = rememberNavController()
