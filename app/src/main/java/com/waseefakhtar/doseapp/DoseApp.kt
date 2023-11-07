@@ -111,7 +111,6 @@ fun DoseApp() {
                                 )
                             }
                         )
-
                     }
                 }
             ) { padding ->

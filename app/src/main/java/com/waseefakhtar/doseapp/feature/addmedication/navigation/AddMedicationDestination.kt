@@ -25,6 +25,6 @@ fun NavGraphBuilder.addMedicationGraph(navController: NavController, bottomBarVi
         navController.previousBackStackEntry?.savedStateHandle.apply {
             this?.set(ASK_NOTIFICATION_PERMISSION, true)
         }
-        AddMedicationRoute(onBackClicked,navigateToMedicationConfirm)
+        AddMedicationRoute(onBackClicked, navigateToMedicationConfirm)
     }
 }

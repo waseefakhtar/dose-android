@@ -474,7 +474,8 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
 
 private fun showMaxSelectionSnackbar(
     numberOfDosage: String,
-    context: Context) {
+    context: Context
+) {
     val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
     showSnackbar(
         context.getString(

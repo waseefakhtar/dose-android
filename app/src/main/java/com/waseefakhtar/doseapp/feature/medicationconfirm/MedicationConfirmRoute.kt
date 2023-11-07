@@ -63,10 +63,12 @@ fun MedicationConfirmScreen(
         viewModel
             .isMedicationSaved
             .collect {
-                showSnackbar( context.getString(
-                    R.string.medication_timely_reminders_setup_message,
-                    medications.first().name
-                ))
+                showSnackbar(
+                    context.getString(
+                        R.string.medication_timely_reminders_setup_message,
+                        medications.first().name
+                    )
+                )
                 navigateToHome()
                 analyticsHelper.logEvent(AnalyticsEvents.MEDICATIONS_SAVED)
             }
