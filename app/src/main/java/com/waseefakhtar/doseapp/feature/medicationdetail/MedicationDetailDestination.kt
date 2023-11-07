@@ -15,7 +15,7 @@ object MedicationDetailDestination : DoseNavigationDestination {
     override val destination = "medication_detail_destination"
 }
 
-fun NavGraphBuilder.medicationDetailGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, onBackClicked: () -> Unit, showSnackbar: (String) -> Unit) {
+fun NavGraphBuilder.medicationDetailGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, onBackClicked: () -> Unit) {
 
     composable(
         route = MedicationDetailDestination.route,
@@ -28,6 +28,6 @@ fun NavGraphBuilder.medicationDetailGraph(navController: NavController, bottomBa
             MEDICATION
         )
         val medication = medicationBundle?.getParcelable<Medication>(MEDICATION)
-        MedicationDetailRoute(medication, onBackClicked, showSnackbar =  showSnackbar)
+        MedicationDetailRoute(medication, onBackClicked)
     }
 }

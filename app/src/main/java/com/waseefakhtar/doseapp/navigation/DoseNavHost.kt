@@ -26,7 +26,6 @@ fun DoseNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = HomeDestination.route,
-    showSnackbar: (String) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -62,8 +61,7 @@ fun DoseNavHost(
             navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
-            onBackClicked = { navController.navigateUp() },
-            showSnackbar = showSnackbar
+            onBackClicked = { navController.navigateUp() }
         )
         calendarGraph(bottomBarVisibility, fabVisibility)
         addMedicationGraph(
@@ -79,7 +77,7 @@ fun DoseNavHost(
                     this?.set(MEDICATION, bundle)
                 }
                 navController.navigate(MedicationConfirmDestination.route)
-            }, showSnackBar = showSnackbar
+            }
         )
         medicationConfirmGraph(
             navController = navController,
@@ -88,8 +86,7 @@ fun DoseNavHost(
             onBackClicked = { navController.navigateUp() },
             navigateToHome = {
                 navController.navigateSingleTop(HomeDestination.route)
-            },
-            showSnackbar = showSnackbar
+            }
         )
     }
 }

@@ -32,19 +32,19 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmViewModel
+import com.waseefakhtar.doseapp.util.SnackBarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationConfirmRoute(
     medication: List<Medication>?,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
-    showSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MedicationConfirmViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     medication?.let {
-        MedicationConfirmScreen(it, viewModel, analyticsHelper, onBackClicked, navigateToHome, showSnackbar)
+        MedicationConfirmScreen(it, viewModel, analyticsHelper, onBackClicked, navigateToHome)
     } ?: {
         FirebaseCrashlytics.getInstance().log("Error: Cannot show MedicationConfirmScreen. Medication is null.")
     }
@@ -57,7 +57,6 @@ fun MedicationConfirmScreen(
     analyticsHelper: AnalyticsHelper,
     onBackClicked: () -> Unit,
     navigateToHome: () -> Unit,
-    showSnackbar: (String) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -65,7 +64,7 @@ fun MedicationConfirmScreen(
         viewModel
             .isMedicationSaved
             .collect {
-                showSnackbar.invoke( context.getString(
+                showSnackbar( context.getString(
                     R.string.medication_timely_reminders_setup_message,
                     medications.first().name
                 ))

@@ -1,7 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -62,28 +61,26 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.Recurrence
+import com.waseefakhtar.doseapp.util.SnackBarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {}, showSnackbar = {})
+    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {})
 }
 
 @Composable
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
-    showSnackbar: (String) -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
-    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm, showSnackbar)
+    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,7 +90,6 @@ fun AddMedicationScreen(
     viewModel: AddMedicationViewModel,
     analyticsHelper: AnalyticsHelper,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
-    showSnackbar: (String) -> Unit
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
@@ -157,7 +153,7 @@ fun AddMedicationScreen(
                         nightSelection = isNightSelected,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
-                            showSnackbar.invoke(
+                            showSnackbar(
                                 context.getString(
                                     R.string.value_is_empty,
                                     invalidatedValue
@@ -298,7 +294,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -328,7 +324,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -362,7 +358,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -392,7 +388,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context, showSnackbar)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -478,11 +474,9 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
 
 private fun showMaxSelectionSnackbar(
     numberOfDosage: String,
-    context: Context,
-    showSnackbar: (String) -> Unit
-) {
+    context: Context) {
     val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
-    showSnackbar.invoke(
+    showSnackbar(
         context.getString(
             R.string.dosage_and_frequency_mismatch_error_message,
             dosage

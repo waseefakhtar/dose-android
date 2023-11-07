@@ -49,17 +49,16 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDetailViewModel
+import com.waseefakhtar.doseapp.util.SnackBarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationDetailRoute(
     medication: Medication?,
     onBackClicked: () -> Unit,
-    viewModel: MedicationDetailViewModel = hiltViewModel(),
-    showSnackbar: (String) -> Unit,
-
+    viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
     medication?.let {
-        MedicationDetailScreen(medication, viewModel, onBackClicked, showSnackbar)
+        MedicationDetailScreen(medication, viewModel, onBackClicked)
     }
 }
 
@@ -69,7 +68,6 @@ fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
-    showSnackbar: (String) -> Unit,
 
 ) {
     var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
@@ -147,7 +145,7 @@ fun MedicationDetailScreen(
                         .height(56.dp),
                     onClick = {
                         analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
-                        showSnackbar.invoke(context.getString(R.string.medication_logged))
+                        showSnackbar(context.getString(R.string.medication_logged))
                         onBackClicked()
                     },
                     shape = MaterialTheme.shapes.extraLarge

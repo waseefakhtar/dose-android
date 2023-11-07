@@ -4,13 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -31,8 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +52,7 @@ import com.waseefakhtar.doseapp.navigation.TOP_LEVEL_DESTINATIONS
 import com.waseefakhtar.doseapp.navigation.TopLevelDestination
 import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
 import com.waseefakhtar.doseapp.util.SnackBarUtil
+import com.waseefakhtar.doseapp.util.SnackBarUtil.Companion.showSnackbar
 
 @Composable
 fun DoseApp() {
@@ -65,9 +62,6 @@ fun DoseApp() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            // For the snackbar
-            var snackbarVisibility by remember { mutableStateOf(false) }
-            var snackbarMessage by remember { mutableStateOf("") }
 
             val navController = rememberNavController()
             val doseTopLevelNavigation = remember(navController) {
@@ -101,10 +95,11 @@ fun DoseApp() {
                 bottomBar = {
                     Box {
                         SnackBarUtil.SnackbarWithoutScaffold(
-                            snackBarMessage,
-                            openMySnackbar,
-                            { openMySnackbar = it },
-                        )
+                            SnackBarUtil.getSnackbarMsg().component1(),
+                            SnackBarUtil.getSnackbarVisibility().component1()
+                        ) {
+                            SnackBarUtil.hideSnackbar()
+                        }
                         AnimatedVisibility(
                             visible = bottomBarVisibility.value,
                             enter = slideInVertically(initialOffsetY = { it }),
@@ -138,12 +133,7 @@ fun DoseApp() {
                         modifier = Modifier
                             .padding(padding)
                             .consumeWindowInsets(padding)
-                            .zIndex(1f),
-                        showSnackbar = {
-                            openMySnackbar = true
-                            snackBarMessage = it
-
-                        }
+                            .zIndex(1f)
                     )
                 }
             }
@@ -210,7 +200,12 @@ private fun trackTabClicked(analyticsHelper: AnalyticsHelper, route: String) {
 fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
     ExtendedFloatingActionButton(
         text = { Text(text = stringResource(id = R.string.add_medication)) },
-        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add)) },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.add)
+            )
+        },
         onClick = {
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_FAB)
             navController.navigate(AddMedicationDestination.route)

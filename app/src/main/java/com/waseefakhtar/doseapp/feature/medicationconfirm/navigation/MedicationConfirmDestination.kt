@@ -17,7 +17,7 @@ object MedicationConfirmDestination : DoseNavigationDestination {
     override val destination = "medication_confirm_destination"
 }
 
-fun NavGraphBuilder.medicationConfirmGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, onBackClicked: () -> Unit, navigateToHome: () -> Unit, showSnackbar: (String) -> Unit) {
+fun NavGraphBuilder.medicationConfirmGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, onBackClicked: () -> Unit, navigateToHome: () -> Unit) {
 
     composable(
         route = MedicationConfirmDestination.route,
@@ -28,6 +28,6 @@ fun NavGraphBuilder.medicationConfirmGraph(navController: NavController, bottomB
         }
         val medicationBundle = navController.previousBackStackEntry?.savedStateHandle?.get<Bundle>(MEDICATION)
         val medicationList = medicationBundle?.getParcelableArrayList<Medication>(MEDICATION)
-        MedicationConfirmRoute(medicationList, onBackClicked, navigateToHome,showSnackbar)
+        MedicationConfirmRoute(medicationList, onBackClicked, navigateToHome)
     }
 }
