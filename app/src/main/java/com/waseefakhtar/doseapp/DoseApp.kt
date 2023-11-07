@@ -67,7 +67,7 @@ fun DoseApp() {
         ) {
             // For the snackbar
             var openMySnackbar by remember { mutableStateOf(false) }
-            var snackBarMessage by remember { mutableStateOf("") }
+            var snackbarMessage by remember { mutableStateOf("") }
 
             val navController = rememberNavController()
             val doseTopLevelNavigation = remember(navController) {
