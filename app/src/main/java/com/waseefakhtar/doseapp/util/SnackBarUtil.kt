@@ -25,8 +25,8 @@ class SnackBarUtil {
         @Composable
         fun SnackbarWithoutScaffold(
             message: String,
-            showSb: Boolean,
-            openSnackbar: (Boolean) -> Unit
+            isVisible: Boolean,
+            onVisibilityChange: (Boolean) -> Unit
         ) {
             val snackState = remember { SnackbarHostState() }
             val snackScope = rememberCoroutineScope()
