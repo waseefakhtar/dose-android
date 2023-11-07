@@ -16,24 +16,24 @@ import androidx.compose.ui.zIndex
 import com.waseefakhtar.doseapp.ui.theme.Pink40
 import kotlinx.coroutines.launch
 
-class SnackBarUtil {
+class SnackbarUtil {
 
     companion object {
-        private val snackbarMsgOneShot = mutableStateOf("")
-        private var snackbarVisibility = mutableStateOf(false)
+        private val snackbarMessage = mutableStateOf("")
+        private var isSnackbarVisible = mutableStateOf(false)
 
         fun showSnackbar(message: String) {
-            snackbarMsgOneShot.value = message
-            snackbarVisibility.value = true
+            snackbarMessage.value = message
+            isSnackbarVisible.value = true
         }
 
-        fun getSnackbarMsg() = snackbarMsgOneShot
+        fun getSnackbarMessage() = snackbarMessage
 
         fun hideSnackbar() {
-            snackbarVisibility.value = false
+            isSnackbarVisible.value = false
         }
 
-        fun getSnackbarVisibility() = snackbarVisibility
+        fun isSnackbarVisible() = isSnackbarVisible
 
         @Composable
         fun SnackbarWithoutScaffold(
@@ -47,7 +47,6 @@ class SnackBarUtil {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .padding(bottom = 76.dp)
                     .zIndex(10f),
                 contentAlignment = Alignment.BottomCenter
             ) {
@@ -61,7 +60,6 @@ class SnackBarUtil {
                         contentColor = androidx.compose.ui.graphics.Color.White
                     )
                 }
-
             }
 
             if (isVisible) {
@@ -73,7 +71,5 @@ class SnackBarUtil {
                 }
             }
         }
-
     }
-
 }

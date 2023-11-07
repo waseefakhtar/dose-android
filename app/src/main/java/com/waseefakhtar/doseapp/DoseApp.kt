@@ -51,8 +51,7 @@ import com.waseefakhtar.doseapp.navigation.DoseTopLevelNavigation
 import com.waseefakhtar.doseapp.navigation.TOP_LEVEL_DESTINATIONS
 import com.waseefakhtar.doseapp.navigation.TopLevelDestination
 import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
-import com.waseefakhtar.doseapp.util.SnackBarUtil
-import com.waseefakhtar.doseapp.util.SnackBarUtil.Companion.showSnackbar
+import com.waseefakhtar.doseapp.util.SnackbarUtil
 
 @Composable
 fun DoseApp() {
@@ -94,11 +93,11 @@ fun DoseApp() {
                 },
                 bottomBar = {
                     Box {
-                        SnackBarUtil.SnackbarWithoutScaffold(
-                            SnackBarUtil.getSnackbarMsg().component1(),
-                            SnackBarUtil.getSnackbarVisibility().component1()
+                        SnackbarUtil.SnackbarWithoutScaffold(
+                            SnackbarUtil.getSnackbarMessage().component1(),
+                            SnackbarUtil.isSnackbarVisible().component1()
                         ) {
-                            SnackBarUtil.hideSnackbar()
+                            SnackbarUtil.hideSnackbar()
                         }
                         AnimatedVisibility(
                             visible = bottomBarVisibility.value,

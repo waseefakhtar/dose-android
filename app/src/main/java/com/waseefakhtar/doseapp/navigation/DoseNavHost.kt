@@ -25,7 +25,7 @@ fun DoseNavHost(
     fabVisibility: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = HomeDestination.route,
+    startDestination: String = HomeDestination.route
 ) {
     NavHost(
         navController = navController,
