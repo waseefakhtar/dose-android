@@ -49,6 +49,12 @@ android {
         }
     }
     namespace 'com.waseefakhtar.doseapp'
+
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
+    }
 }
 
 dependencies {

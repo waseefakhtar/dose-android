@@ -59,7 +59,7 @@ fun MedicationCard(
                 Text(
                     modifier = Modifier.padding(bottom = 16.dp),
                     style = MaterialTheme.typography.titleSmall,
-                    text = medication.date.toFormattedDateString().uppercase(),
+                    text = medication.medicationTime.toFormattedDateString().uppercase(),
                     color = MaterialTheme.colorScheme.primary
                 )
 
@@ -70,23 +70,23 @@ fun MedicationCard(
                 )
 
                 val medicationStatusText = when {
-                    medication.date.hasPassed() -> {
+                    medication.medicationTime.hasPassed() -> {
                         if (medication.medicationTaken) {
                             stringResource(
                                 id = R.string.medication_taken_at,
-                                medication.date.toFormattedTimeString()
+                                medication.medicationTime.toFormattedTimeString()
                             )
                         } else {
                             stringResource(
                                 id = R.string.medication_skipped_at,
-                                medication.date.toFormattedTimeString()
+                                medication.medicationTime.toFormattedTimeString()
                             )
                         }
                     }
 
                     else -> stringResource(
                         id = R.string.medication_scheduled_at,
-                        medication.date.toFormattedTimeString()
+                        medication.medicationTime.toFormattedTimeString()
                     )
                 }
 
@@ -111,9 +111,8 @@ private fun MedicationCardTakeNowPreview() {
             dosage = 1,
             recurrence = "2",
             endDate = Date(),
-            timesOfDay = listOf(),
-            medicationTaken = false,
-            date = Date(),
+            medicationTime = Date(),
+            medicationTaken = false
         )
     ) { }
 }
@@ -128,9 +127,8 @@ private fun MedicationCardTakenPreview() {
             dosage = 1,
             recurrence = "2",
             endDate = Date(),
-            timesOfDay = listOf(),
-            medicationTaken = true,
-            date = Date(),
+            medicationTime = Date(),
+            medicationTaken = true
         )
     ) { }
 }

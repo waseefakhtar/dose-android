@@ -165,7 +165,7 @@ fun MedicationDetailScreen(
             Text(
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.titleLarge,
-                text = medication.date.toFormattedDateString(),
+                text = medication.medicationTime.toFormattedDateString(),
                 color = MaterialTheme.colorScheme.primary
             )
 
@@ -194,7 +194,7 @@ fun MedicationDetailScreen(
                 text = stringResource(
                     id = R.string.medication_dose_details,
                     medication.dosage,
-                    medication.date.toFormattedTimeString()
+                    medication.medicationTime.toFormattedTimeString()
                 ),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
