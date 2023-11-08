@@ -7,7 +7,6 @@ import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 
 @Database(

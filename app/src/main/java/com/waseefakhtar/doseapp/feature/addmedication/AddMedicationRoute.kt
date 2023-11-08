@@ -27,7 +27,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
@@ -484,7 +483,8 @@ fun TimerTextField(
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
             selectedTime = it
             time(it)
-        })
+        }
+    )
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
