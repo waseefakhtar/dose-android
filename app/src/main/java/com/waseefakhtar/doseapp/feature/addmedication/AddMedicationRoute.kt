@@ -17,14 +17,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -59,7 +56,9 @@ import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
+import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.TimesOfDay
@@ -95,16 +94,12 @@ fun AddMedicationScreen(
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
     var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
+    var time by rememberSaveable { mutableLongStateOf(Date().time) }
     var isMorningSelected by rememberSaveable { mutableStateOf(false) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 
     Scaffold(
         topBar = {
@@ -195,8 +190,7 @@ fun AddMedicationScreen(
             )
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .fillMaxWidth(),
                 value = medicationName,
                 onValueChange = { medicationName = it },
                 placeholder = {
@@ -266,6 +260,13 @@ fun AddMedicationScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
+                text = "Time(s) for Medication",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            TimerTextField { time = it }
+
+
+            /*Text(
                 text = stringResource(id = R.string.times_of_day),
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -400,7 +401,7 @@ fun AddMedicationScreen(
                         )
                     }
                 )
-            }
+            }*/
         }
     }
 }
@@ -582,6 +583,33 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         readOnly = true,
         value = selectedDate,
+        onValueChange = {},
+        trailingIcon = { Icons.Default.DateRange },
+        interactionSource = interactionSource
+    )
+}
+
+@Composable
+fun TimerTextField(time: (Long) -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
+    val currentTime = CalendarInformation(Calendar.getInstance())
+    var selectedTime by rememberSaveable(
+        stateSaver = CalendarInformation.getStateSaver()
+    ) { mutableStateOf(currentTime) }
+
+    TimePickerDialogComponent(
+        showDialog = isPressed,
+        selectedDate = selectedTime,
+        onSelectedTime = {
+            selectedTime = it
+            time(it.getTimeInMillis())
+        })
+
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        readOnly = true,
+        value = selectedTime.getDateFormatted(HOUR_MINUTE_FORMAT),
         onValueChange = {},
         trailingIcon = { Icons.Default.DateRange },
         interactionSource = interactionSource
