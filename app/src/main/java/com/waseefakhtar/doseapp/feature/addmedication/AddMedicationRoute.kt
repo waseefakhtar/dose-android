@@ -270,8 +270,10 @@ fun AddMedicationScreen(
                         selectedTimes[index] = it
                     },
                     onDeleteClick = {
+                        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
                         removeTime(it)
-                    }
+                    },
+                    analyticsHelper = analyticsHelper
                 )
             }
 
@@ -280,6 +282,7 @@ fun AddMedicationScreen(
                     addTime(CalendarInformation(Calendar.getInstance()))
                 }
             ) {
+                analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                 Text("Add Time")
             }
@@ -464,7 +467,8 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
 @Composable
 fun TimerTextField(
     time: (CalendarInformation) -> Unit,
-    onDeleteClick: (CalendarInformation) -> Unit
+    onDeleteClick: (CalendarInformation) -> Unit,
+    analyticsHelper: AnalyticsHelper
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
@@ -477,6 +481,7 @@ fun TimerTextField(
         showDialog = isPressed,
         selectedDate = selectedTime,
         onSelectedTime = {
+            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
             selectedTime = it
             time(it)
         })
