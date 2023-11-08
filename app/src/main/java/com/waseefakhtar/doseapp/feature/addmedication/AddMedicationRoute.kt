@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -26,6 +29,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
@@ -34,16 +38,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,12 +97,21 @@ fun AddMedicationScreen(
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
     var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    var time by rememberSaveable { mutableLongStateOf(Date().time) }
+    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
     var isMorningSelected by rememberSaveable { mutableStateOf(false) }
     var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
     var isEveningSelected by rememberSaveable { mutableStateOf(false) }
     var isNightSelected by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+
+    fun addTime(time: CalendarInformation) {
+        selectedTimes.add(time)
+    }
+
+    // Function to remove a time from the list
+    fun removeTime(time: CalendarInformation) {
+        selectedTimes.remove(time)
+    }
 
     Scaffold(
         topBar = {
@@ -263,7 +275,27 @@ fun AddMedicationScreen(
                 text = "Time(s) for Medication",
                 style = MaterialTheme.typography.bodyLarge
             )
-            TimerTextField { time = it }
+
+            for (index in selectedTimes.indices) {
+                TimerTextField(
+                    time = {
+                        selectedTimes[index] = it
+                    },
+                    onDeleteClick = {
+                        val indexToRemove = selectedTimes.indexOf(it)
+                        selectedTimes.removeAt(indexToRemove)
+                    }
+                )
+            }
+
+            Button(
+                onClick = {
+                    addTime(CalendarInformation(Calendar.getInstance()))
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                Text("Add Time")
+            }
 
 
             /*Text(
@@ -590,7 +622,10 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
 }
 
 @Composable
-fun TimerTextField(time: (Long) -> Unit) {
+fun TimerTextField(
+    time: (CalendarInformation) -> Unit,
+    onDeleteClick: (CalendarInformation) -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
     val currentTime = CalendarInformation(Calendar.getInstance())
@@ -603,7 +638,7 @@ fun TimerTextField(time: (Long) -> Unit) {
         selectedDate = selectedTime,
         onSelectedTime = {
             selectedTime = it
-            time(it.getTimeInMillis())
+            time(it)
         })
 
     TextField(
@@ -611,7 +646,19 @@ fun TimerTextField(time: (Long) -> Unit) {
         readOnly = true,
         value = selectedTime.getDateFormatted(HOUR_MINUTE_FORMAT),
         onValueChange = {},
-        trailingIcon = { Icons.Default.DateRange },
+        trailingIcon = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onDeleteClick(selectedTime) } ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        },
         interactionSource = interactionSource
     )
 }

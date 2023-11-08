@@ -1,6 +1,10 @@
 package com.waseefakhtar.doseapp.feature.addmedication.model
 
+import android.os.Parcelable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -38,6 +42,15 @@ class CalendarInformation(private val calendar: Calendar) {
             },
             restore = {
                 CalendarInformation(it)
+            }
+        )
+
+        fun getStateListSaver() = Saver<MutableList<CalendarInformation>, MutableList<Calendar>>(
+            save = { state ->
+                state.map { it.calendar }.toMutableList()
+            },
+            restore = {
+                it.map { CalendarInformation(it) }.toMutableList()
             }
         )
     }
