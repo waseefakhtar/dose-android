@@ -1,7 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -62,10 +61,9 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.Recurrence
+import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
@@ -91,7 +89,7 @@ fun AddMedicationScreen(
     onBackClicked: () -> Unit,
     viewModel: AddMedicationViewModel,
     analyticsHelper: AnalyticsHelper,
-    navigateToMedicationConfirm: (List<Medication>) -> Unit
+    navigateToMedicationConfirm: (List<Medication>) -> Unit,
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
@@ -155,11 +153,12 @@ fun AddMedicationScreen(
                         nightSelection = isNightSelected,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.value_is_empty, invalidatedValue),
-                                Toast.LENGTH_LONG
-                            ).show()
+                            showSnackbar(
+                                context.getString(
+                                    R.string.value_is_empty,
+                                    invalidatedValue
+                                )
+                            )
 
                             val event = String.format(
                                 AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
@@ -295,7 +294,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -325,7 +324,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -359,7 +358,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -389,7 +388,7 @@ fun AddMedicationScreen(
                                 selectionCount = count
                             },
                             onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(scope, numberOfDosage, context)
+                                showMaxSelectionSnackbar(numberOfDosage, context)
                             }
                         )
                     },
@@ -474,22 +473,16 @@ private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): B
 }
 
 private fun showMaxSelectionSnackbar(
-    scope: CoroutineScope,
     numberOfDosage: String,
     context: Context
 ) {
-    scope.launch {
-        // TODO: Fix showing Snackbar.
-        // SnackbarHostState().showSnackbar("You can only select ${numberOfDosage} times of days.")
-    }
-
     val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
-
-    Toast.makeText(
-        context,
-        context.getString(R.string.dosage_and_frequency_mismatch_error_message, dosage),
-        Toast.LENGTH_LONG
-    ).show()
+    showSnackbar(
+        context.getString(
+            R.string.dosage_and_frequency_mismatch_error_message,
+            dosage
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

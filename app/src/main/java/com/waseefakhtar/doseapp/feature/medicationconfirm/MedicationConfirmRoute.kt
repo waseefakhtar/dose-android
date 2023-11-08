@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.feature.medicationconfirm
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +31,7 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmState
 import com.waseefakhtar.doseapp.feature.medicationconfirm.viewmodel.MedicationConfirmViewModel
+import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationConfirmRoute(
@@ -55,7 +55,7 @@ fun MedicationConfirmScreen(
     viewModel: MedicationConfirmViewModel,
     analyticsHelper: AnalyticsHelper,
     onBackClicked: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -63,14 +63,12 @@ fun MedicationConfirmScreen(
         viewModel
             .isMedicationSaved
             .collect {
-                Toast.makeText(
-                    context,
+                showSnackbar(
                     context.getString(
                         R.string.medication_timely_reminders_setup_message,
                         medications.first().name
-                    ),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                    )
+                )
                 navigateToHome()
                 analyticsHelper.logEvent(AnalyticsEvents.MEDICATIONS_SAVED)
             }

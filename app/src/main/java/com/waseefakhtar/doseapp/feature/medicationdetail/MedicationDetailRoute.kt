@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.feature.medicationdetail
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +45,7 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDetailViewModel
+import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationDetailRoute(
@@ -64,6 +64,7 @@ fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
+
 ) {
     var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
     var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
@@ -140,12 +141,8 @@ fun MedicationDetailScreen(
                         .height(56.dp),
                     onClick = {
                         analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
+                        showSnackbar(context.getString(R.string.medication_logged))
                         onBackClicked()
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.medication_logged),
-                            Toast.LENGTH_SHORT,
-                        ).show()
                     },
                     shape = MaterialTheme.shapes.extraLarge
                 ) {

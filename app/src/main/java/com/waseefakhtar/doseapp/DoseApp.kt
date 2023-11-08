@@ -3,6 +3,7 @@ package com.waseefakhtar.doseapp
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -49,6 +51,7 @@ import com.waseefakhtar.doseapp.navigation.DoseTopLevelNavigation
 import com.waseefakhtar.doseapp.navigation.TOP_LEVEL_DESTINATIONS
 import com.waseefakhtar.doseapp.navigation.TopLevelDestination
 import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
+import com.waseefakhtar.doseapp.util.SnackbarUtil
 
 @Composable
 fun DoseApp() {
@@ -78,6 +81,7 @@ fun DoseApp() {
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onBackground,
                 floatingActionButton = {
+
                     AnimatedVisibility(
                         visible = fabVisibility.value,
                         enter = slideInVertically(initialOffsetY = { it }),
@@ -88,18 +92,26 @@ fun DoseApp() {
                     )
                 },
                 bottomBar = {
-                    AnimatedVisibility(
-                        visible = bottomBarVisibility.value,
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { it }),
-                        content = {
-                            DoseBottomBar(
-                                onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
-                                currentDestination = currentDestination,
-                                analyticsHelper = analyticsHelper
-                            )
+                    Box {
+                        SnackbarUtil.SnackbarWithoutScaffold(
+                            SnackbarUtil.getSnackbarMessage().component1(),
+                            SnackbarUtil.isSnackbarVisible().component1()
+                        ) {
+                            SnackbarUtil.hideSnackbar()
                         }
-                    )
+                        AnimatedVisibility(
+                            visible = bottomBarVisibility.value,
+                            enter = slideInVertically(initialOffsetY = { it }),
+                            exit = slideOutVertically(targetOffsetY = { it }),
+                            content = {
+                                DoseBottomBar(
+                                    onNavigateToTopLevelDestination = doseTopLevelNavigation::navigateTo,
+                                    currentDestination = currentDestination,
+                                    analyticsHelper = analyticsHelper
+                                )
+                            }
+                        )
+                    }
                 }
             ) { padding ->
                 Row(
@@ -119,6 +131,7 @@ fun DoseApp() {
                         modifier = Modifier
                             .padding(padding)
                             .consumeWindowInsets(padding)
+                            .zIndex(1f)
                     )
                 }
             }
@@ -185,7 +198,12 @@ private fun trackTabClicked(analyticsHelper: AnalyticsHelper, route: String) {
 fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
     ExtendedFloatingActionButton(
         text = { Text(text = stringResource(id = R.string.add_medication)) },
-        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add)) },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.add)
+            )
+        },
         onClick = {
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_FAB)
             navController.navigate(AddMedicationDestination.route)
