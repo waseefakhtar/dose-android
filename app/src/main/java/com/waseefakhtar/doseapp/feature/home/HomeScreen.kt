@@ -204,11 +204,11 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 @Composable
 fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
 
-    val medicationList = state.medications.sortedBy { it.date }
+    val medicationList = state.medications.sortedBy { it.medicationTime }
     val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
         val calendar = Calendar.getInstance()
         val medicationsToday = medicationList.filter {
-            val medicationDate = it.date
+            val medicationDate = it.medicationTime
             calendar.time = medicationDate
             val medicationDay = calendar.get(Calendar.DAY_OF_YEAR)
 
@@ -229,7 +229,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
         val endOfWeekThisWeek = startOfWeekThisWeek.clone() as Calendar
         endOfWeekThisWeek.add(Calendar.DAY_OF_WEEK, 6)
         val medicationsThisWeek = medicationList.filter {
-            val medicationDate = it.date // Change this to the appropriate attribute
+            val medicationDate = it.medicationTime // Change this to the appropriate attribute
             medicationDate in startOfWeekThisWeek.time..endOfWeekThisWeek.time && !medicationsToday.contains(it)
         }
         if (medicationsThisWeek.isNotEmpty()) {
@@ -244,7 +244,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
         val endOfWeekNextWeek = startOfWeekNextWeek.clone() as Calendar
         endOfWeekNextWeek.add(Calendar.DAY_OF_MONTH, 6)
         val medicationsNextWeek = medicationList.filter {
-            val medicationDate = it.date // Change this to the appropriate attribute
+            val medicationDate = it.medicationTime // Change this to the appropriate attribute
             medicationDate in startOfWeekNextWeek.time..endOfWeekNextWeek.time
         }
         if (medicationsNextWeek.isNotEmpty()) {

@@ -8,10 +8,9 @@ import java.util.MissingFormatArgumentException
 
 class CalendarInformation(private val calendar: Calendar) {
 
-    val dateInformation = DateInformation(
-        year = calendar.get(Calendar.YEAR),
-        month = calendar.get(Calendar.MONTH),
-        dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+    val dateInformation = TimeInformation(
+        hour = calendar.get(Calendar.HOUR_OF_DAY),
+        minute = calendar.get(Calendar.MINUTE)
     )
 
     fun getTimeInMillis() = calendar.timeInMillis
@@ -24,14 +23,12 @@ class CalendarInformation(private val calendar: Calendar) {
         }
     }
 
-    inner class DateInformation(
-        val year: Int,
-        val month: Int,
-        val dayOfMonth: Int
+    inner class TimeInformation(
+        val hour: Int,
+        val minute: Int,
     ) {
-        operator fun component1(): Int = year
-        operator fun component2(): Int = month
-        operator fun component3(): Int = dayOfMonth
+        operator fun component1(): Int = hour
+        operator fun component2(): Int = minute
     }
 
     companion object {
@@ -41,6 +38,15 @@ class CalendarInformation(private val calendar: Calendar) {
             },
             restore = {
                 CalendarInformation(it)
+            }
+        )
+
+        fun getStateListSaver() = Saver<MutableList<CalendarInformation>, MutableList<Calendar>>(
+            save = { state ->
+                state.map { it.calendar }.toMutableList()
+            },
+            restore = {
+                it.map { CalendarInformation(it) }.toMutableList()
             }
         )
     }

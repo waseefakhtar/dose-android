@@ -106,8 +106,8 @@ fun MedicationConfirmScreen(
         Text(
             text = stringResource(
                 R.string.all_set,
-                medication.dosage,
                 medication.name,
+                medications.size,
                 medication.recurrence.lowercase(),
                 medication.endDate.toFormattedDateString()
             ),

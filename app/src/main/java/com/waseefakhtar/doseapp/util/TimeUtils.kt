@@ -9,14 +9,15 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
+const val HOUR_MINUTE_FORMAT = "h:mm a"
 @Composable
 fun getTimeRemaining(medication: Medication): String {
     val currentTime = Calendar.getInstance().time
-    val dateBefore = medication.date
+    val dateBefore = medication.medicationTime
     val timeDiff = abs(currentTime.time - dateBefore.time)
 
     // If the medication is scheduled for a future date, display days remaining
-    if (medication.date.toFormattedDateString() != medication.endDate.toFormattedDateString()) {
+    if (medication.medicationTime.toFormattedDateString() != medication.endDate.toFormattedDateString()) {
         val daysRemaining = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) + 1L
         return stringResource(id = R.string.time_remaining, daysRemaining, stringResource(id = R.string.days))
     }

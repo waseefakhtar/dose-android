@@ -2,7 +2,7 @@ package com.waseefakhtar.doseapp.feature.addmedication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.util.TimesOfDay
+import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import java.util.Calendar
 import java.util.Date
 
@@ -13,7 +13,7 @@ class AddMedicationViewModel : ViewModel() {
         dosage: Int,
         recurrence: String,
         endDate: Date,
-        timesOfDay: List<TimesOfDay>,
+        medicationTimes: List<CalendarInformation>,
         startDate: Date = Date()
     ): List<Medication> {
 
@@ -33,16 +33,16 @@ class AddMedicationViewModel : ViewModel() {
         val calendar = Calendar.getInstance()
         calendar.time = startDate
         for (i in 0 until numOccurrences) {
-            for (timeOfDay in timesOfDay) {
+            for (medicationTime in medicationTimes) {
+                // TODO: Generate id automatically.
                 val medication = Medication(
                     id = 0,
                     name = name,
                     dosage = dosage,
                     recurrence = recurrence,
                     endDate = endDate,
-                    timesOfDay = listOf(timeOfDay),
                     medicationTaken = false,
-                    date = getDateAndTimeFor(timeOfDay, calendar)
+                    medicationTime = getMedicationTime(medicationTime, calendar)
                 )
                 medications.add(medication)
             }
@@ -54,24 +54,9 @@ class AddMedicationViewModel : ViewModel() {
         return medications
     }
 
-    private fun getDateAndTimeFor(timeOfDay: TimesOfDay, calendar: Calendar): Date {
-        return when (timeOfDay) {
-            TimesOfDay.Morning -> {
-                calendar.set(Calendar.HOUR_OF_DAY, 8)
-                calendar.time
-            }
-            TimesOfDay.Afternoon -> {
-                calendar.set(Calendar.HOUR_OF_DAY, 13)
-                calendar.time
-            }
-            TimesOfDay.Evening -> {
-                calendar.set(Calendar.HOUR_OF_DAY, 18)
-                calendar.time
-            }
-            TimesOfDay.Night -> {
-                calendar.set(Calendar.HOUR_OF_DAY, 22)
-                calendar.time
-            }
-        }
+    private fun getMedicationTime(medicationTime: CalendarInformation, calendar: Calendar): Date {
+        calendar.set(Calendar.HOUR_OF_DAY, medicationTime.dateInformation.hour)
+        calendar.set(Calendar.MINUTE, medicationTime.dateInformation.minute)
+        return calendar.time
     }
 }

@@ -15,16 +15,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -36,17 +35,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,10 +55,11 @@ import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
+import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
-import com.waseefakhtar.doseapp.util.TimesOfDay
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import java.util.Calendar
 import java.util.Date
@@ -95,15 +92,15 @@ fun AddMedicationScreen(
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
     var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    var isMorningSelected by rememberSaveable { mutableStateOf(false) }
-    var isAfternoonSelected by rememberSaveable { mutableStateOf(false) }
-    var isEveningSelected by rememberSaveable { mutableStateOf(false) }
-    var isNightSelected by rememberSaveable { mutableStateOf(false) }
+    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
     val context = LocalContext.current
-    val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    fun addTime(time: CalendarInformation) {
+        selectedTimes.add(time)
+    }
+
+    fun removeTime(time: CalendarInformation) {
+        selectedTimes.remove(time)
     }
 
     Scaffold(
@@ -147,10 +144,7 @@ fun AddMedicationScreen(
                         dosage = numberOfDosage.toIntOrNull() ?: 0,
                         recurrence = recurrence,
                         endDate = endDate,
-                        morningSelection = isMorningSelected,
-                        afternoonSelection = isAfternoonSelected,
-                        eveningSelection = isEveningSelected,
-                        nightSelection = isNightSelected,
+                        selectedTimes = selectedTimes,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
                             showSnackbar(
@@ -195,8 +189,7 @@ fun AddMedicationScreen(
             )
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .fillMaxWidth(),
                 value = medicationName,
                 onValueChange = { medicationName = it },
                 placeholder = {
@@ -266,140 +259,31 @@ fun AddMedicationScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = stringResource(id = R.string.times_of_day),
+                text = "Time(s) for Medication",
                 style = MaterialTheme.typography.bodyLarge
             )
 
-            var selectionCount by rememberSaveable { mutableStateOf(0) }
-            val scope = rememberCoroutineScope()
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    selected = isMorningSelected,
-                    onClick = {
-                        handleSelection(
-                            isSelected = isMorningSelected,
-                            selectionCount = selectionCount,
-                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                                selectionCount,
-                                numberOfDosage.toIntOrNull() ?: 0
-                            ),
-                            onStateChange = { count, selected ->
-                                isMorningSelected = selected
-                                selectionCount = count
-                            },
-                            onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context)
-                            }
-                        )
+            for (index in selectedTimes.indices) {
+                TimerTextField(
+                    time = {
+                        selectedTimes[index] = it
                     },
-                    label = { Text(text = TimesOfDay.Morning.name) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.selected_content_description)
-                        )
-                    }
-                )
-                FilterChip(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    selected = isAfternoonSelected,
-                    onClick = {
-                        handleSelection(
-                            isSelected = isAfternoonSelected,
-                            selectionCount = selectionCount,
-                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                                selectionCount,
-                                numberOfDosage.toIntOrNull() ?: 0
-                            ),
-                            onStateChange = { count, selected ->
-                                isAfternoonSelected = selected
-                                selectionCount = count
-                            },
-                            onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context)
-                            }
-                        )
+                    onDeleteClick = {
+                        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
+                        removeTime(it)
                     },
-                    label = { Text(text = TimesOfDay.Afternoon.name) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.selected_content_description)
-                        )
-                    }
+                    analyticsHelper = analyticsHelper
                 )
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+            Button(
+                onClick = {
+                    addTime(CalendarInformation(Calendar.getInstance()))
+                }
             ) {
-                FilterChip(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    selected = isEveningSelected,
-                    onClick = {
-                        handleSelection(
-                            isSelected = isEveningSelected,
-                            selectionCount = selectionCount,
-                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                                selectionCount,
-                                numberOfDosage.toIntOrNull() ?: 0
-                            ),
-                            onStateChange = { count, selected ->
-                                isEveningSelected = selected
-                                selectionCount = count
-                            },
-                            onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context)
-                            }
-                        )
-                    },
-                    label = { Text(text = TimesOfDay.Evening.name) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.selected_content_description)
-                        )
-                    }
-                )
-                FilterChip(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    selected = isNightSelected,
-                    onClick = {
-                        handleSelection(
-                            isSelected = isNightSelected,
-                            selectionCount = selectionCount,
-                            canSelectMoreTimesOfDay = canSelectMoreTimesOfDay(
-                                selectionCount,
-                                numberOfDosage.toIntOrNull() ?: 0
-                            ),
-                            onStateChange = { count, selected ->
-                                isNightSelected = selected
-                                selectionCount = count
-                            },
-                            onShowMaxSelectionError = {
-                                showMaxSelectionSnackbar(numberOfDosage, context)
-                            }
-                        )
-                    },
-                    label = { Text(text = TimesOfDay.Night.name) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = stringResource(R.string.selected_content_description)
-                        )
-                    }
-                )
+                analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                Text("Add Time")
             }
         }
     }
@@ -410,10 +294,7 @@ private fun validateMedication(
     dosage: Int,
     recurrence: String,
     endDate: Long,
-    morningSelection: Boolean,
-    afternoonSelection: Boolean,
-    eveningSelection: Boolean,
-    nightSelection: Boolean,
+    selectedTimes: List<CalendarInformation>,
     onInvalidate: (Int) -> Unit,
     onValidate: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel
@@ -433,19 +314,13 @@ private fun validateMedication(
         return
     }
 
-    if (!morningSelection && !afternoonSelection && !eveningSelection && !nightSelection) {
-        onInvalidate(R.string.times_of_day)
+    if (selectedTimes.isEmpty()) {
+        onInvalidate(R.string.times_for_medication)
         return
     }
 
-    val timesOfDay = mutableListOf<TimesOfDay>()
-    if (morningSelection) timesOfDay.add(TimesOfDay.Morning)
-    if (afternoonSelection) timesOfDay.add(TimesOfDay.Afternoon)
-    if (eveningSelection) timesOfDay.add(TimesOfDay.Evening)
-    if (nightSelection) timesOfDay.add(TimesOfDay.Night)
-
     val medications =
-        viewModel.createMedications(name, dosage, recurrence, Date(endDate), timesOfDay)
+        viewModel.createMedications(name, dosage, recurrence, Date(endDate), selectedTimes)
 
     onValidate(medications)
 }
@@ -584,6 +459,52 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         value = selectedDate,
         onValueChange = {},
         trailingIcon = { Icons.Default.DateRange },
+        interactionSource = interactionSource
+    )
+}
+
+@Composable
+fun TimerTextField(
+    time: (CalendarInformation) -> Unit,
+    onDeleteClick: (CalendarInformation) -> Unit,
+    analyticsHelper: AnalyticsHelper
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
+    val currentTime = CalendarInformation(Calendar.getInstance())
+    var selectedTime by rememberSaveable(
+        stateSaver = CalendarInformation.getStateSaver()
+    ) { mutableStateOf(currentTime) }
+
+    TimePickerDialogComponent(
+        showDialog = isPressed,
+        selectedDate = selectedTime,
+        onSelectedTime = {
+            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
+            selectedTime = it
+            time(it)
+        }
+    )
+
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        readOnly = true,
+        value = selectedTime.getDateFormatted(HOUR_MINUTE_FORMAT),
+        onValueChange = {},
+        trailingIcon = {
+            // TODO: Make delete action work properly
+            /*Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onDeleteClick(selectedTime) } ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }*/
+        },
         interactionSource = interactionSource
     )
 }

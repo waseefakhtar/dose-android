@@ -28,8 +28,7 @@ class AnalyticsHelper private constructor(context: Context) {
 
     fun trackNotificationShown(medication: Medication) {
         val params = Bundle()
-        params.putString("medication_times_of_day", medication.timesOfDay.toString())
-        params.putString("medication_notification_date", medication.date.toFormattedDateString())
+        params.putString("medication_time", medication.medicationTime.toFormattedDateString())
         params.putString("medication_end_date", medication.endDate.toFormattedDateString())
         params.putString("notification_time", Date().toFormattedDateString())
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SHOWN, params)
@@ -37,8 +36,7 @@ class AnalyticsHelper private constructor(context: Context) {
 
     fun trackNotificationScheduled(medication: Medication) {
         val params = Bundle()
-        params.putString("medication_times_of_day", medication.timesOfDay.toString())
-        params.putString("medication_notification_date", medication.date.toFormattedDateString())
+        params.putString("medication_time", medication.medicationTime.toFormattedDateString())
         params.putString("medication_end_date", medication.endDate.toFormattedDateString())
         params.putString("notification_time", Date().toFormattedDateString())
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, params)

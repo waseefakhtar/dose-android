@@ -26,7 +26,7 @@ class MedicationNotificationService(
         )
 
         val alarmService = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time = medication.date.time
+        val time = medication.medicationTime.time
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
