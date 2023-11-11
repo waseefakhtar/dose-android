@@ -101,10 +101,12 @@ fun AddMedicationScreen(
 
     fun addTime(time: CalendarInformation) {
         selectedTimes.add(time)
+        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
     }
 
     fun removeTime(time: CalendarInformation) {
         selectedTimes.remove(time)
+        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
     }
 
     Scaffold(
@@ -274,20 +276,14 @@ fun AddMedicationScreen(
                     time = {
                         selectedTimes[index] = it
                     },
-                    onDeleteClick = {
-                        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
-                        removeTime(selectedTimes[index])
-                    },
+                    onDeleteClick = { removeTime(selectedTimes[index]) },
                     analyticsHelper = analyticsHelper
                 )
             }
 
             Button(
-                onClick = {
-                    addTime(CalendarInformation(Calendar.getInstance()))
-                }
+                onClick = { addTime(CalendarInformation(Calendar.getInstance())) }
             ) {
-                analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                 Text("Add Time")
             }
