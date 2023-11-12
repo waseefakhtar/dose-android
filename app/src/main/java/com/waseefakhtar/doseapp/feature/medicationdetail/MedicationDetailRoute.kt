@@ -98,10 +98,12 @@ fun MedicationDetailScreen(
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(56.dp)
                 ) {
                     SegmentedButton(
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         selected = isTakenTapped,
+                        shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
                             isTakenTapped = !isTakenTapped
                             if (isTakenTapped) {
@@ -117,7 +119,9 @@ fun MedicationDetailScreen(
                         )
                     }
                     SegmentedButton(
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         selected = isSkippedTapped,
+                        shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
                             isSkippedTapped = !isSkippedTapped
                             if (isSkippedTapped) {
