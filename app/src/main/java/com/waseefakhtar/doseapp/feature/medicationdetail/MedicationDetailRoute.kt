@@ -20,6 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -98,10 +100,12 @@ fun MedicationDetailScreen(
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(56.dp)
                 ) {
                     SegmentedButton(
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         selected = isTakenTapped,
+                        shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
                             isTakenTapped = !isTakenTapped
                             if (isTakenTapped) {
@@ -117,7 +121,9 @@ fun MedicationDetailScreen(
                         )
                     }
                     SegmentedButton(
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         selected = isSkippedTapped,
+                        shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
                             isSkippedTapped = !isSkippedTapped
                             if (isSkippedTapped) {
