@@ -1,72 +1,66 @@
 package com.waseefakhtar.doseapp.feature.home.data
 
-import android.os.Build
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import java.util.stream.Collectors
-import java.util.stream.Stream
+import java.util.Calendar
+import java.util.Date
 
 class CalendarDataSource {
 
-    val today: LocalDate
+    val today: Date
         get() {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                LocalDate.now()
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
+            return Date()
         }
 
 
-    fun getData(startDate: LocalDate = today, lastSelectedDate: LocalDate): CalendarModel {
-        val firstDayOfWeek = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startDate.with(DayOfWeek.MONDAY)
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-        val endDayOfWeek = firstDayOfWeek.plusDays(7)
+    fun getData(startDate: Date = today, lastSelectedDate: Date): CalendarModel {
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        val firstDayOfWeek = calendar.time
+
+        calendar.add(Calendar.DAY_OF_YEAR, 6)
+        val endDayOfWeek = calendar.time
+
         val visibleDates = getDatesBetween(firstDayOfWeek, endDayOfWeek)
         return toCalendarModel(visibleDates, lastSelectedDate)
     }
 
-    private fun getDatesBetween(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
-        val numOfDays = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ChronoUnit.DAYS.between(startDate, endDate)
-        } else {
-            TODO("VERSION.SDK_INT < O")
+    private fun getDatesBetween(startDate: Date, endDate: Date): List<Date> {
+        val dateList = mutableListOf<Date>()
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+
+        while (calendar.time <= endDate) {
+            dateList.add(calendar.time)
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
-        return Stream.iterate(startDate) { date ->
-            date.plusDays(/* daysToAdd = */ 1)
-        }
-            .limit(numOfDays)
-            .collect(Collectors.toList())
+        return dateList
     }
 
     private fun toCalendarModel(
-        dateList: List<LocalDate>,
-        lastSelectedDate: LocalDate
+        dateList: List<Date>,
+        lastSelectedDate: Date
     ): CalendarModel {
         return CalendarModel(
-            selectedDate = toItemUiModel(lastSelectedDate, true),
+            selectedDate = toItemModel(lastSelectedDate, true),
             visibleDates = dateList.map {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    toItemUiModel(it, it.isEqual(lastSelectedDate))
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
-            },
+                toItemModel(it, it == lastSelectedDate)
+            }
         )
     }
 
-    private fun toItemUiModel(date: LocalDate, isSelectedDate: Boolean) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        CalendarModel.Date(
+    private fun toItemModel(date: Date, isSelectedDate: Boolean): CalendarModel.DateModel {
+        return CalendarModel.DateModel(
             isSelected = isSelectedDate,
-            isToday = date.isEqual(today),
-            date = date,
+            isToday = isToday(date),
+            date = date
         )
-    } else {
-        TODO("VERSION.SDK_INT < O")
+    }
+
+    private fun isToday(date: Date): Boolean {
+        val todayDate = today
+        return date.toFormattedDateString() == todayDate.toFormattedDateString()
     }
 }

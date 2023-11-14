@@ -1,26 +1,22 @@
 package com.waseefakhtar.doseapp.feature.home.model
 
-import android.os.Build
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class CalendarModel(
-    val selectedDate: Date, // the date selected by the User. by default is Today.
-    val visibleDates: List<Date> // the dates shown on the screen
+    val selectedDate: DateModel, // the date selected by the User. by default is Today.
+    val visibleDates: List<DateModel> // the dates shown on the screen
 ) {
 
-    val startDate: Date = visibleDates.first() // the first of the visible dates
-    val endDate: Date = visibleDates.last() // the last of the visible dates
+    val startDate: DateModel = visibleDates.first() // the first of the visible dates
+    val endDate: DateModel = visibleDates.last() // the last of the visible dates
 
-    data class Date(
-        val date: LocalDate,
+    data class DateModel(
+        val date: Date,
         val isSelected: Boolean,
         val isToday: Boolean
     ) {
-        val day: String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            date.format(DateTimeFormatter.ofPattern("E"))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        val day: String = SimpleDateFormat("E", Locale.getDefault()).format(date) ?: ""
     }
 }

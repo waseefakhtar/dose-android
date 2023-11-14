@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -55,16 +54,16 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.toFormattedDateShortString
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.extension.toFormattedMonthDateString
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.home.data.CalendarDataSource
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.time.format.TextStyle
 import java.util.Calendar
+import java.util.Date
 
 @Composable
 fun HomeRoute(
@@ -271,16 +270,23 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
         add(0, MedicationListItem.OverviewItem(medicationsToday, !hasMedicationItem))
     }
 
+    var filteredMedications: List<MedicationListItem> by remember { mutableStateOf(emptyList()) }
 
-    DatesHeader()
-
+    DatesHeader { selectedDate ->
+        val newMedicationList = state.medications
+            .filter { medication ->
+                medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
+            }
+            .sortedBy { it.medicationTime }
+        filteredMedications = newMedicationList.map { MedicationListItem.MedicationItem(it) }
+    }
 
     LazyColumn(
         modifier = Modifier,
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
         items(
-            items = combinedList,
+            items = filteredMedications,
             itemContent = {
                 when (it) {
                     is MedicationListItem.OverviewItem -> {
@@ -314,7 +320,9 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 }
 
 @Composable
-fun DatesHeader() {
+fun DatesHeader(
+    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
+) {
     val dataSource = CalendarDataSource()
     var calendarModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
     Column(modifier = Modifier
@@ -326,21 +334,23 @@ fun DatesHeader() {
             onPrevClickListener = { startDate ->
                 // refresh the CalendarUiModel with new data
                 // by get data with new Start Date (which is the startDate-1 from the visibleDates)
-                val finalStartDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startDate.minusDays(1)
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
+                val calendar = Calendar.getInstance()
+                calendar.time = startDate
+
+                calendar.add(Calendar.DAY_OF_YEAR, -2) // Subtract one day from startDate
+                val finalStartDate = calendar.time
+
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
             },
             onNextClickListener = { endDate ->
                 // refresh the CalendarUiModel with new data
                 // by get data with new Start Date (which is the endDate+2 from the visibleDates)
-                val finalStartDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    endDate.plusDays(2)
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
+                val calendar = Calendar.getInstance()
+                calendar.time = endDate
+
+                calendar.add(Calendar.DAY_OF_YEAR, 2)
+                val finalStartDate = calendar.time
+
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
             })
         DateList(
@@ -350,15 +360,12 @@ fun DatesHeader() {
                 calendarModel = calendarModel.copy(
                     selectedDate = date,
                     visibleDates = calendarModel.visibleDates.map {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             it.copy(
-                                isSelected = it.date.isEqual(date.date)
+                                isSelected = it.date.toFormattedDateString() == date.date.toFormattedDateString()
                             )
-                        } else {
-                            TODO("VERSION.SDK_INT < O")
-                        }
                     }
                 )
+                onDateSelected(date)
             })
     }
 }
@@ -366,7 +373,7 @@ fun DatesHeader() {
 @Composable
 fun DateList(
     data: CalendarModel,
-    onDateClickListener: (CalendarModel.Date) -> Unit
+    onDateClickListener: (CalendarModel.DateModel) -> Unit
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -380,8 +387,8 @@ fun DateList(
 
 @Composable
 fun DateItem(
-    date: CalendarModel.Date,
-    onClickListener: (CalendarModel.Date) -> Unit,
+    date: CalendarModel.DateModel,
+    onClickListener: (CalendarModel.DateModel) -> Unit,
 ) {
     Column {
         Text(
@@ -415,30 +422,25 @@ fun DateItem(
                 verticalArrangement = Arrangement.Center, // Center vertically
                 horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
             ) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Text(
-                        text = date.date.dayOfMonth.toString(), // date "15", "16"
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = if (date.isSelected) {
-                            FontWeight.Medium
-                        } else {
-                            FontWeight.Normal
-                        }
-                    )
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
+                Text(
+                    text = date.date.toFormattedDateShortString(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = if (date.isSelected) {
+                        FontWeight.Medium
+                    } else {
+                        FontWeight.Normal
+                    }
+                )
             }
         }
     }
-
 }
 
 @Composable
 fun DateHeader(
     data: CalendarModel,
-    onPrevClickListener: (LocalDate) -> Unit,
-    onNextClickListener: (LocalDate) -> Unit,) {
+    onPrevClickListener: (Date) -> Unit,
+    onNextClickListener: (Date) -> Unit,) {
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
@@ -449,15 +451,9 @@ fun DateHeader(
             text = if (data.selectedDate.isToday) {
                 "Today"
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    data.selectedDate.date.format(
-                        DateTimeFormatter.ofPattern("MMMM dd")
-                    )
-                } else {
-                    TODO("VERSION.SDK_INT < O")
-                }
+                data.selectedDate.date.toFormattedMonthDateString()
             },
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.tertiary
         )
