@@ -12,7 +12,6 @@ class CalendarDataSource {
             return Date()
         }
 
-
     fun getData(startDate: Date = today, lastSelectedDate: Date): CalendarModel {
         val calendar = Calendar.getInstance()
         calendar.time = startDate

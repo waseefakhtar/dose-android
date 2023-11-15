@@ -37,13 +37,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -258,9 +255,10 @@ fun DatesHeader(
 ) {
     val dataSource = CalendarDataSource()
     var calendarModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
         DateHeader(
             data = calendarModel,
@@ -285,21 +283,22 @@ fun DatesHeader(
                 val finalStartDate = calendar.time
 
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
-            })
+            }
+        )
         DateList(
             data = calendarModel,
-            onDateClickListener = {
-                    date ->
+            onDateClickListener = { date ->
                 calendarModel = calendarModel.copy(
                     selectedDate = date,
                     visibleDates = calendarModel.visibleDates.map {
-                            it.copy(
-                                isSelected = it.date.toFormattedDateString() == date.date.toFormattedDateString()
-                            )
+                        it.copy(
+                            isSelected = it.date.toFormattedDateString() == date.date.toFormattedDateString()
+                        )
                     }
                 )
                 onDateSelected(date)
-            })
+            }
+        )
     }
 }
 
@@ -334,8 +333,7 @@ fun DateItem(
         Card(
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 4.dp)
-                .clickable { onClickListener(date) }
-            ,
+                .clickable { onClickListener(date)},
             colors = cardColors(
                 // background colors of the selected date
                 // and the non-selected date are different
@@ -373,7 +371,8 @@ fun DateItem(
 fun DateHeader(
     data: CalendarModel,
     onPrevClickListener: (Date) -> Unit,
-    onNextClickListener: (Date) -> Unit,) {
+    onNextClickListener: (Date) -> Unit)
+{
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
