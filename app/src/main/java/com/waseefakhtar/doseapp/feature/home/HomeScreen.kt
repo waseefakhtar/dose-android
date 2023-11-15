@@ -6,10 +6,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -170,7 +170,7 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .height(156.dp),
         shape = RoundedCornerShape(36.dp),
         colors = cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -185,12 +185,13 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
             Column(
                 modifier = Modifier
                     .padding(24.dp, 24.dp, 0.dp, 16.dp)
-                    .fillMaxWidth(.50F),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .fillMaxWidth(.50F)
+                    .align(Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
 
                 Text(
-                    text = stringResource(R.string.welcome),
+                    text = stringResource(R.string.medication_break),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                 )
@@ -218,59 +219,7 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 @Composable
 fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
 
-    val medicationList = state.medications.sortedBy { it.medicationTime }
-    val combinedList: List<MedicationListItem> = mutableListOf<MedicationListItem>().apply {
-        val calendar = Calendar.getInstance()
-        val medicationsToday = medicationList.filter {
-            val medicationDate = it.medicationTime
-            calendar.time = medicationDate
-            val medicationDay = calendar.get(Calendar.DAY_OF_YEAR)
-
-            val todayCalendar = Calendar.getInstance()
-            val todayDay = todayCalendar.get(Calendar.DAY_OF_YEAR)
-
-            medicationDay == todayDay
-        }
-
-        if (medicationsToday.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem(stringResource(R.string.today)))
-            addAll(medicationsToday.map { MedicationListItem.MedicationItem(it) })
-        }
-
-        // Find medications for this week and add "This Week" header
-        val startOfWeekThisWeek = Calendar.getInstance()
-        startOfWeekThisWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val endOfWeekThisWeek = startOfWeekThisWeek.clone() as Calendar
-        endOfWeekThisWeek.add(Calendar.DAY_OF_WEEK, 6)
-        val medicationsThisWeek = medicationList.filter {
-            val medicationDate = it.medicationTime // Change this to the appropriate attribute
-            medicationDate in startOfWeekThisWeek.time..endOfWeekThisWeek.time && !medicationsToday.contains(it)
-        }
-        if (medicationsThisWeek.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem(stringResource(R.string.this_week)))
-            addAll(medicationsThisWeek.map { MedicationListItem.MedicationItem(it) })
-        }
-
-        // Find medications for next week and add "Next Week" header
-        val startOfWeekNextWeek = Calendar.getInstance()
-        startOfWeekNextWeek.time = endOfWeekThisWeek.time // Use the end of current week as start of next week
-        startOfWeekNextWeek.add(Calendar.DAY_OF_MONTH, 1)
-        val endOfWeekNextWeek = startOfWeekNextWeek.clone() as Calendar
-        endOfWeekNextWeek.add(Calendar.DAY_OF_MONTH, 6)
-        val medicationsNextWeek = medicationList.filter {
-            val medicationDate = it.medicationTime // Change this to the appropriate attribute
-            medicationDate in startOfWeekNextWeek.time..endOfWeekNextWeek.time
-        }
-        if (medicationsNextWeek.isNotEmpty()) {
-            add(MedicationListItem.HeaderItem(stringResource(R.string.next_week)))
-            addAll(medicationsNextWeek.map { MedicationListItem.MedicationItem(it) })
-        }
-
-        val hasMedicationItem = any { it is MedicationListItem.MedicationItem }
-        add(0, MedicationListItem.OverviewItem(medicationsToday, !hasMedicationItem))
-    }
-
-    var filteredMedications: List<MedicationListItem> by remember { mutableStateOf(emptyList()) }
+    var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
 
     DatesHeader { selectedDate ->
         val newMedicationList = state.medications
@@ -278,44 +227,28 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
                 medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
             }
             .sortedBy { it.medicationTime }
-        filteredMedications = newMedicationList.map { MedicationListItem.MedicationItem(it) }
+
+        filteredMedications = newMedicationList
     }
 
-    LazyColumn(
-        modifier = Modifier,
-        contentPadding = PaddingValues(vertical = 8.dp)
-    ) {
-        items(
-            items = filteredMedications,
-            itemContent = {
-                when (it) {
-                    is MedicationListItem.OverviewItem -> {
-                        when (it.isMedicationListEmpty) {
-                            true -> EmptyCard(navController, analyticsHelper)
-                            false -> DailyOverviewCard(navController, analyticsHelper, it.medicationsToday)
+    if (filteredMedications.isEmpty()) {
+        EmptyCard(navController, analyticsHelper)
+    } else {
+        LazyColumn(
+            modifier = Modifier,
+        ) {
+            items(
+                items = filteredMedications,
+                itemContent = {
+                    MedicationCard(
+                        medication = it,
+                        navigateToMedicationDetail = { medication ->
+                            navigateToMedicationDetail(medication)
                         }
-                    }
-                    is MedicationListItem.HeaderItem -> {
-                        Text(
-                            modifier = Modifier
-                                .padding(4.dp, 12.dp, 8.dp, 0.dp)
-                                .fillMaxWidth(),
-                            text = it.headerText.uppercase(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-                    is MedicationListItem.MedicationItem -> {
-                        MedicationCard(
-                            medication = it.medication,
-                            navigateToMedicationDetail = { medication ->
-                                navigateToMedicationDetail(medication)
-                            }
-                        )
-                    }
+                    )
                 }
-            }
-        )
+            )
+        }
     }
 }
 
