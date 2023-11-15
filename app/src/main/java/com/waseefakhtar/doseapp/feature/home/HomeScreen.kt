@@ -212,13 +212,12 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
 
     var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
 
-    DatesHeader { selectedDate ->
+    DatesHeader(analyticsHelper) { selectedDate ->
         val newMedicationList = state.medications
             .filter { medication ->
                 medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
@@ -226,6 +225,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
             .sortedBy { it.medicationTime }
 
         filteredMedications = newMedicationList
+        analyticsHelper.logEvent(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
     }
 
     if (filteredMedications.isEmpty()) {
@@ -251,6 +251,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 
 @Composable
 fun DatesHeader(
+    analyticsHelper: AnalyticsHelper,
     onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
 ) {
     val dataSource = CalendarDataSource()
@@ -263,7 +264,7 @@ fun DatesHeader(
         DateHeader(
             data = calendarModel,
             onPrevClickListener = { startDate ->
-                // refresh the CalendarUiModel with new data
+                // refresh the CalendarModel with new data
                 // by get data with new Start Date (which is the startDate-1 from the visibleDates)
                 val calendar = Calendar.getInstance()
                 calendar.time = startDate
@@ -272,9 +273,10 @@ fun DatesHeader(
                 val finalStartDate = calendar.time
 
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
+                analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_PREVIOUS_WEEK_CLICKED)
             },
             onNextClickListener = { endDate ->
-                // refresh the CalendarUiModel with new data
+                // refresh the CalendarModel with new data
                 // by get data with new Start Date (which is the endDate+2 from the visibleDates)
                 val calendar = Calendar.getInstance()
                 calendar.time = endDate
@@ -283,6 +285,7 @@ fun DatesHeader(
                 val finalStartDate = calendar.time
 
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
+                analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_NEXT_WEEK_CLICKED)
             }
         )
         DateList(
