@@ -336,7 +336,7 @@ fun DateItem(
         Card(
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 4.dp)
-                .clickable { onClickListener(date)},
+                .clickable { onClickListener(date) },
             colors = cardColors(
                 // background colors of the selected date
                 // and the non-selected date are different
@@ -374,8 +374,8 @@ fun DateItem(
 fun DateHeader(
     data: CalendarModel,
     onPrevClickListener: (Date) -> Unit,
-    onNextClickListener: (Date) -> Unit)
-{
+    onNextClickListener: (Date) -> Unit
+) {
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
     ) {
