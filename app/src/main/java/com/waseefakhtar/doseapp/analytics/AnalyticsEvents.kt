@@ -40,4 +40,8 @@ object AnalyticsEvents {
 
     const val HOME_TAB_CLICKED = "home_tab_clicked"
     const val HISTORY_TAB_CLICKED = "history_tab_clicked"
+
+    const val HOME_CALENDAR_PREVIOUS_WEEK_CLICKED = "home_calendar_previous_week_clicked"
+    const val HOME_CALENDAR_NEXT_WEEK_CLICKED = "home_calendar_next_week_clicked"
+    const val HOME_NEW_DATE_SELECTED = "home_new_date_clicked"
 }

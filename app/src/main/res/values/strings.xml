@@ -34,8 +34,8 @@
     <string name="dosage_and_frequency_mismatch_error_message">You\'re selecting %s time(s) of days which is more than the number of dosage.</string>
     <string name="your_plan_for_today">Your plan for today</string>
     <string name="daily_medicine_log">%d of %d completed.</string>
-    <string name="welcome">Welcome!</string>
-    <string name="home_screen_empty_card_message">No medications added yet? Tap to get started and stay on top of your medication schedule.</string>
+    <string name="medication_break">Medication Break</string>
+    <string name="home_screen_empty_card_message">No medications scheduled for this date. Take a break and relax.</string>
     <string name="today">Today</string>
     <string name="this_week">This Week</string>
     <string name="next_week">Next Week</string>
