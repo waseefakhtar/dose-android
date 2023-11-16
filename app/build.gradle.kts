@@ -57,9 +57,6 @@ android {
 }
 
 dependencies {
-    // Before updating, check Kotlin compatibility with Compose Compiler: https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
-    // Also check Jetpack libraries update to go along with it: https://developer.android.com/jetpack/androidx/versions/all-channel
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
