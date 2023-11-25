@@ -1,0 +1,77 @@
+[versions]
+accompanistPermissions = "0.33.2-alpha"
+activity = "1.8.0"
+androidxHilt = "1.1.0"
+compose = "1.6.0-alpha08"
+composeCompiler = "1.5.4"
+composeNavigation = "2.7.5"
+core = "1.12.0"
+espresso = "3.5.1"
+firebase = "32.5.0"
+firebaseCrashlyticsGradle = "2.9.1"
+gson = "2.10"
+gradle = "8.1.2"
+googleServices = "4.3.13"
+hilt = "2.47"
+junit = "4.13.2"
+junitExt = "1.1.5"
+kotlin = "1.9.20" # Must be aligned with KSP version
+ksp = "1.9.20-1.0.14" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
+ktlint = "10.3.0"
+lifecycle = "2.7.0-beta01"
+room = "2.6.0"
+material3 = "1.2.0-alpha10"
+okhttp = "4.10.0"
+[libraries]
+# Accompanist
+accompanist-permission = { group="com.google.accompanist", name="accompanist-permissions", version.ref="accompanistPermissions" }
+# Android
+androidx-core-ktx = { group="androidx.core", name="core-ktx", version.ref="core" }
+# Compose
+compose-activity = { group="androidx.activity", name="activity-compose", version.ref="activity" }
+compose-fundation = { group="androidx.compose.foundation", name="foundation", version.ref="compose" }
+compose-material3 = { group="androidx.compose.material3", name="material3", version.ref = "material3" }
+compose-junit-ui = { group="androidx.compose.ui", name="ui-test-junit4", version.ref="compose" }
+compose-navigation = { group="androidx.navigation", name="navigation-compose", version.ref="composeNavigation" }
+compose-preview = { group="androidx.compose.ui", name="ui-tooling-preview", version.ref="compose" }
+compose-ui-tooling-debug = { group="androidx.compose.ui", name="ui-tooling", version.ref="compose" }
+compose-ui-test-manifest = { group="androidx.compose.ui", name="ui-test-manifest", version.ref="compose" }
+compose-ui = { group="androidx.compose.ui", name="ui", version.ref="compose" }
+# Firebase
+firebase-analytics = { group="com.google.firebase", name="firebase-analytics" }
+firebase-crashlytics = { group="com.google.firebase", name="firebase-crashlytics" }
+firebase-bom = { group="com.google.firebase", name="firebase-bom", version.ref="firebase" }
+firebase-crashlytics-gradle-plugin = { group="com.google.firebase", name="firebase-crashlytics-gradle", version.ref="firebaseCrashlyticsGradle" }
+# Google Services
+google-services-gradle-plugin = { group="com.google.gms", name="google-services", version.ref="googleServices" }
+# Gson
+gson = { group="com.google.code.gson", name="gson", version.ref="gson" }
+# Hilt
+hilt-android = { group="com.google.dagger", name="hilt-android", version.ref="hilt"}
+hilt-compiler = { group="com.google.dagger", name="hilt-compiler", version.ref="hilt"}
+hilt-gradle-plugin = { group="com.google.dagger", name="hilt-android-gradle-plugin", version.ref="hilt"  }
+hilt-androidx-compiler = { group= "androidx.hilt", name= "hilt-compiler", version.ref="androidxHilt"}
+hilt-navigation-compose = { group= "androidx.hilt", name= "hilt-navigation-compose", version.ref="androidxHilt"}
+# Ktlin
+ktlint-gradle-plugin = { group="org.jlleitschuh.gradle", name="ktlint-gradle", version.ref="ktlint" }
+# Lifecycle
+lifecycle-runtime-ktx = { group="androidx.lifecycle", name="lifecycle-runtime-ktx", version.ref="lifecycle" }
+lifecycle-viewmodel-compose = { group="androidx.lifecycle", name="lifecycle-viewmodel-compose", version.ref="lifecycle" }
+# OkHttp
+okhttp = { group="com.squareup.okhttp3", name="okhttp" }
+okhttp-logging-interceptor = { group="com.squareup.okhttp3", name="logging-interceptor" }
+okhttp-bom = { group="com.squareup.okhttp3", name="okhttp-bom", version.ref="okhttp" }
+# Room
+room-runtime = { group="androidx.room", name="room-runtime", version.ref="room"}
+room-ktx = { group="androidx.room", name="room-ktx", version.ref="room"}
+room-compiler = { group="androidx.room", name="room-compiler", version.ref="room"}
+# Tests
+junit = { group="junit", name="junit", version.ref="junit" }
+junit-ext = { group="androidx.test.ext", name="junit", version.ref="junitExt" }
+espresso-core = { group="androidx.test.espresso", name="espresso-core", version.ref="espresso" }
+[plugins]
+android-application = { id="com.android.application", version.ref="gradle" }
+android-library = { id="com.android.library", version.ref="gradle" }
+jetbrains-kotlin-android = { id="org.jetbrains.kotlin.android", version.ref="kotlin" }
+ktlint = { id="org.jlleitschuh.gradle.ktlint", version.ref="ktlint" }
+ksp = { id="com.google.devtools.ksp", version.ref="ksp" }
