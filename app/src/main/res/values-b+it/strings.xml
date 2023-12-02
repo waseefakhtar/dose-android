@@ -33,7 +33,7 @@
     <string name="selected_content_description">Selezionato</string>
     <string name="dosage_and_frequency_mismatch_error_message">Stai selezionando %s volte che è superiore al numero di dosaggi.</string>
     <string name="your_plan_for_today">Il tuo piano per oggi</string>
-    <string name="daily_medicine_log">%d su %d completati.</string>
+    <string name="daily_medicine_log">%1$d su %2$d completati.</string>
     <string name="medication_break">Pausa dai Medicinali</string>
     <string name="home_screen_empty_card_message">Nessun medicinale programmato per questa data. Fai una pausa e rilassati.</string>
     <string name="today">Oggi</string>
@@ -48,10 +48,10 @@
     <string name="medication_scheduled_at">Programmato alle %s</string>
     <string name="medication_timely_reminders_setup_message">%s è ora impostato per promemoria tempestivi.</string>
     <string name="medication_logged">Medicina Registrata</string>
-    <string name="medication_dose_details">%d dose alle %s</string>
+    <string name="medication_dose_details">%1$d dose alle %2$s</string>
     <string name="medication_reminder">Promemoria Medicinale</string>
     <string name="notifications_for_medication_reminder">Notifiche per promemoria medicinale</string>
-    <string name="medication_reminder_time">È ora di prendere la tua medicina, %s. Apri l'app per registrarla.</string>
+    <string name="medication_reminder_time">È ora di prendere la tua medicina, %s. Apri l\'app per registrarla.</string>
     <string name="cancel">Annulla</string>
     <string name="ok">Ok</string>
 </resources>
