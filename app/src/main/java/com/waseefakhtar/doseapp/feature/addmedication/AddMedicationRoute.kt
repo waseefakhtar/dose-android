@@ -265,7 +265,7 @@ fun AddMedicationScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = "Time(s) for Medication",
+                text = stringResource(R.string.times_for_medication),
                 style = MaterialTheme.typography.bodyLarge
             )
 

@@ -2,6 +2,7 @@
     <string name="app_name">Dose</string>
     <string name="home">Home</string>
     <string name="calendar">Calendario</string>
+    <string name="add_time">Aggiungi Orario</string>
     <string name="add_medication">Aggiungi Medicinale</string>
     <string name="medication_name">Nome Medicinale</string>
     <string name="dose_per_day">Dosaggio</string>
@@ -54,4 +55,7 @@
     <string name="medication_reminder_time">È ora di prendere la tua medicina, %s. Apri l\'app per registrarla.</string>
     <string name="cancel">Annulla</string>
     <string name="ok">Ok</string>
+    <string name="daily">Quotidiana</string>
+    <string name="weekly">Settimanalmente</string>
+    <string name="monthly">Mensile</string>
 </resources>
