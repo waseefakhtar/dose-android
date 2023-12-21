@@ -42,6 +42,9 @@
     <string name="notifications">Notifications</string>
     <string name="notification_permission_required">Notification Permission Required</string>
     <string name="notification_permission_required_description_message">To ensure you never miss your medication, please grant the notification permission.</string>
+    <string name="alarms">Notifications</string>
+    <string name="alarms_permission_required">Alarms Permission Required</string>
+    <string name="alarms_permission_required_description_message">To ensure you never miss your medication, please grant the alarms permission.</string>
     <string name="allow">Allow</string>
     <string name="medication_taken_at">Taken at %s</string>
     <string name="medication_skipped_at">Skipped at %s</string>
