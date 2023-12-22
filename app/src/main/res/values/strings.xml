@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Dose</string>
     <string name="home">Home</string>
     <string name="calendar">Calendar</string>
@@ -42,6 +42,9 @@
     <string name="notifications">Notifications</string>
     <string name="notification_permission_required">Notification Permission Required</string>
     <string name="notification_permission_required_description_message">To ensure you never miss your medication, please grant the notification permission.</string>
+    <string name="alarms" tools:ignore="MissingTranslation">Notifications</string>
+    <string name="alarms_permission_required" tools:ignore="MissingTranslation">Alarms Permission Required</string>
+    <string name="alarms_permission_required_description_message" tools:ignore="MissingTranslation">To ensure you never miss your medication, please grant the alarms permission.</string>
     <string name="allow">Allow</string>
     <string name="medication_taken_at">Taken at %s</string>
     <string name="medication_skipped_at">Skipped at %s</string>
