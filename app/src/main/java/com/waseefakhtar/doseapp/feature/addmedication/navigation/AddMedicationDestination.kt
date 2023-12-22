@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.waseefakhtar.doseapp.core.navigation.DoseNavigationDestination
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.AddMedicationRoute
+import com.waseefakhtar.doseapp.feature.home.navigation.ASK_ALARM_PERMISSION
 import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
 
 object AddMedicationDestination : DoseNavigationDestination {
@@ -24,6 +25,9 @@ fun NavGraphBuilder.addMedicationGraph(navController: NavController, bottomBarVi
 
         navController.previousBackStackEntry?.savedStateHandle.apply {
             this?.set(ASK_NOTIFICATION_PERMISSION, true)
+        }
+        navController.previousBackStackEntry?.savedStateHandle.apply {
+            this?.set(ASK_ALARM_PERMISSION, true)
         }
         AddMedicationRoute(onBackClicked, navigateToMedicationConfirm)
     }
