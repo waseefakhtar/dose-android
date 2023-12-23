@@ -25,6 +25,11 @@ android {
         }
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
