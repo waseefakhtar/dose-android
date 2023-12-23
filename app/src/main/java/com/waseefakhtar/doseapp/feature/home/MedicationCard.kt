@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.feature.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +38,7 @@ fun MedicationCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        onClick = {navigateToMedicationDetail(medication)},
+        onClick = { navigateToMedicationDetail(medication) },
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,

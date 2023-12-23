@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -343,7 +342,7 @@ fun DateItem(
         Card(
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 4.dp),
-            onClick = {onClickListener(date)},
+            onClick = { onClickListener(date) },
             colors = cardColors(
                 // background colors of the selected date
                 // and the non-selected date are different
