@@ -29,7 +29,6 @@ android {
         generateLocaleConfig = true
     }
 
-
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
