@@ -326,6 +326,7 @@ fun DateList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateItem(
     date: CalendarModel.DateModel,
@@ -341,8 +342,8 @@ fun DateItem(
         )
         Card(
             modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 4.dp)
-                .clickable { onClickListener(date) },
+                .padding(vertical = 4.dp, horizontal = 4.dp),
+            onClick = {onClickListener(date)},
             colors = cardColors(
                 // background colors of the selected date
                 // and the non-selected date are different
