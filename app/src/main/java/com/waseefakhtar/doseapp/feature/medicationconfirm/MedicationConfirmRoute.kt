@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -104,8 +105,9 @@ fun MedicationConfirmScreen(
 
         val medication = medications.first()
         Text(
-            text = stringResource(
-                R.string.all_set,
+            text = pluralStringResource(
+                id = R.plurals.all_set,
+                count = medications.size,
                 medication.name,
                 medications.size,
                 medication.recurrence.lowercase(),
