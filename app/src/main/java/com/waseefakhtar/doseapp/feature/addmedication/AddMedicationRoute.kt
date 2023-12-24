@@ -265,7 +265,7 @@ fun AddMedicationScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = "Time(s) for Medication",
+                text = stringResource(R.string.time_s_for_medication),
                 style = MaterialTheme.typography.bodyLarge
             )
 
@@ -285,7 +285,7 @@ fun AddMedicationScreen(
                 onClick = { addTime(CalendarInformation(Calendar.getInstance())) }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                Text("Add Time")
+                Text(stringResource(R.string.add_time))
             }
         }
     }
