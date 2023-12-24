@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="all_set">
+        <item quantity="one">Your %1$s reminders are ready, with %2$s alert %3$s until %4$s.</item>
+        <item quantity="other">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
+    </plurals>
+</resources>

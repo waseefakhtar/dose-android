@@ -13,7 +13,6 @@
     <string name="next">Avanti</string>
     <string name="value_is_empty">Inserisci un valore valido per %s</string>
     <string name="all_done">Fatto!</string>
-    <string name="all_set">I tuoi promemoria per %1$s sono pronti, con %2$s avvisi %3$s fino a %4$s.</string>
     <string name="confirm">Conferma</string>
     <string name="time_remaining">Prossima dose tra %1$s %2$s</string>
     <string name="days">giorni</string>

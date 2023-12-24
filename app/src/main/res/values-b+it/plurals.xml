@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="all_set">
+        <item quantity="one">I tuoi promemoria per %1$s sono pronti, con %2$s avviso %3$s fino a %4$s.</item>
+        <item quantity="other">I tuoi promemoria per %1$s sono pronti, con %2$s avvisi %3$s fino a %4$s.</item>
+    </plurals>
+</resources>

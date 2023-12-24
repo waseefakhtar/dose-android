@@ -13,7 +13,6 @@
     <string name="next">Next</string>
     <string name="value_is_empty">Please enter a valid value for %s</string>
     <string name="all_done">All done!</string>
-    <string name="all_set">Your %1$s reminders are ready, with %2$s alert(s) %3$s until %4$s.</string>
     <string name="confirm">Confirm</string>
     <string name="time_remaining">Next dose in %1$s %2$s</string>
     <string name="days">days</string>
