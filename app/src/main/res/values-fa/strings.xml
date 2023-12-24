@@ -12,7 +12,6 @@
     <string name="next">بعدی</string>
     <string name="value_is_empty">لطفا مقدار درستی برای %s وارد کنید.</string>
     <string name="all_done">همه تمام.</string>
-    <string name="all_set">هشدارهای شما برای %1$s آماده است، تعداد %2$s هشدار با تکرار %3$s تا %4$s</string>
     <string name="confirm">تایید</string>
     <string name="time_remaining">دوز بعدی در %1$s و %2$s</string>
     <string name="days">روزها</string>
