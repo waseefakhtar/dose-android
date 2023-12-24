@@ -1,9 +1,11 @@
 package com.waseefakhtar.doseapp.feature.home
 
 import android.Manifest
+import android.app.AlarmManager
+import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -66,12 +69,14 @@ import java.util.Date
 fun HomeRoute(
     navController: NavController,
     askNotificationPermission: Boolean,
+    askAlarmPermission: Boolean,
     navigateToMedicationDetail: (Medication) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
+    PermissionAlarmDialog(analyticsHelper, askAlarmPermission)
     PermissionDialog(analyticsHelper, askNotificationPermission)
     HomeScreen(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
 }
@@ -320,6 +325,7 @@ fun DateList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateItem(
     date: CalendarModel.DateModel,
@@ -335,8 +341,8 @@ fun DateItem(
         )
         Card(
             modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 4.dp)
-                .clickable { onClickListener(date) },
+                .padding(vertical = 4.dp, horizontal = 4.dp),
+            onClick = { onClickListener(date) },
             colors = cardColors(
                 // background colors of the selected date
                 // and the non-selected date are different
@@ -458,6 +464,64 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
                                     notificationPermissionState.launchPermissionRequest()
                                     openAlertDialog.value = false
                                     analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+                                }
+                            ) {
+                                Text(stringResource(R.string.allow))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: Boolean) {
+    val context = LocalContext.current
+    val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
+    if (askAlarmPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)) {
+        val alarmPermissionState = rememberPermissionState(Manifest.permission.SCHEDULE_EXACT_ALARM) { isGranted ->
+            when (isGranted) {
+                true -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_GRANTED)
+                false -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_REFUSED)
+            }
+        }
+        if (alarmManager?.canScheduleExactAlarms() == false) {
+            val openAlertDialog = remember { mutableStateOf(true) }
+
+            when {
+                openAlertDialog.value -> {
+                    analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_SHOWN)
+
+                    AlertDialog(
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = stringResource(R.string.alarms)
+                            )
+                        },
+                        title = {
+                            Text(text = stringResource(R.string.alarms_permission_required))
+                        },
+                        text = {
+                            Text(text = stringResource(R.string.alarms_permission_required_description_message))
+                        },
+                        onDismissRequest = {
+                            openAlertDialog.value = false
+                            analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_DISMISSED)
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    Intent().also { intent ->
+                                        intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                                        context.startActivity(intent)
+                                    }
+
+                                    openAlertDialog.value = false
+                                    analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_ALLOW_CLICKED)
                                 }
                             ) {
                                 Text(stringResource(R.string.allow))

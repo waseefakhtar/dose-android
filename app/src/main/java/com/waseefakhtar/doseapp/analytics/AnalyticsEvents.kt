@@ -8,6 +8,12 @@ object AnalyticsEvents {
     const val NOTIFICATION_PERMISSION_GRANTED = "notification_permission_granted"
     const val NOTIFICATION_PERMISSION_REFUSED = "notification_permission_refused"
 
+    const val ALARM_PERMISSION_DIALOG_SHOWN = "alarm_permission_dialog_shown"
+    const val ALARM_PERMISSION_DIALOG_DISMISSED = "alarm_permission_dialog_shown"
+    const val ALARM_PERMISSION_DIALOG_ALLOW_CLICKED = "alarm_permission_dialog_allow_clicked"
+    const val ALARM_PERMISSION_GRANTED = "alarm_permission_granted"
+    const val ALARM_PERMISSION_REFUSED = "alarm_permission_refused"
+
     const val EMPTY_CARD_SHOWN = "empty_card_shown"
 
     const val ADD_MEDICATION_CLICKED_EMPTY_CARD = "add_medication_clicked_empty_card"
