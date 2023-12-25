@@ -2,6 +2,7 @@
     <string name="app_name">Dose</string>
     <string name="home">Home</string>
     <string name="calendar">Calendar</string>
+    <string name="add_time" tools:ignore="MissingTranslation">Add Time</string>
     <string name="add_medication">Add Medication</string>
     <string name="medication_name">Medication Name</string>
     <string name="dose_per_day">Dosage</string>
@@ -12,7 +13,10 @@
     <string name="next">Next</string>
     <string name="value_is_empty">Please enter a valid value for %s</string>
     <string name="all_done">All done!</string>
-    <string name="all_set">Your %1$s reminders are ready, with %2$s alert(s) %3$s until %4$s.</string>
+    <plurals name="all_set" tools:ignore="MissingTranslation">
+        <item quantity="one">Your %1$s reminders are ready, with %2$s alert %3$s until %4$s.</item>
+        <item quantity="many">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
+    </plurals>
     <string name="confirm">Confirm</string>
     <string name="time_remaining">Next dose in %1$s %2$s</string>
     <string name="days">days</string>
@@ -57,4 +61,7 @@
     <string name="medication_reminder_time">It is time to take your medication, %s. Open the app to log it.</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="daily" tools:ignore="MissingTranslation">Daily</string>
+    <string name="weekly" tools:ignore="MissingTranslation">Weekly</string>
+    <string name="monthly" tools:ignore="MissingTranslation">Monthly</string>
 </resources>
