@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.waseefakhtar.doseapp"
         minSdk = libs.versions.min.sdk.version.get().toInt()
-        targetSdk = libs.versions.traget.sdk.version.get().toInt()
+        targetSdk = libs.versions.target.sdk.version.get().toInt()
         versionCode = libs.versions.version.code.get().toInt()
         versionName = libs.versions.version.name.get()
 

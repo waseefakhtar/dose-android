@@ -1,7 +1,7 @@
 [versions]
 min-sdk-version = "21"
 compile-sdk-version = "34"
-traget-sdk-version = "34"
+target-sdk-version = "34"
 version-code = "6"
 version-name = "1.4.0"
 accompanistPermissions = "0.33.2-alpha"
