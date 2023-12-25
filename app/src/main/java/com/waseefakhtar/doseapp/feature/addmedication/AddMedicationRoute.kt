@@ -285,7 +285,7 @@ fun AddMedicationScreen(
                 onClick = { addTime(CalendarInformation(Calendar.getInstance())) }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                Text("Add Time")
+                Text(stringResource(id = R.string.add_time))
             }
         }
     }
