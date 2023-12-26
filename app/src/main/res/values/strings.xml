@@ -16,6 +16,7 @@
     <plurals name="all_set" tools:ignore="MissingTranslation">
         <item quantity="one">Your %1$s reminders are ready, with %2$s alert %3$s until %4$s.</item>
         <item quantity="many">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
+        <item quantity="other">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
     </plurals>
     <string name="confirm">Confirm</string>
     <string name="time_remaining">Next dose in %1$s %2$s</string>
