@@ -14,5 +14,5 @@ interface MedicationRepository {
 
     fun getAllMedications(): Flow<List<Medication>>
 
-    fun getMedicationsForDate(date: Date): Flow<List<Medication>>
+    fun getMedicationsForDate(date: String): Flow<List<Medication>>
 }

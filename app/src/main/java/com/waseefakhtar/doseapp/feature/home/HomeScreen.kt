@@ -219,28 +219,18 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 
 @Composable
 fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
-
-    var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
-
     DatesHeader(analyticsHelper) { selectedDate ->
-        val newMedicationList = state.medications
-            .filter { medication ->
-                medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
-            }
-            .sortedBy { it.medicationTime }
-
-        filteredMedications = newMedicationList
+        viewModel.selectDate(selectedDate.date)
         analyticsHelper.logEvent(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
     }
-
-    if (filteredMedications.isEmpty()) {
+    if (state.medications.isEmpty()) {
         EmptyCard(navController, analyticsHelper)
     } else {
         LazyColumn(
             modifier = Modifier,
         ) {
             items(
-                items = filteredMedications,
+                items = state.medications,
                 itemContent = {
                     MedicationCard(
                         medication = it,
