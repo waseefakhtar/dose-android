@@ -219,7 +219,7 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 
 @Composable
 fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
-    DatesHeader(analyticsHelper) { selectedDate ->
+    DatesHeader(analyticsHelper, state.lastSelectedDate) { selectedDate ->
         viewModel.selectDate(selectedDate.date)
         analyticsHelper.logEvent(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
     }
@@ -247,10 +247,15 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 @Composable
 fun DatesHeader(
     analyticsHelper: AnalyticsHelper,
-    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
+    lastSelectedDate: String,
+    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date){}
 ) {
     val dataSource = CalendarDataSource()
-    var calendarModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
+    var calendarModel by remember {
+        mutableStateOf(
+            dataSource.getData(lastSelectedDate = dataSource.getLastSelectedDate(lastSelectedDate))
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

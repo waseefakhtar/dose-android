@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.home.data
 
+import com.waseefakhtar.doseapp.extension.toDate
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
 import java.util.Calendar
@@ -12,6 +13,9 @@ class CalendarDataSource {
             return Date()
         }
 
+    fun getLastSelectedDate(dateString: String): Date {
+        return dateString.toDate() ?: today
+    }
     fun getData(startDate: Date = today, lastSelectedDate: Date): CalendarModel {
         val calendar = Calendar.getInstance()
         calendar.time = startDate
@@ -45,7 +49,10 @@ class CalendarDataSource {
         return CalendarModel(
             selectedDate = toItemModel(lastSelectedDate, true),
             visibleDates = dateList.map {
-                toItemModel(it, it == lastSelectedDate)
+                toItemModel(
+                    date = it,
+                    isSelectedDate = it.toFormattedDateString() == lastSelectedDate.toFormattedDateString()
+                )
             }
         )
     }

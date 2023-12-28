@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.domain.model.Medication
@@ -24,12 +25,20 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getMedicationsUseCase: GetMedicationsUseCase,
-    private val updateMedicationUseCase: UpdateMedicationUseCase
+    private val updateMedicationUseCase: UpdateMedicationUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var state by mutableStateOf(HomeState())
         private set
-    private var dateFilter = MutableStateFlow(Date().toFormattedYeahMonthDateString())
+    private var dateFilter = savedStateHandle.getStateFlow(
+        DATE_FILTER_KEY,
+        Date().toFormattedYeahMonthDateString()
+    ).onEach {
+        state = state.copy(
+            lastSelectedDate = it
+        )
+    }
 
     init {
         loadMedications()
@@ -59,7 +68,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun selectDate(date: Date) {
-        dateFilter.update { date.toFormattedYeahMonthDateString() }
+        savedStateHandle[DATE_FILTER_KEY] = date.toFormattedYeahMonthDateString()
     }
 
     fun takeMedication(medication: Medication) {
@@ -70,5 +79,8 @@ class HomeViewModel @Inject constructor(
 
     fun getUserPlan() {
         // TODO: Get user plan
+    }
+    companion object {
+        const val DATE_FILTER_KEY = "com.waseefakhtar.doseapp.MedicationDateFilter"
     }
 }
