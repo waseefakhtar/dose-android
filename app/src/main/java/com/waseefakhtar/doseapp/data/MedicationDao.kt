@@ -34,8 +34,8 @@ interface MedicationDao {
         """
             SELECT *
             FROM medicationentity
-            WHERE strftime('%Y-%m-%d', medicationTime / 1000, 'unixepoch') = :date
-            ORDER BY medicationTime DESC
+            WHERE strftime('%Y-%m-%d', medicationTime / 1000, 'unixepoch', 'localtime') = :date
+            ORDER BY medicationTime ASC
         """
     )
     fun getMedicationsForDate(date: String): Flow<List<MedicationEntity>>
