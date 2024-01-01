@@ -16,8 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
@@ -38,8 +38,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,20 +58,24 @@ import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.millisSinceEpoch
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
-import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
+import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
-import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
-import com.waseefakhtar.doseapp.util.getRecurrenceList
-import java.util.Calendar
-import java.util.Date
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {})
+    AddMedicationRoute(
+        onBackClicked = {},
+        navigateToMedicationConfirm = {},
+    )
 }
 
 @Composable
@@ -81,8 +85,14 @@ fun AddMedicationRoute(
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
     val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
-    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm)
+    AddMedicationScreen(
+        onBackClicked = onBackClicked,
+        viewModel = viewModel,
+        analyticsHelper = analyticsHelper,
+        navigateToMedicationConfirm = navigateToMedicationConfirm
+    )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,20 +101,29 @@ fun AddMedicationScreen(
     viewModel: AddMedicationViewModel,
     analyticsHelper: AnalyticsHelper,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
+    context: Context = LocalContext.current
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
-    var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
-    var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
-    val context = LocalContext.current
 
-    fun addTime(time: CalendarInformation) {
+    val (recurrence, onRecurrenceChange) = rememberSaveable(stateSaver = StateSavers.recurrenceSaver) {
+        mutableStateOf(Recurrence.Daily)
+    }
+
+    val (endDate, onEndDateChange) = rememberSaveable(stateSaver = StateSavers.localDateSaver) {
+        mutableStateOf(LocalDate.now())
+    }
+
+    val selectedTimes = rememberSaveable(saver = StateSavers.localListTimeSaver) {
+        mutableStateListOf()
+    }
+
+    fun addTime(time: LocalTime) {
         selectedTimes.add(time)
         analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
     }
 
-    fun removeTime(time: CalendarInformation) {
+    fun removeTime(time: LocalTime) {
         selectedTimes.remove(time)
         analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
     }
@@ -112,8 +131,7 @@ fun AddMedicationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .padding(vertical = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
@@ -123,7 +141,7 @@ fun AddMedicationScreen(
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.back)
                         )
                     }
@@ -249,7 +267,7 @@ fun AddMedicationScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
-                RecurrenceDropdownMenu { recurrence = it }
+                RecurrenceDropdownMenu(recurrence = onRecurrenceChange)
             }
 
             if (isMaxDoseError) {
@@ -261,7 +279,7 @@ fun AddMedicationScreen(
             }
 
             Spacer(modifier = Modifier.padding(4.dp))
-            EndDateTextField { endDate = it }
+            EndDateTextField(endDate = onEndDateChange)
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
@@ -282,7 +300,7 @@ fun AddMedicationScreen(
             }
 
             Button(
-                onClick = { addTime(CalendarInformation(Calendar.getInstance())) }
+                onClick = { addTime(LocalTime.now()) }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                 Text(stringResource(id = R.string.add_time))
@@ -291,12 +309,13 @@ fun AddMedicationScreen(
     }
 }
 
+
 private fun validateMedication(
     name: String,
     dosage: Int,
-    recurrence: String,
-    endDate: Long,
-    selectedTimes: List<CalendarInformation>,
+    recurrence: Recurrence,
+    endDate: LocalDate,
+    selectedTimes: List<LocalTime>,
     onInvalidate: (Int) -> Unit,
     onValidate: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel
@@ -311,7 +330,7 @@ private fun validateMedication(
         return
     }
 
-    if (endDate < 1) {
+    if (endDate < LocalDate.now()) {
         onInvalidate(R.string.end_date)
         return
     }
@@ -321,8 +340,13 @@ private fun validateMedication(
         return
     }
 
-    val medications =
-        viewModel.createMedications(name, dosage, recurrence, Date(endDate), selectedTimes)
+    val medications = viewModel.createMedications(
+        name = name,
+        dosage = dosage,
+        recurrence = recurrence,
+        endDate = endDate,
+        selectedTimes
+    )
 
     onValidate(medications)
 }
@@ -364,7 +388,11 @@ private fun showMaxSelectionSnackbar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
+fun RecurrenceDropdownMenu(recurrence: (Recurrence) -> Unit) {
+
+    var isDropDownExpanded by remember { mutableStateOf(false) }
+    var selectedRecurrence by remember { mutableStateOf(Recurrence.Daily) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -372,33 +400,29 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
             text = stringResource(id = R.string.recurrence),
             style = MaterialTheme.typography.bodyLarge
         )
-
-        val options = getRecurrenceList().map { it.name }
-        var expanded by remember { mutableStateOf(false) }
-        var selectedOptionText by remember { mutableStateOf(options[0]) }
         ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
+            expanded = isDropDownExpanded,
+            onExpandedChange = { isDropDownExpanded = !isDropDownExpanded },
         ) {
             TextField(
                 modifier = Modifier.menuAnchor(),
                 readOnly = true,
-                value = selectedOptionText,
+                value = selectedRecurrence.name,
                 onValueChange = {},
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropDownExpanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
             )
             ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
+                expanded = isDropDownExpanded,
+                onDismissRequest = { isDropDownExpanded = false },
             ) {
-                options.forEach { selectionOption ->
+                Recurrence.entries.forEach { entry ->
                     DropdownMenuItem(
-                        text = { Text(selectionOption) },
+                        text = { Text(entry.name) },
                         onClick = {
-                            selectedOptionText = selectionOption
-                            recurrence(selectionOption)
-                            expanded = false
+                            selectedRecurrence = entry
+                            recurrence(entry)
+                            isDropDownExpanded = false
                         }
                     )
                 }
@@ -409,7 +433,7 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EndDateTextField(endDate: (Long) -> Unit) {
+fun EndDateTextField(endDate: (LocalDate) -> Unit) {
     Text(
         text = stringResource(id = R.string.end_date),
         style = MaterialTheme.typography.bodyLarge
@@ -418,21 +442,14 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
     var shouldDisplay by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    if (isPressed) {
-        shouldDisplay = true
-    }
+    if (isPressed) shouldDisplay = true
 
-    val today = Calendar.getInstance()
-    today.set(Calendar.HOUR_OF_DAY, 0)
-    today.set(Calendar.MINUTE, 0)
-    today.set(Calendar.SECOND, 0)
-    today.set(Calendar.MILLISECOND, 0)
-    val currentDayMillis = today.timeInMillis
+
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= currentDayMillis
+                return utcTimeMillis >= LocalDate.now().millisSinceEpoch
             }
         }
     )
@@ -448,11 +465,13 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
         shouldDisplay = shouldDisplay,
         onConfirmClicked = { selectedDateInMillis ->
             selectedDate = selectedDateInMillis.toFormattedDateString()
-            endDate(selectedDateInMillis)
+            val date = Instant.ofEpochMilli(selectedDateInMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+
+            endDate(date)
         },
-        dismissRequest = {
-            shouldDisplay = false
-        }
+        dismissRequest = { shouldDisplay = false }
     )
 
     TextField(
@@ -469,20 +488,21 @@ fun EndDateTextField(endDate: (Long) -> Unit) {
 fun TimerTextField(
     isLastItem: Boolean,
     isOnlyItem: Boolean,
-    time: (CalendarInformation) -> Unit,
+    time: (LocalTime) -> Unit,
     onDeleteClick: () -> Unit,
-    analyticsHelper: AnalyticsHelper
+    analyticsHelper: AnalyticsHelper,
+    currentTime: LocalTime = LocalTime.now()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    val currentTime = CalendarInformation(Calendar.getInstance())
-    var selectedTime by rememberSaveable(
-        stateSaver = CalendarInformation.getStateSaver()
-    ) { mutableStateOf(currentTime) }
+
+    var selectedTime by rememberSaveable(stateSaver = StateSavers.localTimeSaver) {
+        mutableStateOf(currentTime)
+    }
 
     TimePickerDialogComponent(
         showDialog = isPressed,
-        selectedDate = selectedTime,
+        selectedTime = selectedTime,
         onSelectedTime = {
             analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
             selectedTime = it
@@ -490,10 +510,14 @@ fun TimerTextField(
         }
     )
 
+    val selectedTimeHourFormat by remember(selectedTime) {
+        derivedStateOf(selectedTime::toFormattedTimeString)
+    }
+
     TextField(
         modifier = Modifier.fillMaxWidth(),
         readOnly = true,
-        value = selectedTime.getDateFormatted(HOUR_MINUTE_FORMAT),
+        value = selectedTimeHourFormat,
         onValueChange = {},
         trailingIcon = {
             // TODO: Make delete action work properly

@@ -36,6 +36,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -66,6 +67,8 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.navigation)
     implementation(libs.compose.fundation)
+    // de-sugaring to use Java8 features
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.compose.preview)
 

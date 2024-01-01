@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
-import java.util.Date
+import java.time.LocalDateTime
 
 class AnalyticsHelper private constructor(context: Context) {
 
@@ -30,7 +30,7 @@ class AnalyticsHelper private constructor(context: Context) {
         val params = Bundle()
         params.putString("medication_time", medication.medicationTime.toFormattedDateString())
         params.putString("medication_end_date", medication.endDate.toFormattedDateString())
-        params.putString("notification_time", Date().toFormattedDateString())
+        params.putString("notification_time", LocalDateTime.now().toFormattedDateString())
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SHOWN, params)
     }
 
@@ -38,7 +38,7 @@ class AnalyticsHelper private constructor(context: Context) {
         val params = Bundle()
         params.putString("medication_time", medication.medicationTime.toFormattedDateString())
         params.putString("medication_end_date", medication.endDate.toFormattedDateString())
-        params.putString("notification_time", Date().toFormattedDateString())
+        params.putString("notification_time", LocalDateTime.now().toFormattedDateString())
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, params)
     }
 }

@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
+import java.time.LocalDateTime
 
 @Dao
 interface MedicationDao {
@@ -37,5 +37,5 @@ interface MedicationDao {
             WHERE endDate > :date
         """
     )
-    fun getMedicationsForDate(date: Date): Flow<List<MedicationEntity>>
+    fun getMedicationsForDate(date: LocalDateTime): Flow<List<MedicationEntity>>
 }

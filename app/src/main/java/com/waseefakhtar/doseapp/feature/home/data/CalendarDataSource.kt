@@ -1,65 +1,50 @@
 package com.waseefakhtar.doseapp.feature.home.data
 
-import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
-import java.util.Calendar
-import java.util.Date
+import java.time.LocalDate
 
 class CalendarDataSource {
 
-    val today: Date
-        get() {
-            return Date()
-        }
+    val today: LocalDate
+        get() = LocalDate.now()
 
-    fun getData(startDate: Date = today, lastSelectedDate: Date): CalendarModel {
-        val calendar = Calendar.getInstance()
-        calendar.time = startDate
+    fun getData(startDate: LocalDate = today, lastSelectedDate: LocalDate): CalendarModel {
+        val weekDayStart = startDate.dayOfWeek.value - 1L
 
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val firstDayOfWeek = calendar.time
+        val firstDayOfWeek = startDate.minusDays(weekDayStart)
 
-        calendar.add(Calendar.DAY_OF_YEAR, 6)
-        val endDayOfWeek = calendar.time
+        val endDayOfWeek = startDate.plusDays(6L - weekDayStart)
 
         val visibleDates = getDatesBetween(firstDayOfWeek, endDayOfWeek)
         return toCalendarModel(visibleDates, lastSelectedDate)
     }
 
-    private fun getDatesBetween(startDate: Date, endDate: Date): List<Date> {
-        val dateList = mutableListOf<Date>()
-        val calendar = Calendar.getInstance()
-        calendar.time = startDate
-
-        while (calendar.time <= endDate) {
-            dateList.add(calendar.time)
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
+    private fun getDatesBetween(startDate: LocalDate, endDate: LocalDate): List<LocalDate> =
+        buildList {
+            var start = startDate
+            while (start <= endDate) {
+                add(start)
+                start = start.plusDays(1)
+            }
         }
-        return dateList
-    }
 
     private fun toCalendarModel(
-        dateList: List<Date>,
-        lastSelectedDate: Date
-    ): CalendarModel {
-        return CalendarModel(
-            selectedDate = toItemModel(lastSelectedDate, true),
-            visibleDates = dateList.map {
-                toItemModel(it, it == lastSelectedDate)
-            }
-        )
-    }
+        dateList: List<LocalDate>,
+        lastSelectedDate: LocalDate
+    ): CalendarModel = CalendarModel(
+        selectedDate = toItemModel(lastSelectedDate, true),
+        visibleDates = dateList.map {
+            toItemModel(it, it == lastSelectedDate)
+        }
+    )
 
-    private fun toItemModel(date: Date, isSelectedDate: Boolean): CalendarModel.DateModel {
+
+    private fun toItemModel(date: LocalDate, isSelectedDate: Boolean): CalendarModel.DateModel {
         return CalendarModel.DateModel(
             isSelected = isSelectedDate,
-            isToday = isToday(date),
+            isToday = today == date,
             date = date
         )
     }
 
-    private fun isToday(date: Date): Boolean {
-        val todayDate = today
-        return date.toFormattedDateString() == todayDate.toFormattedDateString()
-    }
 }
