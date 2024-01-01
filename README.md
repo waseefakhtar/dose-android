@@ -2,14 +2,6 @@
 
 
 <h1 align="center">Dose App 💊⏰</h1>
-
-<p align="center">
-Dose is a medication reminder app for Android, designed to help you stay on top of your health by reminding you to take your medications on time — Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.
-</p>
-<p align="center">
-I’m building it in public. So the idea is for everyone to contribute, leave feedback, suggest ideas, and collaborate!
-</p>
-</br>
 <p align="center">
   <a href="https://devlibrary.withgoogle.com/products/android/repos/waseefakhtar-dose-android"><img alt="Google" src="https://img.shields.io/badge/Google%20DevLibrary-Waseef-3ddc84?logo=android&logoColor=3ddc84"/></a>
   <a href="https://www.youtube.com/shorts/RTNcK_2yhYI"><img alt="YouTube" src="https://img.shields.io/badge/YouTube-Google%20Developers-ff0000?logo=youtube"/></a>
@@ -20,7 +12,14 @@ I’m building it in public. So the idea is for everyone to contribute, leave fe
   <a href="https://android-arsenal.com/api?level=21"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/></a>
   <a href="https://github.com/waseefakhtar/dose-android/actions"><img alt="Build Status" src="https://github.com/waseefakhtar/dose-android/workflows/Android%20CI/badge.svg?branch=main"/></a> 
   <a href="https://github.com/waseefakhtar/dose-android/contributors/"><img src="https://img.shields.io/github/contributors/waseefakhtar/dose-android.svg" alt="Contributors" /></a>
-</p> <br>
+</p> 
+
+<p align="center">
+Dose is a medication reminder app for Android, designed to help you stay on top of your health by reminding you to take your medications on time — Made with Jetpack Compose, Material Design 3, Room, Navigation Components, Kotlin Coroutines, Hilt, Firebase using the recommended <a href="https://developer.android.com/topic/architecture">Android Architecture Guidelines</a>.
+</p>
+<p align="center">
+I’m building it in public. So the idea is for everyone to contribute, leave feedback, suggest ideas, and collaborate!
+</p>
 
 <p align="center">
 Got any crazy new ideas? Head over to the <a href="https://github.com/waseefakhtar/dose-android/discussions">Discussions</a> tab and start a new discussion.
