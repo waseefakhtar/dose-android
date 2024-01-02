@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +25,8 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.hasPassed
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
-import java.util.Date
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,6 @@ fun MedicationCard(
     medication: Medication,
     navigateToMedicationDetail: (Medication) -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,7 +69,7 @@ fun MedicationCard(
                 )
 
                 val medicationStatusText = when {
-                    medication.medicationTime.hasPassed() -> {
+                    medication.medicationTime.hasPassed -> {
                         if (medication.medicationTaken) {
                             stringResource(
                                 id = R.string.medication_taken_at,
@@ -95,7 +95,10 @@ fun MedicationCard(
                 )
             }
 
-            Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null
+            )
         }
     }
 }
@@ -109,11 +112,12 @@ private fun MedicationCardTakeNowPreview() {
             name = "A big big name for a little medication I needs to take",
             dosage = 1,
             recurrence = "2",
-            endDate = Date(),
-            medicationTime = Date(),
+            endDate = LocalDate.now(),
+            medicationTime = LocalDateTime.now(),
             medicationTaken = false
-        )
-    ) { }
+        ),
+        navigateToMedicationDetail = {}
+    )
 }
 
 @Preview
@@ -125,9 +129,9 @@ private fun MedicationCardTakenPreview() {
             name = "A big big name for a little medication I needs to take",
             dosage = 1,
             recurrence = "2",
-            endDate = Date(),
-            medicationTime = Date(),
-            medicationTaken = true
-        )
-    ) { }
+            endDate = LocalDate.now(),
+            medicationTime = LocalDateTime.now(),
+            medicationTaken = false
+        ),
+        navigateToMedicationDetail = {})
 }

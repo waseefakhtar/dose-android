@@ -20,12 +20,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -62,8 +63,7 @@ import com.waseefakhtar.doseapp.feature.home.data.CalendarDataSource
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeState
 import com.waseefakhtar.doseapp.feature.home.viewmodel.HomeViewModel
-import java.util.Calendar
-import java.util.Date
+import java.time.LocalDate
 
 @Composable
 fun HomeRoute(
@@ -82,11 +82,23 @@ fun HomeRoute(
 }
 
 @Composable
-fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
+fun HomeScreen(
+    navController: NavController,
+    analyticsHelper: AnalyticsHelper,
+    state: HomeState,
+    viewModel: HomeViewModel,
+    navigateToMedicationDetail: (Medication) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DailyMedications(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
+        DailyMedications(
+            navController = navController,
+            analyticsHelper = analyticsHelper,
+            state = state,
+            viewModel = viewModel,
+            navigateToMedicationDetail = navigateToMedicationDetail
+        )
     }
 }
 
@@ -110,7 +122,11 @@ fun Greeting() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHelper, medicationsToday: List<Medication>) {
+fun DailyOverviewCard(
+    navController: NavController,
+    analyticsHelper: AnalyticsHelper,
+    medicationsToday: List<Medication>
+) {
 
     Card(
         modifier = Modifier
@@ -118,7 +134,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             .padding(top = 8.dp)
             .height(156.dp),
         shape = RoundedCornerShape(36.dp),
-        colors = cardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.tertiary
         ),
@@ -218,7 +234,13 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 }
 
 @Composable
-fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
+fun DailyMedications(
+    navController: NavController,
+    analyticsHelper: AnalyticsHelper,
+    state: HomeState,
+    viewModel: HomeViewModel,
+    navigateToMedicationDetail: (Medication) -> Unit
+) {
 
     var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
 
@@ -271,25 +293,31 @@ fun DatesHeader(
             onPrevClickListener = { startDate ->
                 // refresh the CalendarModel with new data
                 // by get data with new Start Date (which is the startDate-1 from the visibleDates)
-                val calendar = Calendar.getInstance()
-                calendar.time = startDate
+//                val calendar = Calendar.getInstance()
+//                calendar.time = startDate
+//
+//                calendar.add(Calendar.DAY_OF_YEAR, -2) // Subtract one day from startDate
+//                val finalStartDate = calendar.time
 
-                calendar.add(Calendar.DAY_OF_YEAR, -2) // Subtract one day from startDate
-                val finalStartDate = calendar.time
-
-                calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
+                calendarModel = dataSource.getData(
+                    startDate = startDate.minusDays(2),
+                    lastSelectedDate = calendarModel.selectedDate.date
+                )
                 analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_PREVIOUS_WEEK_CLICKED)
             },
             onNextClickListener = { endDate ->
                 // refresh the CalendarModel with new data
                 // by get data with new Start Date (which is the endDate+2 from the visibleDates)
-                val calendar = Calendar.getInstance()
-                calendar.time = endDate
+//                val calendar = Calendar.getInstance()
+//                calendar.time = endDate
+//
+//                calendar.add(Calendar.DAY_OF_YEAR, 2)
+//                val finalStartDate = calendar.time
 
-                calendar.add(Calendar.DAY_OF_YEAR, 2)
-                val finalStartDate = calendar.time
-
-                calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
+                calendarModel = dataSource.getData(
+                    startDate = endDate.plusDays(2),
+                    lastSelectedDate = calendarModel.selectedDate.date
+                )
                 analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_NEXT_WEEK_CLICKED)
             }
         )
@@ -379,8 +407,8 @@ fun DateItem(
 @Composable
 fun DateHeader(
     data: CalendarModel,
-    onPrevClickListener: (Date) -> Unit,
-    onNextClickListener: (Date) -> Unit
+    onPrevClickListener: (LocalDate) -> Unit,
+    onNextClickListener: (LocalDate) -> Unit
 ) {
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
@@ -398,20 +426,24 @@ fun DateHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.tertiary
         )
-        IconButton(onClick = {
-            onPrevClickListener(data.startDate.date)
-        }) {
+        IconButton(
+            onClick = {
+                onPrevClickListener(data.startDate.date)
+            },
+        ) {
             Icon(
-                imageVector = Icons.Filled.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 tint = MaterialTheme.colorScheme.tertiary,
                 contentDescription = "Back"
             )
         }
-        IconButton(onClick = {
-            onNextClickListener(data.endDate.date)
-        }) {
+        IconButton(
+            onClick = {
+                onNextClickListener(data.endDate.date)
+            },
+        ) {
             Icon(
-                imageVector = Icons.Filled.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 tint = MaterialTheme.colorScheme.tertiary,
                 contentDescription = "Next"
             )
@@ -420,21 +452,29 @@ fun DateHeader(
 }
 
 sealed class MedicationListItem {
-    data class OverviewItem(val medicationsToday: List<Medication>, val isMedicationListEmpty: Boolean) : MedicationListItem()
+    data class OverviewItem(
+        val medicationsToday: List<Medication>,
+        val isMedicationListEmpty: Boolean
+    ) : MedicationListItem()
+
     data class MedicationItem(val medication: Medication) : MedicationListItem()
     data class HeaderItem(val headerText: String) : MedicationListItem()
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission: Boolean) {
+fun PermissionDialog(
+    analyticsHelper: AnalyticsHelper,
+    askNotificationPermission: Boolean,
+) {
     if (askNotificationPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
-        val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS) { isGranted ->
-            when (isGranted) {
-                true -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
-                false -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
+        val notificationPermissionState =
+            rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS) { isGranted ->
+                when (isGranted) {
+                    true -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
+                    false -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
+                }
             }
-        }
         if (!notificationPermissionState.status.isGranted) {
             val openAlertDialog = remember { mutableStateOf(true) }
 
@@ -482,12 +522,13 @@ fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: 
     val context = LocalContext.current
     val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
     if (askAlarmPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)) {
-        val alarmPermissionState = rememberPermissionState(Manifest.permission.SCHEDULE_EXACT_ALARM) { isGranted ->
-            when (isGranted) {
-                true -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_GRANTED)
-                false -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_REFUSED)
+        val alarmPermissionState =
+            rememberPermissionState(Manifest.permission.SCHEDULE_EXACT_ALARM) { isGranted ->
+                when (isGranted) {
+                    true -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_GRANTED)
+                    false -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_REFUSED)
+                }
             }
-        }
         if (alarmManager?.canScheduleExactAlarms() == false) {
             val openAlertDialog = remember { mutableStateOf(true) }
 

@@ -8,6 +8,7 @@ import android.os.Build
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.millisSinceEpoch
 
 class MedicationNotificationService(
     private val context: Context
@@ -26,7 +27,7 @@ class MedicationNotificationService(
         )
 
         val alarmService = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time = medication.medicationTime.time
+        val time = medication.medicationTime.millisSinceEpoch
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {

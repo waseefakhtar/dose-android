@@ -1,7 +1,7 @@
 package com.waseefakhtar.doseapp.feature.home.model
 
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 data class CalendarModel(
@@ -13,10 +13,13 @@ data class CalendarModel(
     val endDate: DateModel = visibleDates.last() // the last of the visible dates
 
     data class DateModel(
-        val date: Date,
+        val date: LocalDate,
         val isSelected: Boolean,
         val isToday: Boolean
     ) {
-        val day: String = SimpleDateFormat("E", Locale.getDefault()).format(date) ?: ""
+        val day: String
+            get() = DateTimeFormatter
+                .ofPattern("E", Locale.getDefault())
+                .format(date) ?: ""
     }
 }

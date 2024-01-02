@@ -72,7 +72,7 @@ fun HistoryScreen(analyticsHelper: AnalyticsHelper, state: HistoryState, navigat
 @Composable
 fun MedicationList(analyticsHelper: AnalyticsHelper, state: HistoryState, navigateToMedicationDetail: (Medication) -> Unit) {
 
-    val filteredMedicationList = state.medications.filter { it.medicationTime.hasPassed() }
+    val filteredMedicationList = state.medications.filter { it.medicationTime.hasPassed }
     val sortedMedicationList: List<MedicationListItem> = filteredMedicationList.sortedBy { it.medicationTime }.map { MedicationListItem.MedicationItem(it) }
 
     when (sortedMedicationList.isEmpty()) {

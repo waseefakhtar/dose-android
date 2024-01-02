@@ -1,8 +1,8 @@
 package com.waseefakhtar.doseapp.feature.calendar.viewmodel
 
-import java.util.Date
+import java.time.LocalDate
 
 // TODO: Fill out when Calendar feature is implemented
 data class CalendarState(
-    val currentDate: Date? = null
+    val currentDate: LocalDate? = null
 )

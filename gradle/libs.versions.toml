@@ -1,4 +1,5 @@
 [versions]
+desugar_jdk_libs = "2.0.4"
 min-sdk-version = "21"
 compile-sdk-version = "34"
 target-sdk-version = "34"
@@ -44,6 +45,7 @@ compose-ui-tooling-debug = { group="androidx.compose.ui", name="ui-tooling", ver
 compose-ui-test-manifest = { group="androidx.compose.ui", name="ui-test-manifest", version.ref="compose" }
 compose-ui = { group="androidx.compose.ui", name="ui", version.ref="compose" }
 # Firebase
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 firebase-analytics = { group="com.google.firebase", name="firebase-analytics" }
 firebase-crashlytics = { group="com.google.firebase", name="firebase-crashlytics" }
 firebase-bom = { group="com.google.firebase", name="firebase-bom", version.ref="firebase" }
