@@ -54,7 +54,9 @@ import com.waseefakhtar.doseapp.ui.theme.DoseAppTheme
 import com.waseefakhtar.doseapp.util.SnackbarUtil
 
 @Composable
-fun DoseApp() {
+fun DoseApp(
+    analyticsHelper: AnalyticsHelper
+) {
     DoseAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -72,9 +74,6 @@ fun DoseApp() {
 
             val bottomBarVisibility = rememberSaveable { (mutableStateOf(true)) }
             val fabVisibility = rememberSaveable { (mutableStateOf(true)) }
-
-            val context = LocalContext.current
-            val analyticsHelper = AnalyticsHelper.getInstance(context)
 
             Scaffold(
                 modifier = Modifier.padding(16.dp, 0.dp),
@@ -216,7 +215,8 @@ fun DoseFAB(navController: NavController, analyticsHelper: AnalyticsHelper) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val context = LocalContext.current
     DoseAppTheme {
-        DoseApp()
+        DoseApp(analyticsHelper = AnalyticsHelper(context = context))
     }
 }

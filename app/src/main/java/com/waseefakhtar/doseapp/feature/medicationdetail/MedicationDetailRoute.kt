@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
-import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
@@ -70,7 +69,7 @@ fun MedicationDetailScreen(
     var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
 
     val context = LocalContext.current
-    val analyticsHelper = AnalyticsHelper.getInstance(context)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -79,7 +78,7 @@ fun MedicationDetailScreen(
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
-                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_ON_BACK_CLICKED)
+                            viewModel.logEvent(AnalyticsEvents.MEDICATION_DETAIL_ON_BACK_CLICKED)
                             onBackClicked()
                         },
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
@@ -109,7 +108,7 @@ fun MedicationDetailScreen(
                             if (isTakenTapped) {
                                 isSkippedTapped = false
                             }
-                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_TAKEN_CLICKED)
+                            viewModel.logEvent(AnalyticsEvents.MEDICATION_DETAIL_TAKEN_CLICKED)
                             viewModel.updateMedication(medication, isTakenTapped)
                         }
                     ) {
@@ -127,7 +126,7 @@ fun MedicationDetailScreen(
                             if (isSkippedTapped) {
                                 isTakenTapped = false
                             }
-                            analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_SKIPPED_CLICKED)
+                            viewModel.logEvent(AnalyticsEvents.MEDICATION_DETAIL_SKIPPED_CLICKED)
                             viewModel.updateMedication(medication, isTakenTapped)
                         }
                     ) {
@@ -144,7 +143,7 @@ fun MedicationDetailScreen(
                         .padding(vertical = 16.dp)
                         .height(56.dp),
                     onClick = {
-                        analyticsHelper.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
+                        viewModel.logEvent(AnalyticsEvents.MEDICATION_DETAIL_DONE_CLICKED)
                         showSnackbar(context.getString(R.string.medication_logged))
                         onBackClicked()
                     },
