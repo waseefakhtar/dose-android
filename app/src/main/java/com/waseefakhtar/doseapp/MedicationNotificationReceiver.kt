@@ -9,10 +9,17 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 const val MEDICATION_INTENT = "medication_intent"
 const val MEDICATION_NOTIFICATION = "medication_notification"
+
+@AndroidEntryPoint
 class MedicationNotificationReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
 
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
@@ -59,6 +66,6 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(medication.hashCode(), notification)
 
-        AnalyticsHelper.getInstance(context).trackNotificationShown(medication)
+        analyticsHelper.trackNotificationShown(medication)
     }
 }

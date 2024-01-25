@@ -16,14 +16,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
-import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.hasPassed
 import com.waseefakhtar.doseapp.feature.history.viewmodel.HistoryState
@@ -36,14 +34,19 @@ fun HistoryRoute(
     navigateToMedicationDetail: (Medication) -> Unit,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
-    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
-    HistoryScreen(analyticsHelper, state, navigateToMedicationDetail)
+    HistoryScreen(
+        state = state,
+        navigateToMedicationDetail = navigateToMedicationDetail
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(analyticsHelper: AnalyticsHelper, state: HistoryState, navigateToMedicationDetail: (Medication) -> Unit) {
+fun HistoryScreen(
+    state: HistoryState,
+    navigateToMedicationDetail: (Medication) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,13 +67,19 @@ fun HistoryScreen(analyticsHelper: AnalyticsHelper, state: HistoryState, navigat
             modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            MedicationList(analyticsHelper, state, navigateToMedicationDetail)
+            MedicationList(
+                state = state,
+                navigateToMedicationDetail = navigateToMedicationDetail
+            )
         }
     }
 }
 
 @Composable
-fun MedicationList(analyticsHelper: AnalyticsHelper, state: HistoryState, navigateToMedicationDetail: (Medication) -> Unit) {
+fun MedicationList(
+    state: HistoryState,
+    navigateToMedicationDetail: (Medication) -> Unit
+) {
 
     val filteredMedicationList = state.medications.filter { it.medicationTime.hasPassed() }
     val sortedMedicationList: List<MedicationListItem> = filteredMedicationList.sortedBy { it.medicationTime }.map { MedicationListItem.MedicationItem(it) }

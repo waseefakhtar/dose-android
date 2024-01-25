@@ -13,7 +13,7 @@ class MedicationNotificationService(
     private val context: Context
 ) {
 
-    fun scheduleNotification(medication: Medication) {
+    fun scheduleNotification(medication: Medication, analyticsHelper: AnalyticsHelper) {
         val intent = Intent(context, MedicationNotificationReceiver::class.java)
         intent.putExtra(MEDICATION_INTENT, medication)
 
@@ -40,7 +40,7 @@ class MedicationNotificationService(
             }
         }
 
-        AnalyticsHelper.getInstance(context).trackNotificationScheduled(medication)
+        analyticsHelper.trackNotificationScheduled(medication)
     }
 
     companion object {

@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
-import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateShortString
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
@@ -74,19 +74,44 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
     val state = viewModel.state
-    PermissionAlarmDialog(analyticsHelper, askAlarmPermission)
-    PermissionDialog(analyticsHelper, askNotificationPermission)
-    HomeScreen(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
+    PermissionAlarmDialog(
+        askAlarmPermission = askAlarmPermission,
+        logEvent = viewModel::logEvent
+    )
+    PermissionDialog(
+        askNotificationPermission = askNotificationPermission,
+        logEvent = viewModel::logEvent
+    )
+    HomeScreen(
+        modifier = modifier,
+        navController = navController,
+        state = state,
+        navigateToMedicationDetail = navigateToMedicationDetail,
+        logEvent = viewModel::logEvent
+    )
 }
 
 @Composable
-fun HomeScreen(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
+fun HomeScreen(
+    modifier: Modifier,
+    navController: NavController,
+    state: HomeState,
+    navigateToMedicationDetail: (Medication) -> Unit,
+    logEvent: (String) -> Unit
+) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DailyMedications(navController, analyticsHelper, state, viewModel, navigateToMedicationDetail)
+        DailyMedications(
+            navController = navController,
+            state = state,
+            navigateToMedicationDetail = navigateToMedicationDetail,
+            logEvent = {
+                logEvent.invoke(it)
+            }
+        )
     }
 }
 
@@ -110,7 +135,11 @@ fun Greeting() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHelper, medicationsToday: List<Medication>) {
+fun DailyOverviewCard(
+    navController: NavController,
+    medicationsToday: List<Medication>,
+    logEvent: (String) -> Unit
+) {
 
     Card(
         modifier = Modifier
@@ -123,7 +152,7 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
             contentColor = MaterialTheme.colorScheme.tertiary
         ),
         onClick = {
-            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_DAILY_OVERVIEW)
+            logEvent.invoke(AnalyticsEvents.ADD_MEDICATION_CLICKED_DAILY_OVERVIEW)
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
@@ -167,8 +196,15 @@ fun DailyOverviewCard(navController: NavController, analyticsHelper: AnalyticsHe
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
-    analyticsHelper.logEvent(AnalyticsEvents.EMPTY_CARD_SHOWN)
+fun EmptyCard(
+    navController: NavController,
+    logEvent: (String) -> Unit
+) {
+
+    LaunchedEffect(Unit) {
+        logEvent.invoke(AnalyticsEvents.EMPTY_CARD_SHOWN)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +215,7 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
             contentColor = MaterialTheme.colorScheme.tertiary
         ),
         onClick = {
-            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_CLICKED_EMPTY_CARD)
+            logEvent.invoke(AnalyticsEvents.ADD_MEDICATION_CLICKED_EMPTY_CARD)
             navController.navigate(AddMedicationDestination.route)
         }
     ) {
@@ -218,23 +254,38 @@ fun EmptyCard(navController: NavController, analyticsHelper: AnalyticsHelper) {
 }
 
 @Composable
-fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
+fun DailyMedications(
+    navController: NavController,
+    state: HomeState,
+    navigateToMedicationDetail: (Medication) -> Unit,
+    logEvent: (String) -> Unit
+) {
 
     var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
 
-    DatesHeader(analyticsHelper) { selectedDate ->
-        val newMedicationList = state.medications
-            .filter { medication ->
-                medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
-            }
-            .sortedBy { it.medicationTime }
+    DatesHeader(
+        logEvent = {
+            logEvent.invoke(it)
+        },
+        onDateSelected = { selectedDate ->
+            val newMedicationList = state.medications
+                .filter { medication ->
+                    medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
+                }
+                .sortedBy { it.medicationTime }
 
-        filteredMedications = newMedicationList
-        analyticsHelper.logEvent(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
-    }
+            filteredMedications = newMedicationList
+            logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
+        }
+    )
 
     if (filteredMedications.isEmpty()) {
-        EmptyCard(navController, analyticsHelper)
+        EmptyCard(
+            navController = navController,
+            logEvent = {
+                logEvent.invoke(it)
+            }
+        )
     } else {
         LazyColumn(
             modifier = Modifier,
@@ -256,7 +307,7 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 
 @Composable
 fun DatesHeader(
-    analyticsHelper: AnalyticsHelper,
+    logEvent: (String) -> Unit,
     onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
 ) {
     val dataSource = CalendarDataSource()
@@ -278,7 +329,7 @@ fun DatesHeader(
                 val finalStartDate = calendar.time
 
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
-                analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_PREVIOUS_WEEK_CLICKED)
+                logEvent.invoke(AnalyticsEvents.HOME_CALENDAR_PREVIOUS_WEEK_CLICKED)
             },
             onNextClickListener = { endDate ->
                 // refresh the CalendarModel with new data
@@ -290,7 +341,7 @@ fun DatesHeader(
                 val finalStartDate = calendar.time
 
                 calendarModel = dataSource.getData(startDate = finalStartDate, lastSelectedDate = calendarModel.selectedDate.date)
-                analyticsHelper.logEvent(AnalyticsEvents.HOME_CALENDAR_NEXT_WEEK_CLICKED)
+                logEvent.invoke(AnalyticsEvents.HOME_CALENDAR_NEXT_WEEK_CLICKED)
             }
         )
         DateList(
@@ -427,12 +478,15 @@ sealed class MedicationListItem {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission: Boolean) {
+fun PermissionDialog(
+    askNotificationPermission: Boolean,
+    logEvent: (String) -> Unit
+) {
     if (askNotificationPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
         val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS) { isGranted ->
             when (isGranted) {
-                true -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
-                false -> analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
+                true -> logEvent.invoke(AnalyticsEvents.NOTIFICATION_PERMISSION_GRANTED)
+                false -> logEvent.invoke(AnalyticsEvents.NOTIFICATION_PERMISSION_REFUSED)
             }
         }
         if (!notificationPermissionState.status.isGranted) {
@@ -440,7 +494,7 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
 
             when {
                 openAlertDialog.value -> {
-                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
+                    logEvent.invoke(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_SHOWN)
                     AlertDialog(
                         icon = {
                             Icon(
@@ -456,14 +510,14 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
                         },
                         onDismissRequest = {
                             openAlertDialog.value = false
-                            analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
+                            logEvent.invoke(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_DISMISSED)
                         },
                         confirmButton = {
                             Button(
                                 onClick = {
                                     notificationPermissionState.launchPermissionRequest()
                                     openAlertDialog.value = false
-                                    analyticsHelper.logEvent(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
+                                    logEvent.invoke(AnalyticsEvents.NOTIFICATION_PERMISSION_DIALOG_ALLOW_CLICKED)
                                 }
                             ) {
                                 Text(stringResource(R.string.allow))
@@ -478,14 +532,17 @@ fun PermissionDialog(analyticsHelper: AnalyticsHelper, askNotificationPermission
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: Boolean) {
+fun PermissionAlarmDialog(
+    askAlarmPermission: Boolean,
+    logEvent: (String) -> Unit
+) {
     val context = LocalContext.current
     val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
     if (askAlarmPermission && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)) {
         val alarmPermissionState = rememberPermissionState(Manifest.permission.SCHEDULE_EXACT_ALARM) { isGranted ->
             when (isGranted) {
-                true -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_GRANTED)
-                false -> analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_REFUSED)
+                true -> logEvent.invoke(AnalyticsEvents.ALARM_PERMISSION_GRANTED)
+                false -> logEvent.invoke(AnalyticsEvents.ALARM_PERMISSION_REFUSED)
             }
         }
         if (alarmManager?.canScheduleExactAlarms() == false) {
@@ -493,7 +550,8 @@ fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: 
 
             when {
                 openAlertDialog.value -> {
-                    analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_SHOWN)
+
+                    logEvent.invoke(AnalyticsEvents.ALARM_PERMISSION_DIALOG_SHOWN)
 
                     AlertDialog(
                         icon = {
@@ -510,7 +568,7 @@ fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: 
                         },
                         onDismissRequest = {
                             openAlertDialog.value = false
-                            analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_DISMISSED)
+                            logEvent.invoke(AnalyticsEvents.ALARM_PERMISSION_DIALOG_DISMISSED)
                         },
                         confirmButton = {
                             Button(
@@ -521,7 +579,7 @@ fun PermissionAlarmDialog(analyticsHelper: AnalyticsHelper, askAlarmPermission: 
                                     }
 
                                     openAlertDialog.value = false
-                                    analyticsHelper.logEvent(AnalyticsEvents.ALARM_PERMISSION_DIALOG_ALLOW_CLICKED)
+                                    logEvent.invoke(AnalyticsEvents.ALARM_PERMISSION_DIALOG_ALLOW_CLICKED)
                                 }
                             ) {
                                 Text(stringResource(R.string.allow))
