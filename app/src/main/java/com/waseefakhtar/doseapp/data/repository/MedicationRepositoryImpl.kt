@@ -33,7 +33,7 @@ class MedicationRepositoryImpl(
         }
     }
 
-    override fun getMedicationsForDate(date: Date): Flow<List<Medication>> {
+    override fun getMedicationsForDate(date: String): Flow<List<Medication>> {
         return dao.getMedicationsForDate(
             date = date
         ).map { entities ->

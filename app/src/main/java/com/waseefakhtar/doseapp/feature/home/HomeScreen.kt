@@ -88,7 +88,8 @@ fun HomeRoute(
         navController = navController,
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
-        logEvent = viewModel::logEvent
+        logEvent = viewModel::logEvent,
+        onDateSelected = viewModel::selectDate
     )
 }
 
@@ -98,6 +99,7 @@ fun HomeScreen(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
     Column(
@@ -110,7 +112,8 @@ fun HomeScreen(
             navigateToMedicationDetail = navigateToMedicationDetail,
             logEvent = {
                 logEvent.invoke(it)
-            }
+            },
+            onDateSelected = onDateSelected
         )
     }
 }
@@ -194,7 +197,6 @@ fun DailyOverviewCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmptyCard(
     navController: NavController,
@@ -258,28 +260,14 @@ fun DailyMedications(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
-
-    var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
-
-    DatesHeader(
-        logEvent = {
-            logEvent.invoke(it)
-        },
-        onDateSelected = { selectedDate ->
-            val newMedicationList = state.medications
-                .filter { medication ->
-                    medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
-                }
-                .sortedBy { it.medicationTime }
-
-            filteredMedications = newMedicationList
-            logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
-        }
-    )
-
-    if (filteredMedications.isEmpty()) {
+    DatesHeader(logEvent = {logEvent.invoke(it)}, onDateSelected = { selectedDate ->
+        onDateSelected(selectedDate)
+        logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
+    }, lastSelectedDate =  state.lastSelectedDate)
+    if (state.medications.isEmpty()) {
         EmptyCard(
             navController = navController,
             logEvent = {
@@ -291,7 +279,7 @@ fun DailyMedications(
             modifier = Modifier,
         ) {
             items(
-                items = filteredMedications,
+                items = state.medications,
                 itemContent = {
                     MedicationCard(
                         medication = it,
@@ -307,11 +295,16 @@ fun DailyMedications(
 
 @Composable
 fun DatesHeader(
-    logEvent: (String) -> Unit,
-    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
+    lastSelectedDate: String,
+    onDateSelected: (CalendarModel.DateModel) -> Unit, // Callback to pass the selected date){}
+    logEvent: (String) -> Unit
 ) {
     val dataSource = CalendarDataSource()
-    var calendarModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
+    var calendarModel by remember {
+        mutableStateOf(
+            dataSource.getData(lastSelectedDate = dataSource.getLastSelectedDate(lastSelectedDate))
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

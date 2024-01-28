@@ -7,7 +7,7 @@ version-name = "1.4.1"
 accompanistPermissions = "0.33.2-alpha"
 activity = "1.8.0"
 androidxHilt = "1.1.0"
-compose = "1.6.0-alpha08"
+compose = "1.6.0-beta03"
 composeCompiler = "1.5.4"
 composeNavigation = "2.7.5"
 core = "1.12.0"
@@ -25,7 +25,7 @@ ksp = "1.9.20-1.0.14" # KSP version must be aligned with kotlin https://github.c
 ktlint = "10.3.0"
 lifecycle = "2.7.0-beta01"
 room = "2.6.0"
-material3 = "1.2.0-alpha10"
+material3 = "1.2.0-beta01"
 okhttp = "4.10.0"
 
 [libraries]
