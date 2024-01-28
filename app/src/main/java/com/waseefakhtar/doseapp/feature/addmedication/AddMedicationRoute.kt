@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
-import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
@@ -80,8 +79,7 @@ fun AddMedicationRoute(
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
-    val analyticsHelper = AnalyticsHelper.getInstance(LocalContext.current)
-    AddMedicationScreen(onBackClicked, viewModel, analyticsHelper, navigateToMedicationConfirm)
+    AddMedicationScreen(onBackClicked, viewModel, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +87,6 @@ fun AddMedicationRoute(
 fun AddMedicationScreen(
     onBackClicked: () -> Unit,
     viewModel: AddMedicationViewModel,
-    analyticsHelper: AnalyticsHelper,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
@@ -101,12 +98,12 @@ fun AddMedicationScreen(
 
     fun addTime(time: CalendarInformation) {
         selectedTimes.add(time)
-        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
+        viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_ADD_TIME_CLICKED)
     }
 
     fun removeTime(time: CalendarInformation) {
         selectedTimes.remove(time)
-        analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
+        viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_DELETE_TIME_CLICKED)
     }
 
     Scaffold(
@@ -117,7 +114,7 @@ fun AddMedicationScreen(
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
-                            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
+                            viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
                             onBackClicked()
                         },
                         elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
@@ -164,11 +161,11 @@ fun AddMedicationScreen(
                                 AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
                                 invalidatedValue
                             )
-                            analyticsHelper.logEvent(event)
+                            viewModel.logEvent(eventName = event)
                         },
                         onValidate = {
                             navigateToMedicationConfirm(it)
-                            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
+                            viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
                         },
                         viewModel = viewModel
                     )
@@ -277,7 +274,9 @@ fun AddMedicationScreen(
                         selectedTimes[index] = it
                     },
                     onDeleteClick = { removeTime(selectedTimes[index]) },
-                    analyticsHelper = analyticsHelper
+                    logEvent = {
+                        viewModel.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
+                    },
                 )
             }
 
@@ -471,7 +470,7 @@ fun TimerTextField(
     isOnlyItem: Boolean,
     time: (CalendarInformation) -> Unit,
     onDeleteClick: () -> Unit,
-    analyticsHelper: AnalyticsHelper
+    logEvent: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
@@ -484,7 +483,7 @@ fun TimerTextField(
         showDialog = isPressed,
         selectedDate = selectedTime,
         onSelectedTime = {
-            analyticsHelper.logEvent(AnalyticsEvents.ADD_MEDICATION_NEW_TIME_SELECTED)
+            logEvent.invoke()
             selectedTime = it
             time(it)
         }

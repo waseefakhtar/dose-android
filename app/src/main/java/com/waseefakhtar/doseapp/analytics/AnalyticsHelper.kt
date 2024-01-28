@@ -2,43 +2,40 @@ package com.waseefakhtar.doseapp.analytics
 
 import android.content.Context
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import java.util.Date
 
-class AnalyticsHelper private constructor(context: Context) {
+private const val MEDICATION_TIME = "medication_time"
+private const val MEDICATION_END_DATE = "medication_end_date"
+private const val NOTIFICATION_TIME = "notification_time"
 
+class AnalyticsHelper(
+    context: Context
+) {
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
-    companion object {
-        @Volatile
-        private var instance: AnalyticsHelper? = null
-
-        fun getInstance(context: Context): AnalyticsHelper {
-            return instance ?: synchronized(this) {
-                instance ?: AnalyticsHelper(context).also { instance = it }
-            }
-        }
-    }
-
-    fun logEvent(eventName: String, params: Bundle? = null) {
-        firebaseAnalytics.logEvent(eventName, params)
-    }
-
     fun trackNotificationShown(medication: Medication) {
-        val params = Bundle()
-        params.putString("medication_time", medication.medicationTime.toFormattedDateString())
-        params.putString("medication_end_date", medication.endDate.toFormattedDateString())
-        params.putString("notification_time", Date().toFormattedDateString())
+        val params = bundleOf(
+            MEDICATION_TIME to medication.medicationTime.toFormattedDateString(),
+            MEDICATION_END_DATE to medication.endDate.toFormattedDateString(),
+            NOTIFICATION_TIME to Date().toFormattedDateString()
+        )
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SHOWN, params)
     }
 
     fun trackNotificationScheduled(medication: Medication) {
-        val params = Bundle()
-        params.putString("medication_time", medication.medicationTime.toFormattedDateString())
-        params.putString("medication_end_date", medication.endDate.toFormattedDateString())
-        params.putString("notification_time", Date().toFormattedDateString())
+        val params = bundleOf(
+            MEDICATION_TIME to medication.medicationTime.toFormattedDateString(),
+            MEDICATION_END_DATE to medication.endDate.toFormattedDateString(),
+            NOTIFICATION_TIME to Date().toFormattedDateString()
+        )
         logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, params)
+    }
+
+    fun logEvent(eventName: String, params: Bundle? = null) {
+        firebaseAnalytics.logEvent(eventName, params)
     }
 }

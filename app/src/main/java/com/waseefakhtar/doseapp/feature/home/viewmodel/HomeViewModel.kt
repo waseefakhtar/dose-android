@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedYeahMonthDateString
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
@@ -27,6 +28,8 @@ class HomeViewModel @Inject constructor(
     private val getMedicationsUseCase: GetMedicationsUseCase,
     private val updateMedicationUseCase: UpdateMedicationUseCase,
     private val savedStateHandle: SavedStateHandle
+    private val analyticsHelper: AnalyticsHelper
+
 ) : ViewModel() {
 
     var state by mutableStateOf(HomeState())
@@ -79,6 +82,10 @@ class HomeViewModel @Inject constructor(
 
     fun getUserPlan() {
         // TODO: Get user plan
+    }
+
+    fun logEvent(eventName: String) {
+        analyticsHelper.logEvent(eventName = eventName)
     }
     companion object {
         const val DATE_FILTER_KEY = "com.waseefakhtar.doseapp.MedicationDateFilter"

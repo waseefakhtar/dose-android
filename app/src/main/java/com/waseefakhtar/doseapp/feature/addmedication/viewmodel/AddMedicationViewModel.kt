@@ -1,12 +1,18 @@
 package com.waseefakhtar.doseapp.feature.addmedication.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Calendar
 import java.util.Date
+import javax.inject.Inject
 
-class AddMedicationViewModel : ViewModel() {
+@HiltViewModel
+class AddMedicationViewModel @Inject constructor(
+    private val analyticsHelper: AnalyticsHelper
+) : ViewModel() {
 
     fun createMedications(
         name: String,
@@ -58,5 +64,9 @@ class AddMedicationViewModel : ViewModel() {
         calendar.set(Calendar.HOUR_OF_DAY, medicationTime.dateInformation.hour)
         calendar.set(Calendar.MINUTE, medicationTime.dateInformation.minute)
         return calendar.time
+    }
+
+    fun logEvent(eventName: String) {
+        analyticsHelper.logEvent(eventName = eventName)
     }
 }
