@@ -88,7 +88,8 @@ fun HomeRoute(
         navController = navController,
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
-        logEvent = viewModel::logEvent
+        logEvent = viewModel::logEvent,
+        onDateSelected = viewModel::selectDate
     )
 }
 
@@ -98,6 +99,7 @@ fun HomeScreen(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
     Column(
@@ -110,7 +112,8 @@ fun HomeScreen(
             navigateToMedicationDetail = navigateToMedicationDetail,
             logEvent = {
                 logEvent.invoke(it)
-            }
+            },
+            onDateSelected = onDateSelected
         )
     }
 }
@@ -194,7 +197,6 @@ fun DailyOverviewCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmptyCard(
     navController: NavController,
@@ -254,13 +256,24 @@ fun EmptyCard(
 }
 
 @Composable
-fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHelper, state: HomeState, viewModel: HomeViewModel, navigateToMedicationDetail: (Medication) -> Unit) {
-    DatesHeader(analyticsHelper, state.lastSelectedDate) { selectedDate ->
-        viewModel.selectDate(selectedDate.date)
-        analyticsHelper.logEvent(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
-    }
+fun DailyMedications(
+    navController: NavController,
+    state: HomeState,
+    navigateToMedicationDetail: (Medication) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
+    logEvent: (String) -> Unit
+) {
+    DatesHeader(logEvent = {logEvent.invoke(it)}, onDateSelected = { selectedDate ->
+        onDateSelected(selectedDate)
+        logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
+    }, lastSelectedDate =  state.lastSelectedDate)
     if (state.medications.isEmpty()) {
-        EmptyCard(navController, analyticsHelper)
+        EmptyCard(
+            navController = navController,
+            logEvent = {
+                logEvent.invoke(it)
+            }
+        )
     } else {
         LazyColumn(
             modifier = Modifier,
@@ -282,9 +295,8 @@ fun DailyMedications(navController: NavController, analyticsHelper: AnalyticsHel
 
 @Composable
 fun DatesHeader(
-    analyticsHelper: AnalyticsHelper,
     lastSelectedDate: String,
-    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date){}
+    onDateSelected: (CalendarModel.DateModel) -> Unit, // Callback to pass the selected date){}
     logEvent: (String) -> Unit
 ) {
     val dataSource = CalendarDataSource()

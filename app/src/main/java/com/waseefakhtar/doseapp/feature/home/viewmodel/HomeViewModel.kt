@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedYeahMonthDateString
+import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
 import com.waseefakhtar.doseapp.feature.home.usecase.UpdateMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getMedicationsUseCase: GetMedicationsUseCase,
     private val updateMedicationUseCase: UpdateMedicationUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
     private val analyticsHelper: AnalyticsHelper
 
 ) : ViewModel() {
@@ -70,8 +71,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun selectDate(date: Date) {
-        savedStateHandle[DATE_FILTER_KEY] = date.toFormattedYeahMonthDateString()
+    fun selectDate(selectedDate : CalendarModel.DateModel) {
+        savedStateHandle[DATE_FILTER_KEY] = selectedDate.date.toFormattedYeahMonthDateString()
     }
 
     fun takeMedication(medication: Medication) {
