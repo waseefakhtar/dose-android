@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,7 +75,7 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
+    val state by viewModel.homeUiState.collectAsState()
     PermissionAlarmDialog(
         askAlarmPermission = askAlarmPermission,
         logEvent = viewModel::logEvent
@@ -88,7 +89,8 @@ fun HomeRoute(
         navController = navController,
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
-        logEvent = viewModel::logEvent
+        logEvent = viewModel::logEvent,
+        onSelectedDate = {viewModel.updateSelectedDate(it)}
     )
 }
 
@@ -98,7 +100,8 @@ fun HomeScreen(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
-    logEvent: (String) -> Unit
+    logEvent: (String) -> Unit,
+    onSelectedDate: (Date) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -108,6 +111,7 @@ fun HomeScreen(
             navController = navController,
             state = state,
             navigateToMedicationDetail = navigateToMedicationDetail,
+            onSelectedDate = onSelectedDate ,
             logEvent = {
                 logEvent.invoke(it)
             }
@@ -258,28 +262,22 @@ fun DailyMedications(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
+    onSelectedDate: (Date) -> Unit,
     logEvent: (String) -> Unit
 ) {
 
-    var filteredMedications: List<Medication> by remember { mutableStateOf(emptyList()) }
 
     DatesHeader(
         logEvent = {
             logEvent.invoke(it)
         },
         onDateSelected = { selectedDate ->
-            val newMedicationList = state.medications
-                .filter { medication ->
-                    medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
-                }
-                .sortedBy { it.medicationTime }
-
-            filteredMedications = newMedicationList
+            onSelectedDate(selectedDate.date)
             logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
         }
     )
 
-    if (filteredMedications.isEmpty()) {
+    if (state.medications.isEmpty()) {
         EmptyCard(
             navController = navController,
             logEvent = {
@@ -291,7 +289,7 @@ fun DailyMedications(
             modifier = Modifier,
         ) {
             items(
-                items = filteredMedications,
+                items = state.medications,
                 itemContent = {
                     MedicationCard(
                         medication = it,
