@@ -7,12 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
 import com.waseefakhtar.doseapp.feature.home.usecase.UpdateMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +30,33 @@ class HomeViewModel @Inject constructor(
 
     var state by mutableStateOf(HomeState())
         private set
+
+
+    private val _selectedDate = MutableStateFlow(Date())
+    private val _medications = getMedicationsUseCase.getMedications()
+
+
+
+    val homeUiState  = combine(_selectedDate,_medications)  { selectedDate , medications ->
+        val filteredMedications = medications.filter {
+            it.medicationTime.toFormattedDateString() == selectedDate.toFormattedDateString()
+        }.sortedBy { it.medicationTime }
+
+        HomeState(
+            medications = filteredMedications
+        )
+
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        HomeState()
+    )
+
+
+
+    fun updateSelectedDate(date: Date) {
+        _selectedDate.value = date
+    }
 
     init {
         loadMedications()

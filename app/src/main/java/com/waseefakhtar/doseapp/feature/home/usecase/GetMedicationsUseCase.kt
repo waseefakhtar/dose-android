@@ -9,7 +9,7 @@ class GetMedicationsUseCase @Inject constructor(
     private val repository: MedicationRepository
 ) {
 
-    suspend fun getMedications(): Flow<List<Medication>> {
+     fun getMedications(): Flow<List<Medication>> {
         return repository.getAllMedications()
     }
 }
