@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -50,10 +52,13 @@ import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 fun MedicationDetailRoute(
     medication: Medication?,
     onBackClicked: () -> Unit,
+    navigateToMedicationDetail: (Medication) -> Unit,
     viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
     medication?.let {
-        MedicationDetailScreen(medication, viewModel, onBackClicked)
+        MedicationDetailScreen(medication, viewModel, onBackClicked) {
+            navigateToMedicationDetail(it)
+        }
     }
 }
 
@@ -63,13 +68,13 @@ fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
+    navigateToMedicationDetail: () -> Unit
 
 ) {
     var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
     var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
 
     val context = LocalContext.current
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -94,6 +99,23 @@ fun MedicationDetailScreen(
         },
         bottomBar = {
             Column {
+                Row (modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    FloatingActionButton(
+                        onClick = {
+                            viewModel.logEvent(eventName = AnalyticsEvents.EDIT_MEDICATION_ON_BACK_CLICKED)
+                            navigateToMedicationDetail()
+                        },
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit)
+                        )
+                    }
+                }
+
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier
                         .fillMaxWidth()

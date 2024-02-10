@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.addmedication.navigation
 
+import android.os.Bundle
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
@@ -10,6 +11,7 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.AddMedicationRoute
 import com.waseefakhtar.doseapp.feature.home.navigation.ASK_ALARM_PERMISSION
 import com.waseefakhtar.doseapp.feature.home.navigation.ASK_NOTIFICATION_PERMISSION
+import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
 
 object AddMedicationDestination : DoseNavigationDestination {
     override val route = "add_medication_route"
@@ -29,6 +31,11 @@ fun NavGraphBuilder.addMedicationGraph(navController: NavController, bottomBarVi
         navController.previousBackStackEntry?.savedStateHandle.apply {
             this?.set(ASK_ALARM_PERMISSION, true)
         }
-        AddMedicationRoute(onBackClicked, navigateToMedicationConfirm)
+        val medicationBundle = navController.previousBackStackEntry?.savedStateHandle?.get<Bundle>(
+            MEDICATION
+        )
+        val medication = medicationBundle?.getParcelable<Medication>(MEDICATION)
+
+        AddMedicationRoute(medication, onBackClicked, navigateToMedicationConfirm)
     }
 }

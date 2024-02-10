@@ -30,6 +30,7 @@
     <string name="history">History</string>
     <string name="no_history_yet">No history yet</string>
     <string name="back">Back</string>
+    <string name="edit">Edit</string>
     <string name="add">Add</string>
     <string name="medication_name_hint">e.g. Risperdal, 4mg</string>
     <string name="error">Error</string>

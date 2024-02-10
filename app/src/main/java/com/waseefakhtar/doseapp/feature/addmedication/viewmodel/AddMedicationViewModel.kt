@@ -15,6 +15,7 @@ class AddMedicationViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun createMedications(
+        id:Long?,
         name: String,
         dosage: Int,
         recurrence: String,
@@ -42,7 +43,7 @@ class AddMedicationViewModel @Inject constructor(
             for (medicationTime in medicationTimes) {
                 // TODO: Generate id automatically.
                 val medication = Medication(
-                    id = 0,
+                    id = id ?: 0,
                     name = name,
                     dosage = dosage,
                     recurrence = recurrence,

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.waseefakhtar.doseapp.feature.addmedication.navigation.AddMedicationDestination
 import com.waseefakhtar.doseapp.feature.addmedication.navigation.addMedicationGraph
 import com.waseefakhtar.doseapp.feature.calendar.navigation.calendarGraph
 import com.waseefakhtar.doseapp.feature.history.historyGraph
@@ -61,7 +62,15 @@ fun DoseNavHost(
             navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
-            onBackClicked = { navController.navigateUp() }
+            onBackClicked = { navController.navigateUp() },
+            navigateToMedicationDetail = {
+                val bundle = Bundle()
+                bundle.putParcelable(MEDICATION, it)
+                navController.currentBackStackEntry?.savedStateHandle.apply {
+                    this?.set(MEDICATION, bundle)
+                }
+                navController.navigate(AddMedicationDestination.route)
+            }
         )
         calendarGraph(bottomBarVisibility, fabVisibility)
         addMedicationGraph(

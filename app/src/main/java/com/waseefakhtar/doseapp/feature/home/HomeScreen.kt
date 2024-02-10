@@ -272,7 +272,7 @@ fun DailyMedications(
                 .filter { medication ->
                     medication.medicationTime.toFormattedDateString() == selectedDate.date.toFormattedDateString()
                 }
-                .sortedBy { it.medicationTime }
+                .sortedByDescending { it.medicationTime }
 
             filteredMedications = newMedicationList
             logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)

@@ -70,30 +70,39 @@ import java.util.Date
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    AddMedicationRoute(onBackClicked = {}, navigateToMedicationConfirm = {})
+   AddMedicationRoute(medication = null, onBackClicked = {}, navigateToMedicationConfirm = {})
 }
 
 @Composable
 fun AddMedicationRoute(
+    medication: Medication?,
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel = hiltViewModel()
 ) {
-    AddMedicationScreen(onBackClicked, viewModel, navigateToMedicationConfirm)
+    AddMedicationScreen(medication, onBackClicked, viewModel, navigateToMedicationConfirm)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicationScreen(
+    medication: Medication?,
     onBackClicked: () -> Unit,
     viewModel: AddMedicationViewModel,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
 ) {
-    var medicationName by rememberSaveable { mutableStateOf("") }
-    var numberOfDosage by rememberSaveable { mutableStateOf("1") }
-    var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
-    var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
+    var medicationName by rememberSaveable { mutableStateOf(medication?.name ?: "") }
+
+    var numberOfDosage by rememberSaveable { mutableStateOf((medication?.dosage ?: 1).toString()) }
+    var recurrence by rememberSaveable {
+        mutableStateOf(
+            medication?.recurrence ?: Recurrence.Daily.name
+        )
+    }
+    var endDate by rememberSaveable { mutableLongStateOf(medication?.endDate?.time ?: Date().time) }
+    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) {
+        mutableStateListOf(CalendarInformation(Calendar.getInstance()))
+    }
     val context = LocalContext.current
 
     fun addTime(time: CalendarInformation) {
@@ -143,6 +152,7 @@ fun AddMedicationScreen(
                     .height(56.dp),
                 onClick = {
                     validateMedication(
+                        id = medication?.id,
                         name = medicationName,
                         dosage = numberOfDosage.toIntOrNull() ?: 0,
                         recurrence = recurrence,
@@ -291,6 +301,7 @@ fun AddMedicationScreen(
 }
 
 private fun validateMedication(
+    id:Long?,
     name: String,
     dosage: Int,
     recurrence: String,
@@ -321,7 +332,7 @@ private fun validateMedication(
     }
 
     val medications =
-        viewModel.createMedications(name, dosage, recurrence, Date(endDate), selectedTimes)
+        viewModel.createMedications(id, name, dosage, recurrence, Date(endDate), selectedTimes)
 
     onValidate(medications)
 }
