@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedYeahMonthDateString
+import com.waseefakhtar.doseapp.extension.toFormattedYearMonthDateString
 import com.waseefakhtar.doseapp.feature.home.model.CalendarModel
 import com.waseefakhtar.doseapp.feature.home.usecase.GetMedicationsUseCase
 import com.waseefakhtar.doseapp.feature.home.usecase.UpdateMedicationUseCase
@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
         private set
     private var dateFilter = savedStateHandle.getStateFlow(
         DATE_FILTER_KEY,
-        Date().toFormattedYeahMonthDateString()
+        Date().toFormattedYearMonthDateString()
     ).onEach {
         state = state.copy(
             lastSelectedDate = it
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun selectDate(selectedDate : CalendarModel.DateModel) {
-        savedStateHandle[DATE_FILTER_KEY] = selectedDate.date.toFormattedYeahMonthDateString()
+        savedStateHandle[DATE_FILTER_KEY] = selectedDate.date.toFormattedYearMonthDateString()
     }
 
     fun takeMedication(medication: Medication) {
@@ -89,6 +89,6 @@ class HomeViewModel @Inject constructor(
         analyticsHelper.logEvent(eventName = eventName)
     }
     companion object {
-        const val DATE_FILTER_KEY = "com.waseefakhtar.doseapp.MedicationDateFilter"
+        const val DATE_FILTER_KEY = "medication_date_filter"
     }
 }
