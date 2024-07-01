@@ -1,6 +1,5 @@
 package com.waseefakhtar.doseapp.feature.home.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +18,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -42,6 +44,29 @@ class HomeViewModel @Inject constructor(
         state = state.copy(
             lastSelectedDate = it
         )
+    }
+
+
+    private val _selectedDate = MutableStateFlow(Date())
+    private val _medications = getMedicationsUseCase.getMedications()
+
+    val homeUiState  = combine(_selectedDate,_medications)  { selectedDate , medications ->
+        val filteredMedications = medications.filter {
+            it.medicationTime.toFormattedDateString() == selectedDate.toFormattedDateString()
+        }.sortedBy { it.medicationTime }
+
+        HomeState(
+            medications = filteredMedications
+        )
+
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        HomeState()
+    )
+
+    fun updateSelectedDate(date: Date) {
+        _selectedDate.value = date
     }
 
     init {

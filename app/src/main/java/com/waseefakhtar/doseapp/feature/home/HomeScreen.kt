@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,7 +75,7 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
+    val state by viewModel.homeUiState.collectAsState()
     PermissionAlarmDialog(
         askAlarmPermission = askAlarmPermission,
         logEvent = viewModel::logEvent
@@ -88,8 +89,9 @@ fun HomeRoute(
         navController = navController,
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
+        onDateSelected = viewModel::selectDate,
+        onSelectedDate = {viewModel.updateSelectedDate(it)},
         logEvent = viewModel::logEvent,
-        onDateSelected = viewModel::selectDate
     )
 }
 
@@ -100,6 +102,7 @@ fun HomeScreen(
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
     onDateSelected: (CalendarModel.DateModel) -> Unit,
+    onSelectedDate: (Date) -> Unit,
     logEvent: (String) -> Unit
 ) {
     Column(
@@ -110,10 +113,11 @@ fun HomeScreen(
             navController = navController,
             state = state,
             navigateToMedicationDetail = navigateToMedicationDetail,
+            onSelectedDate = onSelectedDate,
+            onDateSelected = onDateSelected,
             logEvent = {
                 logEvent.invoke(it)
             },
-            onDateSelected = onDateSelected
         )
     }
 }
@@ -260,13 +264,23 @@ fun DailyMedications(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
+    onSelectedDate: (Date) -> Unit,
     onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
-    DatesHeader(logEvent = {logEvent.invoke(it)}, onDateSelected = { selectedDate ->
-        onDateSelected(selectedDate)
-        logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
-    }, lastSelectedDate =  state.lastSelectedDate)
+
+
+    DatesHeader(
+        lastSelectedDate = state.lastSelectedDate,
+        logEvent = {
+            logEvent.invoke(it)
+        },
+        onDateSelected = { selectedDate ->
+            onSelectedDate(selectedDate.date)
+            logEvent.invoke(AnalyticsEvents.HOME_NEW_DATE_SELECTED)
+        }
+    )
+
     if (state.medications.isEmpty()) {
         EmptyCard(
             navController = navController,
