@@ -9,7 +9,9 @@ class GetMedicationsUseCase @Inject constructor(
     private val repository: MedicationRepository
 ) {
 
-     fun getMedications(): Flow<List<Medication>> {
-        return repository.getAllMedications()
+    fun getMedications(date: String? = null): Flow<List<Medication>> {
+        return if (date != null) {
+            repository.getMedicationsForDate(date)
+        } else repository.getAllMedications()
     }
 }

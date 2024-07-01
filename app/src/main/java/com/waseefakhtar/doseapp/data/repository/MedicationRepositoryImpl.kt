@@ -7,7 +7,6 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.domain.repository.MedicationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Date
 
 class MedicationRepositoryImpl(
     private val dao: MedicationDao
@@ -33,7 +32,7 @@ class MedicationRepositoryImpl(
         }
     }
 
-    override fun getMedicationsForDate(date: Date): Flow<List<Medication>> {
+    override fun getMedicationsForDate(date: String): Flow<List<Medication>> {
         return dao.getMedicationsForDate(
             date = date
         ).map { entities ->
