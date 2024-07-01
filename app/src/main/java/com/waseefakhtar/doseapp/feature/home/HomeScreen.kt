@@ -89,8 +89,9 @@ fun HomeRoute(
         navController = navController,
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
+        onDateSelected = viewModel::selectDate,
+        onSelectedDate = { viewModel.updateSelectedDate(it) },
         logEvent = viewModel::logEvent,
-        onSelectedDate = {viewModel.updateSelectedDate(it)}
     )
 }
 
@@ -100,8 +101,9 @@ fun HomeScreen(
     navController: NavController,
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
-    logEvent: (String) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
     onSelectedDate: (Date) -> Unit,
+    logEvent: (String) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -111,10 +113,11 @@ fun HomeScreen(
             navController = navController,
             state = state,
             navigateToMedicationDetail = navigateToMedicationDetail,
-            onSelectedDate = onSelectedDate ,
+            onSelectedDate = onSelectedDate,
+            onDateSelected = onDateSelected,
             logEvent = {
                 logEvent.invoke(it)
-            }
+            },
         )
     }
 }
@@ -198,7 +201,6 @@ fun DailyOverviewCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmptyCard(
     navController: NavController,
@@ -263,11 +265,12 @@ fun DailyMedications(
     state: HomeState,
     navigateToMedicationDetail: (Medication) -> Unit,
     onSelectedDate: (Date) -> Unit,
+    onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
 
-
     DatesHeader(
+        lastSelectedDate = state.lastSelectedDate,
         logEvent = {
             logEvent.invoke(it)
         },
@@ -305,11 +308,16 @@ fun DailyMedications(
 
 @Composable
 fun DatesHeader(
-    logEvent: (String) -> Unit,
-    onDateSelected: (CalendarModel.DateModel) -> Unit // Callback to pass the selected date
+    lastSelectedDate: String,
+    onDateSelected: (CalendarModel.DateModel) -> Unit, // Callback to pass the selected date){}
+    logEvent: (String) -> Unit
 ) {
     val dataSource = CalendarDataSource()
-    var calendarModel by remember { mutableStateOf(dataSource.getData(lastSelectedDate = dataSource.today)) }
+    var calendarModel by remember {
+        mutableStateOf(
+            dataSource.getData(lastSelectedDate = dataSource.getLastSelectedDate(lastSelectedDate))
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
