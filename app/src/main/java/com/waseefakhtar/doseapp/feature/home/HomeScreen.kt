@@ -90,7 +90,7 @@ fun HomeRoute(
         state = state,
         navigateToMedicationDetail = navigateToMedicationDetail,
         onDateSelected = viewModel::selectDate,
-        onSelectedDate = {viewModel.updateSelectedDate(it)},
+        onSelectedDate = { viewModel.updateSelectedDate(it) },
         logEvent = viewModel::logEvent,
     )
 }
@@ -268,7 +268,6 @@ fun DailyMedications(
     onDateSelected: (CalendarModel.DateModel) -> Unit,
     logEvent: (String) -> Unit
 ) {
-
 
     DatesHeader(
         lastSelectedDate = state.lastSelectedDate,

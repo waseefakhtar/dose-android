@@ -8,7 +8,6 @@ import androidx.room.Query
 import androidx.room.Update
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 @Dao
 interface MedicationDao {

@@ -24,7 +24,7 @@ fun String.toDate(): Date? {
     return try {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         sdf.parse(this)
-    }catch (e: Exception) {
+    } catch (e: Exception) {
         e.printStackTrace()
         null
     }
