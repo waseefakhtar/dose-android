@@ -32,7 +32,7 @@ Got any crazy new ideas? Head over to the <a href="https://github.com/waseefakht
 </a>
 
 ## IDE Version
-Android Studio Hedgehog | 2023.1.1 Beta 1
+Android Studio Koala | 2024.1.1
 
 ## Contributions
 
