@@ -15,6 +15,11 @@ fun Date.toFormattedMonthDateString(): String {
     return sdf.format(this)
 }
 
+fun Date.toFormattedMonthString(): String {
+    val sdf = SimpleDateFormat("MMMM, yyyy", Locale.getDefault())
+    return sdf.format(this)
+}
+
 fun Date.toFormattedYearMonthDateString(): String {
     val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     return sdf.format(this)
