@@ -40,7 +40,6 @@ class AddMedicationViewModel @Inject constructor(
         calendar.time = startDate
         for (i in 0 until numOccurrences) {
             for (medicationTime in medicationTimes) {
-                // TODO: Generate id automatically.
                 val medication = Medication(
                     id = 0,
                     name = name,

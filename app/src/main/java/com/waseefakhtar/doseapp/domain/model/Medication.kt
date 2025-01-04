@@ -6,7 +6,7 @@ import java.util.Date
 
 @Parcelize
 data class Medication(
-    val id: Long?,
+    val id: Long = 0,
     val name: String,
     val dosage: Int,
     val recurrence: String,
