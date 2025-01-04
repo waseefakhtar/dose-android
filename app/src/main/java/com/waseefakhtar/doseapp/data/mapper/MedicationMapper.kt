@@ -17,7 +17,7 @@ fun MedicationEntity.toMedication(): Medication {
 
 fun Medication.toMedicationEntity(): MedicationEntity {
     return MedicationEntity(
-        id = id ?: 0L,
+        id = id,
         name = name,
         dosage = dosage,
         recurrence = recurrence,
