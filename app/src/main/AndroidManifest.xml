@@ -28,7 +28,6 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name=".NotificationActionReceiver" />
         <receiver android:name=".MedicationNotificationReceiver" android:enabled="true" />
     </application>
 
