@@ -12,12 +12,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NotificationModule {
-    
     @Provides
     @Singleton
     fun provideMedicationNotificationService(
-        @ApplicationContext context: Context
-    ): MedicationNotificationService {
-        return MedicationNotificationService(context)
-    }
-} 
+        @ApplicationContext context: Context,
+    ): MedicationNotificationService = MedicationNotificationService(context)
+}
