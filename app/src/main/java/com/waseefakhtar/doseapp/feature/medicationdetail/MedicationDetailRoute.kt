@@ -1,5 +1,6 @@
 package com.waseefakhtar.doseapp.feature.medicationdetail
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,9 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,12 +52,24 @@ import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationDetailRoute(
-    medication: Medication?,
+    medicationId: Long?,
     onBackClicked: () -> Unit,
     viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
+    val medication by viewModel.medication.collectAsState()
+
+    LaunchedEffect(Unit) {
+        medicationId?.let {
+            viewModel.getMedicationById(it)
+        }
+    }
+
     medication?.let {
-        MedicationDetailScreen(medication, viewModel, onBackClicked)
+        MedicationDetailScreen(
+            medication = it,
+            viewModel = viewModel,
+            onBackClicked = onBackClicked
+        )
     }
 }
 
@@ -63,12 +79,20 @@ fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit,
-
 ) {
-    var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
-    var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
+    var isTakenTapped by remember(medication.medicationTaken) { 
+        mutableStateOf(medication.medicationTaken) 
+    }
+    var isSkippedTapped by remember(medication.medicationTaken) { 
+        mutableStateOf(!medication.medicationTaken) 
+    }
 
     val context = LocalContext.current
+
+    LaunchedEffect(medication) {
+        isTakenTapped = medication.medicationTaken
+        isSkippedTapped = !medication.medicationTaken
+    }
 
     Scaffold(
         topBar = {

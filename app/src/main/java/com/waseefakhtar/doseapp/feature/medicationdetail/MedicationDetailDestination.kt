@@ -1,33 +1,49 @@
 package com.waseefakhtar.doseapp.feature.medicationdetail
 
-import android.os.Bundle
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import androidx.navigation.navArgument
 import com.waseefakhtar.doseapp.core.navigation.DoseNavigationDestination
-import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.feature.medicationconfirm.navigation.MEDICATION
+import com.waseefakhtar.doseapp.core.navigation.NavigationConstants.MEDICATION_ID
+import com.waseefakhtar.doseapp.core.navigation.NavigationConstants.DEEP_LINK_URI_PATTERN
 
 object MedicationDetailDestination : DoseNavigationDestination {
-    override val route = "medication_detail_route"
+    override val route = "medication_detail_route/{$MEDICATION_ID}"
     override val destination = "medication_detail_destination"
+    fun createNavigationRoute(medicationId: Long) = "medication_detail_route/$medicationId"
 }
 
-fun NavGraphBuilder.medicationDetailGraph(navController: NavController, bottomBarVisibility: MutableState<Boolean>, fabVisibility: MutableState<Boolean>, onBackClicked: () -> Unit) {
-
+fun NavGraphBuilder.medicationDetailGraph(
+    bottomBarVisibility: MutableState<Boolean>,
+    fabVisibility: MutableState<Boolean>,
+    onBackClicked: () -> Unit
+) {
     composable(
         route = MedicationDetailDestination.route,
-    ) {
+        arguments = listOf(
+            navArgument(MEDICATION_ID) { type = NavType.LongType }
+        ),
+        deepLinks = listOf(
+            navDeepLink {
+                uriPattern = DEEP_LINK_URI_PATTERN
+            }
+        )
+    ) { backStackEntry ->
         LaunchedEffect(null) {
             bottomBarVisibility.value = false
             fabVisibility.value = false
         }
-        val medicationBundle = navController.previousBackStackEntry?.savedStateHandle?.get<Bundle>(
-            MEDICATION
+
+        val medicationId = backStackEntry.arguments?.getLong(MEDICATION_ID)
+
+        MedicationDetailRoute(
+            medicationId = medicationId,
+            onBackClicked = onBackClicked
         )
-        val medication = medicationBundle?.getParcelable<Medication>(MEDICATION)
-        MedicationDetailRoute(medication, onBackClicked)
     }
 }

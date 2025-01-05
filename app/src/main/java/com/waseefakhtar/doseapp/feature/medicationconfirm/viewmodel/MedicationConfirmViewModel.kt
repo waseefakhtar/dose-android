@@ -15,26 +15,26 @@ import javax.inject.Inject
 @HiltViewModel
 class MedicationConfirmViewModel @Inject constructor(
     private val addMedicationUseCase: AddMedicationUseCase,
+    private val medicationNotificationService: MedicationNotificationService,
     private val analyticsHelper: AnalyticsHelper
 ) : ViewModel() {
 
     private val _isMedicationSaved = MutableSharedFlow<Unit>()
     val isMedicationSaved = _isMedicationSaved.asSharedFlow()
 
-    fun addMedication(context: Context, state: MedicationConfirmState) {
+    fun addMedication(state: MedicationConfirmState) {
         viewModelScope.launch {
             val medications = state.medications
-            val medicationAdded = addMedicationUseCase.addMedication(medications)
-
-            for (medication in medications) {
-                val service = MedicationNotificationService(context)
-                service.scheduleNotification(
-                    medication = medication,
-                    analyticsHelper = analyticsHelper
-                )
+            addMedicationUseCase.addMedication(medications).collect { savedMedications ->
+                // Schedule notifications for saved medications that have proper IDs
+                savedMedications.forEach { medication ->
+                    medicationNotificationService.scheduleNotification(
+                        medication = medication,
+                        analyticsHelper = analyticsHelper
+                    )
+                }
+                _isMedicationSaved.emit(Unit)
             }
-
-            _isMedicationSaved.emit(medicationAdded)
         }
     }
 

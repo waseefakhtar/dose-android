@@ -4,25 +4,31 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class MedicationNotificationService(
-    private val context: Context
+class MedicationNotificationService @Inject constructor(
+    @ApplicationContext private val context: Context
 ) {
 
     fun scheduleNotification(medication: Medication, analyticsHelper: AnalyticsHelper) {
-        val intent = Intent(context, MedicationNotificationReceiver::class.java)
-        intent.putExtra(MEDICATION_INTENT, medication)
+        // Only create the alarm intent and pending intent
+        val alarmIntent = Intent(context, MedicationNotificationReceiver::class.java).apply {
+            putExtra(MEDICATION_INTENT, medication)
+        }
 
-        // TODO: Replace medication.hashCode() with medication.id when medication.id is fixed.
-        val pendingIntent = PendingIntent.getBroadcast(
+        val alarmPendingIntent = PendingIntent.getBroadcast(
             context,
-            medication.hashCode(),
-            intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            medication.id.toInt(),
+            alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmService = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -33,7 +39,7 @@ class MedicationNotificationService(
                 alarmService.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     time,
-                    pendingIntent
+                    alarmPendingIntent
                 )
             } catch (exception: SecurityException) {
                 FirebaseCrashlytics.getInstance().recordException(exception)

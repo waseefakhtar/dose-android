@@ -38,4 +38,7 @@ interface MedicationDao {
         """
     )
     fun getMedicationsForDate(date: String): Flow<List<MedicationEntity>>
+
+    @Query("SELECT * FROM medicationentity WHERE id = :id")
+    suspend fun getMedicationById(id: Long): MedicationEntity?
 }
