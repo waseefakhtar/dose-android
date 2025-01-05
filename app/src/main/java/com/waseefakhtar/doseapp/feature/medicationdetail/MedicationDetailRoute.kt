@@ -76,7 +76,7 @@ fun MedicationDetailRoute(
 fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
-    onBackClicked: () -> Unit,
+    onBackClicked: () -> Unit
 ) {
     var isTakenTapped by remember(medication.medicationTaken) {
         mutableStateOf(medication.medicationTaken)

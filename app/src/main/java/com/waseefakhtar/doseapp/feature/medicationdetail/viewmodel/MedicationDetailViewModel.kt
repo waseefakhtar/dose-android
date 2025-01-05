@@ -13,32 +13,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MedicationDetailViewModel
-    @Inject
-    constructor(
-        private val getMedicationUseCase: GetMedicationUseCase,
-        private val updateMedicationUseCase: UpdateMedicationUseCase,
-        private val analyticsHelper: AnalyticsHelper,
-    ) : ViewModel() {
-        private val _medication = MutableStateFlow<Medication?>(null)
-        val medication = _medication.asStateFlow()
+class MedicationDetailViewModel @Inject constructor(
+    private val getMedicationUseCase: GetMedicationUseCase,
+    private val updateMedicationUseCase: UpdateMedicationUseCase,
+    private val analyticsHelper: AnalyticsHelper
+) : ViewModel() {
+    private val _medication = MutableStateFlow<Medication?>(null)
+    val medication = _medication.asStateFlow()
 
-        fun getMedicationById(id: Long) {
-            viewModelScope.launch {
-                _medication.value = getMedicationUseCase(id)
-            }
-        }
-
-        fun updateMedication(
-            medication: Medication,
-            isMedicationTaken: Boolean,
-        ) {
-            viewModelScope.launch {
-                updateMedicationUseCase.updateMedication(medication.copy(medicationTaken = isMedicationTaken))
-            }
-        }
-
-        fun logEvent(eventName: String) {
-            analyticsHelper.logEvent(eventName = eventName)
+    fun getMedicationById(id: Long) {
+        viewModelScope.launch {
+            _medication.value = getMedicationUseCase(id)
         }
     }
+
+    fun updateMedication(medication: Medication, isMedicationTaken: Boolean) {
+        viewModelScope.launch {
+            updateMedicationUseCase.updateMedication(medication.copy(medicationTaken = isMedicationTaken))
+        }
+    }
+
+    fun logEvent(eventName: String) {
+        analyticsHelper.logEvent(eventName = eventName)
+    }
+}
