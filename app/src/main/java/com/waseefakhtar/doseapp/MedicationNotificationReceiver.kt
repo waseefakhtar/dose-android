@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.net.Uri
 import androidx.core.app.NotificationCompat
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
@@ -30,24 +30,19 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context, medication: Medication) {
-        val activityIntent = Intent(context, MainActivity::class.java)
-        activityIntent.putExtra(MEDICATION_NOTIFICATION, true)
+        // Create deep link intent for notification click
+        val activityIntent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            data = Uri.parse("doseapp://medication/${medication.id}")
+        }
+
         val activityPendingIntent = PendingIntent.getActivity(
             context,
-            1,
+            medication.id.toInt(),
             activityIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val receiverIntent = Intent(context, NotificationActionReceiver::class.java)
-        /*val takenPendingIntent = PendingIntent.getBroadcast(
-            context,
-            2,
-            receiverIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-        )*/
-
-        // TODO: Add action.
         val notification = NotificationCompat.Builder(
             context,
             MedicationNotificationService.MEDICATION_CHANNEL_ID
@@ -55,16 +50,12 @@ class MedicationNotificationReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.ic_dose)
             .setContentTitle(context.getString(R.string.medication_reminder))
             .setContentText(context.getString(R.string.medication_reminder_time, medication.name))
+            .setAutoCancel(true)
             .setContentIntent(activityPendingIntent)
-            /*.addAction(
-                R.drawable.doctor,
-                "Take now",
-                takenPendingIntent)*/
             .build()
 
-        // TODO: Use medication id as notification id.
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(medication.hashCode(), notification)
+        notificationManager.notify(medication.id.toInt(), notification)
 
         analyticsHelper.trackNotificationShown(medication)
     }

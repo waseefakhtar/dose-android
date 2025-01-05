@@ -135,7 +135,7 @@ fun MedicationConfirmScreen(
                 .align(Alignment.CenterHorizontally),
             onClick = {
                 logEvent.invoke(AnalyticsEvents.MEDICATION_CONFIRM_ON_CONFIRM_CLICKED)
-                viewModel.addMedication(context, MedicationConfirmState(medications))
+                viewModel.addMedication(MedicationConfirmState(medications))
             },
             shape = MaterialTheme.shapes.extraLarge
         ) {

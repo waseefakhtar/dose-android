@@ -36,29 +36,22 @@ fun DoseNavHost(
             navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
-            navigateToMedicationDetail = {
-                val bundle = Bundle()
-                bundle.putParcelable(MEDICATION, it)
-                navController.currentBackStackEntry?.savedStateHandle.apply {
-                    this?.set(MEDICATION, bundle)
-                }
-                navController.navigate(MedicationDetailDestination.route)
+            navigateToMedicationDetail = { medication ->
+                navController.navigate(
+                    MedicationDetailDestination.createNavigationRoute(medication.id)
+                )
             }
         )
         historyGraph(
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
-            navigateToMedicationDetail = {
-                val bundle = Bundle()
-                bundle.putParcelable(MEDICATION, it)
-                navController.currentBackStackEntry?.savedStateHandle.apply {
-                    this?.set(MEDICATION, bundle)
-                }
-                navController.navigate(MedicationDetailDestination.route)
+            navigateToMedicationDetail = { medication ->
+                navController.navigate(
+                    MedicationDetailDestination.createNavigationRoute(medication.id)
+                )
             }
         )
         medicationDetailGraph(
-            navController = navController,
             bottomBarVisibility = bottomBarVisibility,
             fabVisibility = fabVisibility,
             onBackClicked = { navController.navigateUp() }

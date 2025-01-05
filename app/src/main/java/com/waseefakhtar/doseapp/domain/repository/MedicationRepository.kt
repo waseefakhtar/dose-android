@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MedicationRepository {
 
-    suspend fun insertMedications(medications: List<Medication>)
+    suspend fun insertMedications(medications: List<Medication>): Flow<List<Medication>>
 
     suspend fun deleteMedication(medication: Medication)
 
@@ -14,4 +14,6 @@ interface MedicationRepository {
     fun getAllMedications(): Flow<List<Medication>>
 
     fun getMedicationsForDate(date: String): Flow<List<Medication>>
+
+    suspend fun getMedicationById(id: Long): Medication?
 }

@@ -24,6 +24,8 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,12 +50,24 @@ import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 
 @Composable
 fun MedicationDetailRoute(
-    medication: Medication?,
+    medicationId: Long?,
     onBackClicked: () -> Unit,
     viewModel: MedicationDetailViewModel = hiltViewModel()
 ) {
+    val medication by viewModel.medication.collectAsState()
+
+    LaunchedEffect(Unit) {
+        medicationId?.let {
+            viewModel.getMedicationById(it)
+        }
+    }
+
     medication?.let {
-        MedicationDetailScreen(medication, viewModel, onBackClicked)
+        MedicationDetailScreen(
+            medication = it,
+            viewModel = viewModel,
+            onBackClicked = onBackClicked
+        )
     }
 }
 
@@ -62,19 +76,26 @@ fun MedicationDetailRoute(
 fun MedicationDetailScreen(
     medication: Medication,
     viewModel: MedicationDetailViewModel,
-    onBackClicked: () -> Unit,
-
+    onBackClicked: () -> Unit
 ) {
-    var isTakenTapped by remember { mutableStateOf(medication.medicationTaken) }
-    var isSkippedTapped by remember { mutableStateOf(!medication.medicationTaken) }
+    var isTakenTapped by remember(medication.medicationTaken) {
+        mutableStateOf(medication.medicationTaken)
+    }
+    var isSkippedTapped by remember(medication.medicationTaken) {
+        mutableStateOf(!medication.medicationTaken)
+    }
 
     val context = LocalContext.current
+
+    LaunchedEffect(medication) {
+        isTakenTapped = medication.medicationTaken
+        isSkippedTapped = !medication.medicationTaken
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .padding(vertical = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
@@ -89,7 +110,7 @@ fun MedicationDetailScreen(
                         )
                     }
                 },
-                title = { }
+                title = {}
             )
         },
         bottomBar = {
@@ -162,9 +183,8 @@ fun MedicationDetailScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.titleLarge,
@@ -182,7 +202,7 @@ fun MedicationDetailScreen(
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Crop
                 )
             }
 
