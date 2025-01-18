@@ -9,7 +9,8 @@ data class Duration(
     val remainderType: DurationType? = null,
 )
 
-fun Long.calculateDurationInDays(endMillis: Long): Int = ((endMillis - this) / (24 * 60 * 60 * 1000)).toInt() + 1
+fun Long.calculateDurationInDays(endMillis: Long): Int =
+    ((endMillis - this) / (24 * 60 * 60 * 1000)).toInt() + 1
 
 fun Long.formatDuration(endMillis: Long): Duration {
     val totalDays = calculateDurationInDays(endMillis)
@@ -21,40 +22,62 @@ fun Long.formatDuration(endMillis: Long): Duration {
             when {
                 remainingDays >= 30 ->
                     Duration(
-                        years,
-                        DurationType.YEARS,
-                        remainingDays / 30,
-                        DurationType.MONTHS,
+                        primary = years,
+                        primaryType = DurationType.YEARS,
+                        remainder = remainingDays / 30,
+                        remainderType = DurationType.MONTHS,
                     )
                 remainingDays > 0 ->
                     Duration(
-                        years,
-                        DurationType.YEARS,
-                        remainingDays,
-                        DurationType.DAYS,
+                        primary = years,
+                        primaryType = DurationType.YEARS,
+                        remainder = remainingDays,
+                        remainderType = DurationType.DAYS,
                     )
-                else -> Duration(years, DurationType.YEARS)
+                else -> Duration(
+                    primary = years,
+                    primaryType = DurationType.YEARS,
+                )
             }
         }
         totalDays >= 30 -> {
             val months = totalDays / 30
             val remainingDays = totalDays % 30
             if (remainingDays > 0) {
-                Duration(months, DurationType.MONTHS, remainingDays, DurationType.DAYS)
+                Duration(
+                    primary = months,
+                    primaryType = DurationType.MONTHS,
+                    remainder = remainingDays,
+                    remainderType = DurationType.DAYS,
+                )
             } else {
-                Duration(months, DurationType.MONTHS)
+                Duration(
+                    primary = months,
+                    primaryType = DurationType.MONTHS,
+                )
             }
         }
         totalDays >= 7 -> {
             val weeks = totalDays / 7
             val remainingDays = totalDays % 7
             if (remainingDays > 0) {
-                Duration(weeks, DurationType.WEEKS, remainingDays, DurationType.DAYS)
+                Duration(
+                    primary = weeks,
+                    primaryType = DurationType.WEEKS,
+                    remainder = remainingDays,
+                    remainderType = DurationType.DAYS,
+                )
             } else {
-                Duration(weeks, DurationType.WEEKS)
+                Duration(
+                    primary = weeks,
+                    primaryType = DurationType.WEEKS,
+                )
             }
         }
-        else -> Duration(totalDays, DurationType.DAYS)
+        else -> Duration(
+            primary = totalDays,
+            primaryType = DurationType.DAYS,
+        )
     }
 }
 

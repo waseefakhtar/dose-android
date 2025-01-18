@@ -26,19 +26,20 @@ fun DateRangePickerDialog(
     onDateSelected: (startDate: Long, endDate: Long) -> Unit,
 ) {
     if (showDialog) {
-        val dateRangePickerState =
-            rememberDateRangePickerState(
-                initialSelectedStartDateMillis = startDate,
-                initialSelectedEndDateMillis = endDate,
-            )
+        val dateRangePickerState = rememberDateRangePickerState(
+            initialSelectedStartDateMillis = startDate,
+            initialSelectedEndDateMillis = endDate,
+        )
 
-        LaunchedEffect(dateRangePickerState.selectedStartDateMillis, dateRangePickerState.selectedEndDateMillis) {
-            // If start date is already selected and user selects a new date
-            if (dateRangePickerState.selectedStartDateMillis != null &&
+        LaunchedEffect(
+            dateRangePickerState.selectedStartDateMillis,
+            dateRangePickerState.selectedEndDateMillis,
+        ) {
+            if (
+                dateRangePickerState.selectedStartDateMillis != null &&
                 dateRangePickerState.selectedEndDateMillis == null
             ) {
                 val newDate = dateRangePickerState.selectedStartDateMillis!!
-                // If new date is after existing end date, update end date
                 if (endDate != null && newDate > endDate) {
                     dateRangePickerState.setSelection(startDate!!, newDate)
                 }
@@ -49,9 +50,8 @@ fun DateRangePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
                 TextButton(
-                    enabled =
-                        dateRangePickerState.selectedStartDateMillis != null &&
-                            dateRangePickerState.selectedEndDateMillis != null,
+                    enabled = dateRangePickerState.selectedStartDateMillis != null &&
+                        dateRangePickerState.selectedEndDateMillis != null,
                     onClick = {
                         dateRangePickerState.selectedStartDateMillis?.let { start ->
                             dateRangePickerState.selectedEndDateMillis?.let { end ->
@@ -75,23 +75,30 @@ fun DateRangePickerDialog(
                 title = {
                     Text(
                         text = stringResource(R.string.select_duration),
-                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp),
+                        modifier = Modifier.padding(
+                            start = 24.dp,
+                            end = 12.dp,
+                            top = 16.dp,
+                        ),
                     )
                 },
                 headline = {
-                    if (dateRangePickerState.selectedStartDateMillis != null &&
+                    if (
+                        dateRangePickerState.selectedStartDateMillis != null &&
                         dateRangePickerState.selectedEndDateMillis != null
                     ) {
-                        val duration =
-                            dateRangePickerState.selectedStartDateMillis!!
-                                .formatDuration(dateRangePickerState.selectedEndDateMillis!!)
+                        val duration = dateRangePickerState.selectedStartDateMillis!!
+                            .formatDuration(dateRangePickerState.selectedEndDateMillis!!)
                         Text(
                             text = formatDurationText(duration),
                             style = MaterialTheme.typography.headlineSmall,
-                            modifier =
-                                Modifier
-                                    .padding(start = 24.dp, end = 12.dp, bottom = 12.dp)
-                                    .fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(
+                                    start = 24.dp,
+                                    end = 12.dp,
+                                    bottom = 12.dp,
+                                )
+                                .fillMaxWidth(),
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }

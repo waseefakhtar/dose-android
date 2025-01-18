@@ -119,8 +119,8 @@ fun AddMedicationScreen(
         topBar = {
             TopAppBar(
                 modifier =
-                    Modifier
-                        .padding(vertical = 16.dp),
+                Modifier
+                    .padding(vertical = 16.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
@@ -148,10 +148,10 @@ fun AddMedicationScreen(
         bottomBar = {
             Button(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .height(56.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .height(56.dp),
                 onClick = {
                     validateMedication(
                         name = medicationName,
@@ -193,9 +193,9 @@ fun AddMedicationScreen(
     ) { innerPadding ->
         Column(
             modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState()),
+            Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
@@ -204,8 +204,8 @@ fun AddMedicationScreen(
             )
             TextField(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth(),
                 value = medicationName,
                 onValueChange = { medicationName = it },
                 placeholder = {
@@ -274,19 +274,19 @@ fun AddMedicationScreen(
 
             Card(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
             ) {
                 Column(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row {
@@ -313,15 +313,15 @@ fun AddMedicationScreen(
                         onValueChange = {},
                         trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
                         interactionSource =
-                            remember { MutableInteractionSource() }.also { interactionSource ->
-                                LaunchedEffect(interactionSource) {
-                                    interactionSource.interactions.collect {
-                                        if (it is PressInteraction.Release) {
-                                            showDatePicker = true
-                                        }
+                        remember { MutableInteractionSource() }.also { interactionSource ->
+                            LaunchedEffect(interactionSource) {
+                                interactionSource.interactions.collect {
+                                    if (it is PressInteraction.Release) {
+                                        showDatePicker = true
                                     }
                                 }
-                            },
+                            }
+                        },
                     )
                 }
             }
@@ -499,10 +499,7 @@ fun TimerTextField(
 }
 
 @Composable
-private fun buildDateRangeText(
-    startDate: Long,
-    endDate: Long,
-): String =
+private fun buildDateRangeText(startDate: Long, endDate: Long): String =
     if (startDate == endDate) {
         stringResource(R.string.select_duration)
     } else {
