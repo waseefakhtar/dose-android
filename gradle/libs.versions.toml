@@ -20,8 +20,8 @@ googleServices = "4.4.2"
 hilt = "2.49"
 junit = "4.13.2"
 junitExt = "1.2.1"
-kotlin = "2.1.0" # Must be aligned with KSP version
-ksp = "2.1.0-1.0.29" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
+kotlin = "2.0.21" # Must be aligned with KSP version
+ksp = "2.0.21-1.0.26" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
 ktlint = "10.3.0"
 lifecycle = "2.8.7"
 room = "2.6.1"
@@ -76,7 +76,6 @@ android-library = { id="com.android.library", version.ref="gradle" }
 jetbrains-kotlin-android = { id="org.jetbrains.kotlin.android", version.ref="kotlin" }
 ktlint = { id="org.jlleitschuh.gradle.ktlint", version.ref="ktlint" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
