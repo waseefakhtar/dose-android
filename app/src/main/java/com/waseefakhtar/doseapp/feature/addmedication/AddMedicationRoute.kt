@@ -1,7 +1,8 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import android.content.Context
+import DateRangePickerDialog
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -32,12 +35,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -57,12 +59,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedDateString
+import com.waseefakhtar.doseapp.extension.formatDuration
+import com.waseefakhtar.doseapp.extension.toFormattedMonthDateString
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.Recurrence
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
+import com.waseefakhtar.doseapp.util.formatDurationText
 import com.waseefakhtar.doseapp.util.getRecurrenceList
 import java.util.Calendar
 import java.util.Date
@@ -77,7 +81,7 @@ fun DefaultPreview() {
 fun AddMedicationRoute(
     onBackClicked: () -> Unit,
     navigateToMedicationConfirm: (List<Medication>) -> Unit,
-    viewModel: AddMedicationViewModel = hiltViewModel()
+    viewModel: AddMedicationViewModel = hiltViewModel(),
 ) {
     AddMedicationScreen(onBackClicked, viewModel, navigateToMedicationConfirm)
 }
@@ -92,8 +96,13 @@ fun AddMedicationScreen(
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
+    var startDate by rememberSaveable { mutableLongStateOf(Date().time) }
     var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    val selectedTimes = rememberSaveable(saver = CalendarInformation.getStateListSaver()) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val selectedTimes =
+        rememberSaveable(
+            saver = CalendarInformation.getStateListSaver(),
+        ) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
     val context = LocalContext.current
 
     fun addTime(time: CalendarInformation) {
@@ -109,19 +118,20 @@ fun AddMedicationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .padding(vertical = 16.dp),
+                modifier =
+                    Modifier
+                        .padding(vertical = 16.dp),
                 navigationIcon = {
                     FloatingActionButton(
                         onClick = {
                             viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_ON_BACK_CLICKED)
                             onBackClicked()
                         },
-                        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
+                            contentDescription = stringResource(R.string.back),
                         )
                     }
                 },
@@ -130,17 +140,18 @@ fun AddMedicationScreen(
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(id = R.string.add_medication),
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.displaySmall
+                        style = MaterialTheme.typography.displaySmall,
                     )
-                }
+                },
             )
         },
         bottomBar = {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-                    .height(56.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .height(56.dp),
                 onClick = {
                     validateMedication(
                         name = medicationName,
@@ -153,51 +164,53 @@ fun AddMedicationScreen(
                             showSnackbar(
                                 context.getString(
                                     R.string.value_is_empty,
-                                    invalidatedValue
-                                )
+                                    invalidatedValue,
+                                ),
                             )
 
-                            val event = String.format(
-                                AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
-                                invalidatedValue
-                            )
+                            val event =
+                                String.format(
+                                    AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
+                                    invalidatedValue,
+                                )
                             viewModel.logEvent(eventName = event)
                         },
                         onValidate = {
                             navigateToMedicationConfirm(it)
                             viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
                         },
-                        viewModel = viewModel
+                        viewModel = viewModel,
                     )
                 },
-                shape = MaterialTheme.shapes.extraLarge
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 Text(
                     text = stringResource(id = R.string.next),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-
             Text(
                 text = stringResource(id = R.string.medication_name),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
             TextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 value = medicationName,
                 onValueChange = { medicationName = it },
                 placeholder = {
                     Text(
-                        text = stringResource(R.string.medication_name_hint)
+                        text = stringResource(R.string.medication_name_hint),
                     )
                 },
             )
@@ -206,16 +219,16 @@ fun AddMedicationScreen(
 
             var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 val maxDose = 3
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         text = stringResource(id = R.string.dose_per_day),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     TextField(
                         modifier = Modifier.width(128.dp),
@@ -233,17 +246,17 @@ fun AddMedicationScreen(
                                 Icon(
                                     imageVector = Icons.Filled.Info,
                                     contentDescription = stringResource(R.string.error),
-                                    tint = MaterialTheme.colorScheme.error
+                                    tint = MaterialTheme.colorScheme.error,
                                 )
                             }
                         },
                         placeholder = {
                             Text(
-                                text = stringResource(R.string.dosage_hint)
+                                text = stringResource(R.string.dosage_hint),
                             )
                         },
                         isError = isMaxDoseError,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     )
                 }
                 RecurrenceDropdownMenu { recurrence = it }
@@ -258,12 +271,76 @@ fun AddMedicationScreen(
             }
 
             Spacer(modifier = Modifier.padding(4.dp))
-            EndDateTextField { endDate = it }
+
+            Card(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
+            ) {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Row {
+                        Text(
+                            text = stringResource(id = R.string.duration),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+
+                        if (startDate != endDate) {
+                            val duration = startDate.formatDuration(endDate)
+                            Text(
+                                text = formatDurationText(duration),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                            )
+                        }
+                    }
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        value = buildDateRangeText(startDate, endDate),
+                        onValueChange = {},
+                        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                        interactionSource =
+                            remember { MutableInteractionSource() }.also { interactionSource ->
+                                LaunchedEffect(interactionSource) {
+                                    interactionSource.interactions.collect {
+                                        if (it is PressInteraction.Release) {
+                                            showDatePicker = true
+                                        }
+                                    }
+                                }
+                            },
+                    )
+                }
+            }
+
+            DateRangePickerDialog(
+                showDialog = showDatePicker,
+                startDate = startDate,
+                endDate = endDate,
+                onDismiss = { showDatePicker = false },
+                onDateSelected = { start, end ->
+                    startDate = start
+                    endDate = end
+                },
+            )
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
                 text = stringResource(R.string.times_for_medication),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
 
             for (index in selectedTimes.indices) {
@@ -281,7 +358,7 @@ fun AddMedicationScreen(
             }
 
             Button(
-                onClick = { addTime(CalendarInformation(Calendar.getInstance())) }
+                onClick = { addTime(CalendarInformation(Calendar.getInstance())) },
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
                 Text(stringResource(id = R.string.add_time))
@@ -298,7 +375,7 @@ private fun validateMedication(
     selectedTimes: List<CalendarInformation>,
     onInvalidate: (Int) -> Unit,
     onValidate: (List<Medication>) -> Unit,
-    viewModel: AddMedicationViewModel
+    viewModel: AddMedicationViewModel,
 ) {
     if (name.isEmpty()) {
         onInvalidate(R.string.medication_name)
@@ -326,50 +403,15 @@ private fun validateMedication(
     onValidate(medications)
 }
 
-private fun handleSelection(
-    isSelected: Boolean,
-    selectionCount: Int,
-    canSelectMoreTimesOfDay: Boolean,
-    onStateChange: (Int, Boolean) -> Unit,
-    onShowMaxSelectionError: () -> Unit
-) {
-    if (isSelected) {
-        onStateChange(selectionCount - 1, !isSelected)
-    } else {
-        if (canSelectMoreTimesOfDay) {
-            onStateChange(selectionCount + 1, !isSelected)
-        } else {
-            onShowMaxSelectionError()
-        }
-    }
-}
-
-private fun canSelectMoreTimesOfDay(selectionCount: Int, numberOfDosage: Int): Boolean {
-    return selectionCount < numberOfDosage
-}
-
-private fun showMaxSelectionSnackbar(
-    numberOfDosage: String,
-    context: Context
-) {
-    val dosage = ((numberOfDosage.toIntOrNull() ?: 0) + 1).toString()
-    showSnackbar(
-        context.getString(
-            R.string.dosage_and_frequency_mismatch_error_message,
-            dosage
-        )
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = stringResource(id = R.string.recurrence),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         val options = getRecurrenceList().map { it.name }
@@ -398,70 +440,12 @@ fun RecurrenceDropdownMenu(recurrence: (String) -> Unit) {
                             selectedOptionText = selectionOption
                             recurrence(selectionOption)
                             expanded = false
-                        }
+                        },
                     )
                 }
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EndDateTextField(endDate: (Long) -> Unit) {
-    Text(
-        text = stringResource(id = R.string.end_date),
-        style = MaterialTheme.typography.bodyLarge
-    )
-
-    var shouldDisplay by remember { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    if (isPressed) {
-        shouldDisplay = true
-    }
-
-    val today = Calendar.getInstance()
-    today.set(Calendar.HOUR_OF_DAY, 0)
-    today.set(Calendar.MINUTE, 0)
-    today.set(Calendar.SECOND, 0)
-    today.set(Calendar.MILLISECOND, 0)
-    val currentDayMillis = today.timeInMillis
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis(),
-        selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= currentDayMillis
-            }
-        }
-    )
-
-    var selectedDate by rememberSaveable {
-        mutableStateOf(
-            datePickerState.selectedDateMillis?.toFormattedDateString() ?: ""
-        )
-    }
-
-    EndDatePickerDialog(
-        state = datePickerState,
-        shouldDisplay = shouldDisplay,
-        onConfirmClicked = { selectedDateInMillis ->
-            selectedDate = selectedDateInMillis.toFormattedDateString()
-            endDate(selectedDateInMillis)
-        },
-        dismissRequest = {
-            shouldDisplay = false
-        }
-    )
-
-    TextField(
-        modifier = Modifier.fillMaxWidth(),
-        readOnly = true,
-        value = selectedDate,
-        onValueChange = {},
-        trailingIcon = { Icons.Default.DateRange },
-        interactionSource = interactionSource
-    )
 }
 
 @Composable
@@ -470,13 +454,13 @@ fun TimerTextField(
     isOnlyItem: Boolean,
     time: (CalendarInformation) -> Unit,
     onDeleteClick: () -> Unit,
-    logEvent: () -> Unit
+    logEvent: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
     val currentTime = CalendarInformation(Calendar.getInstance())
     var selectedTime by rememberSaveable(
-        stateSaver = CalendarInformation.getStateSaver()
+        stateSaver = CalendarInformation.getStateSaver(),
     ) { mutableStateOf(currentTime) }
 
     TimePickerDialogComponent(
@@ -486,7 +470,7 @@ fun TimerTextField(
             logEvent.invoke()
             selectedTime = it
             time(it)
-        }
+        },
     )
 
     TextField(
@@ -498,18 +482,29 @@ fun TimerTextField(
             // TODO: Make delete action work properly
             if (isLastItem && !isOnlyItem) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onDeleteClick) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete",
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                 }
             }
         },
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
     )
 }
+
+@Composable
+private fun buildDateRangeText(
+    startDate: Long,
+    endDate: Long,
+): String =
+    if (startDate == endDate) {
+        stringResource(R.string.select_duration)
+    } else {
+        "${Date(startDate).toFormattedMonthDateString()} - ${Date(endDate).toFormattedMonthDateString()}"
+    }
