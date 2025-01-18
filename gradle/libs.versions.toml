@@ -1,31 +1,31 @@
 [versions]
 min-sdk-version = "21"
-compile-sdk-version = "34"
-target-sdk-version = "34"
+compile-sdk-version = "35"
+target-sdk-version = "35"
 version-code = "8"
 version-name = "1.4.2"
-accompanistPermissions = "0.33.2-alpha"
-activity = "1.9.0"
+accompanistPermissions = "0.34.0"
+activity = "1.10.0"
 androidxHilt = "1.2.0"
-compose = "1.6.8"
-composeCompiler = "1.5.4"
-composeNavigation = "2.7.7"
-core = "1.13.1"
+composeCompiler = "1.5.15"
+compose = "1.7.6"
+composeNavigation = "2.8.5"
+core = "1.15.0"
 espresso = "3.6.1"
-firebase = "33.1.1"
+firebase = "33.8.0"
 firebaseCrashlyticsGradle = "3.0.2"
 gson = "2.10.1"
-gradle = "8.5.0"
+gradle = "8.6.1"
 googleServices = "4.4.2"
 hilt = "2.49"
 junit = "4.13.2"
 junitExt = "1.2.1"
-kotlin = "1.9.20" # Must be aligned with KSP version
-ksp = "1.9.20-1.0.14" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
+kotlin = "2.0.21" # Must be aligned with KSP version
+ksp = "2.0.21-1.0.26" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
 ktlint = "10.3.0"
-lifecycle = "2.8.3"
+lifecycle = "2.8.7"
 room = "2.6.1"
-material3 = "1.2.1"
+material3 = "1.3.1"
 okhttp = "4.10.0"
 
 [libraries]
@@ -76,8 +76,8 @@ android-library = { id="com.android.library", version.ref="gradle" }
 jetbrains-kotlin-android = { id="org.jetbrains.kotlin.android", version.ref="kotlin" }
 ktlint = { id="org.jlleitschuh.gradle.ktlint", version.ref="ktlint" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
