@@ -24,4 +24,4 @@ fun formatDurationText(duration: Duration): String {
     } else {
         primary
     }
-} 
+}

@@ -65,4 +65,4 @@ enum class DurationType(
     WEEKS(R.plurals.duration_weeks),
     MONTHS(R.plurals.duration_months),
     YEARS(R.plurals.duration_years),
-} 
+}
