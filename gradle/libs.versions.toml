@@ -1,7 +1,7 @@
 [versions]
 min-sdk-version = "21"
-compile-sdk-version = "34"
-target-sdk-version = "34"
+compile-sdk-version = "35"
+target-sdk-version = "35"
 version-code = "8"
 version-name = "1.4.2"
 accompanistPermissions = "0.34.0"
@@ -20,8 +20,8 @@ googleServices = "4.4.2"
 hilt = "2.49"
 junit = "4.13.2"
 junitExt = "1.2.1"
-kotlin = "1.9.20" # Must be aligned with KSP version
-ksp = "1.9.20-1.0.14" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
+kotlin = "2.1.0" # Must be aligned with KSP version
+ksp = "2.1.0-1.0.29" # KSP version must be aligned with kotlin https://github.com/google/ksp/releases
 ktlint = "10.3.0"
 lifecycle = "2.8.7"
 room = "2.6.1"
@@ -81,3 +81,4 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
