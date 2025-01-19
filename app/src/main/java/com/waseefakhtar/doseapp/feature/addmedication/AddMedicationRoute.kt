@@ -96,8 +96,8 @@ fun AddMedicationScreen(
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("1") }
     var recurrence by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
-    var startDate by rememberSaveable { mutableLongStateOf(Date().time) }
-    var endDate by rememberSaveable { mutableLongStateOf(Date().time) }
+    var startDate by rememberSaveable { mutableLongStateOf(0L) }
+    var endDate by rememberSaveable { mutableLongStateOf(0L) }
     var showDatePicker by remember { mutableStateOf(false) }
     val selectedTimes =
         rememberSaveable(
@@ -157,6 +157,7 @@ fun AddMedicationScreen(
                         name = medicationName,
                         dosage = numberOfDosage.toIntOrNull() ?: 0,
                         recurrence = recurrence,
+                        startDate = startDate,
                         endDate = endDate,
                         selectedTimes = selectedTimes,
                         onInvalidate = {
@@ -295,7 +296,7 @@ fun AddMedicationScreen(
                             style = MaterialTheme.typography.bodyLarge,
                         )
 
-                        if (startDate != endDate) {
+                        if (startDate != 0L && endDate != 0L && startDate != endDate) {
                             val duration = startDate.formatDuration(endDate)
                             Text(
                                 text = formatDurationText(duration),
@@ -371,6 +372,7 @@ private fun validateMedication(
     name: String,
     dosage: Int,
     recurrence: String,
+    startDate: Long,
     endDate: Long,
     selectedTimes: List<CalendarInformation>,
     onInvalidate: (Int) -> Unit,
@@ -387,8 +389,13 @@ private fun validateMedication(
         return
     }
 
-    if (endDate < 1) {
-        onInvalidate(R.string.end_date)
+    if (startDate == 0L || endDate == 0L) {
+        onInvalidate(R.string.duration)
+        return
+    }
+
+    if (startDate >= endDate) {
+        onInvalidate(R.string.duration)
         return
     }
 
@@ -500,7 +507,7 @@ fun TimerTextField(
 
 @Composable
 private fun buildDateRangeText(startDate: Long, endDate: Long): String =
-    if (startDate == endDate) {
+    if (startDate == 0L || endDate == 0L) {
         stringResource(R.string.select_duration)
     } else {
         "${Date(startDate).toFormattedMonthDateString()} - ${Date(endDate).toFormattedMonthDateString()}"

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.extension.formatDuration
 import com.waseefakhtar.doseapp.util.formatDurationText
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,10 +27,13 @@ fun DateRangePickerDialog(
     onDateSelected: (startDate: Long, endDate: Long) -> Unit,
 ) {
     if (showDialog) {
-        val dateRangePickerState = rememberDateRangePickerState(
-            initialSelectedStartDateMillis = startDate,
-            initialSelectedEndDateMillis = endDate,
-        )
+        val today = Calendar.getInstance().timeInMillis
+        val dateRangePickerState =
+            rememberDateRangePickerState(
+                initialSelectedStartDateMillis = if (startDate == 0L) null else startDate,
+                initialSelectedEndDateMillis = if (endDate == 0L) null else endDate,
+                initialDisplayedMonthMillis = today, // Show current month by default
+            )
 
         LaunchedEffect(
             dateRangePickerState.selectedStartDateMillis,
@@ -40,7 +44,7 @@ fun DateRangePickerDialog(
                 dateRangePickerState.selectedEndDateMillis == null
             ) {
                 val newDate = dateRangePickerState.selectedStartDateMillis!!
-                if (endDate != null && newDate > endDate) {
+                if (endDate != null && endDate != 0L && newDate > endDate) {
                     dateRangePickerState.setSelection(startDate!!, newDate)
                 }
             }
@@ -50,7 +54,8 @@ fun DateRangePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
                 TextButton(
-                    enabled = dateRangePickerState.selectedStartDateMillis != null &&
+                    enabled =
+                    dateRangePickerState.selectedStartDateMillis != null &&
                         dateRangePickerState.selectedEndDateMillis != null,
                     onClick = {
                         dateRangePickerState.selectedStartDateMillis?.let { start ->
@@ -75,7 +80,8 @@ fun DateRangePickerDialog(
                 title = {
                     Text(
                         text = stringResource(R.string.select_duration),
-                        modifier = Modifier.padding(
+                        modifier =
+                        Modifier.padding(
                             start = 24.dp,
                             end = 12.dp,
                             top = 16.dp,
@@ -87,18 +93,19 @@ fun DateRangePickerDialog(
                         dateRangePickerState.selectedStartDateMillis != null &&
                         dateRangePickerState.selectedEndDateMillis != null
                     ) {
-                        val duration = dateRangePickerState.selectedStartDateMillis!!
-                            .formatDuration(dateRangePickerState.selectedEndDateMillis!!)
+                        val duration =
+                            dateRangePickerState.selectedStartDateMillis!!
+                                .formatDuration(dateRangePickerState.selectedEndDateMillis!!)
                         Text(
                             text = formatDurationText(duration),
                             style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier
+                            modifier =
+                            Modifier
                                 .padding(
                                     start = 24.dp,
                                     end = 12.dp,
                                     bottom = 12.dp,
-                                )
-                                .fillMaxWidth(),
+                                ).fillMaxWidth(),
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }
