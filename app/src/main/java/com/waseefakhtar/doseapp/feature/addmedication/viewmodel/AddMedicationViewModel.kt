@@ -18,9 +18,9 @@ class AddMedicationViewModel @Inject constructor(
         name: String,
         dosage: Int,
         recurrence: String,
+        startDate: Date,
         endDate: Date,
         medicationTimes: List<CalendarInformation>,
-        startDate: Date = Date()
     ): List<Medication> {
 
         // Determine the recurrence interval based on the selected recurrence
@@ -32,7 +32,7 @@ class AddMedicationViewModel @Inject constructor(
         }
 
         val oneDayInMillis = 86400 * 1000 // Number of milliseconds in one day
-        val numOccurrences = ((endDate.time + oneDayInMillis - startDate.time) / (interval * oneDayInMillis)).toInt() + 1
+        val numOccurrences = ((endDate.time + oneDayInMillis - startDate.time) / (interval * oneDayInMillis)).toInt()
 
         // Create a Medication object for each occurrence and add it to a list
         val medications = mutableListOf<Medication>()

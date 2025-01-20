@@ -405,7 +405,7 @@ private fun validateMedication(
     }
 
     val medications =
-        viewModel.createMedications(name, dosage, recurrence, Date(endDate), selectedTimes)
+        viewModel.createMedications(name, dosage, recurrence, Date(startDate), Date(endDate), selectedTimes)
 
     onValidate(medications)
 }
