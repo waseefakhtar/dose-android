@@ -171,14 +171,14 @@ fun AddMedicationScreen(
 
                             val event =
                                 String.format(
-                                    AnalyticsEvents.ADD_MEDICATION_MEDICATION_VALUE_INVALIDATED,
-                                    invalidatedValue,
+                                    AnalyticsEvents.ADD_MED_VALUE_INVALIDATED,
+                                    invalidatedValue.lowercase(),
                                 )
                             viewModel.logEvent(eventName = event)
                         },
                         onValidate = {
                             navigateToMedicationConfirm(it)
-                            viewModel.logEvent(eventName = AnalyticsEvents.ADD_MEDICATION_NAVIGATING_TO_MEDICATION_CONFIRM)
+                            viewModel.logEvent(eventName = AnalyticsEvents.ADD_MED_NAVIGATING_TO_MED_CONFIRM)
                         },
                         viewModel = viewModel,
                     )
