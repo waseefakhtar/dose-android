@@ -62,6 +62,8 @@ class HomeViewModel @Inject constructor(
 
     fun updateSelectedDate(date: Date) {
         _selectedDate.value = date
+        // Update the date filter to trigger new medication fetch
+        savedStateHandle[DATE_FILTER_KEY] = date.toFormattedYearMonthDateString()
     }
 
     init {
