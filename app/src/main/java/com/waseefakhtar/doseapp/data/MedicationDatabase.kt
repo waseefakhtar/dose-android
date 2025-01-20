@@ -1,7 +1,6 @@
 package com.waseefakhtar.doseapp.data
 
 import androidx.room.AutoMigration
-import androidx.room.ColumnInfo
 import androidx.room.Database
 import androidx.room.DeleteColumn
 import androidx.room.RenameColumn
@@ -9,7 +8,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
-import java.util.Date
 
 @Database(
     entities = [MedicationEntity::class],
