@@ -45,6 +45,7 @@ class AddMedicationViewModel @Inject constructor(
                     name = name,
                     dosage = dosage,
                     recurrence = recurrence,
+                    startDate = startDate,
                     endDate = endDate,
                     medicationTaken = false,
                     medicationTime = getMedicationTime(medicationTime, calendar)

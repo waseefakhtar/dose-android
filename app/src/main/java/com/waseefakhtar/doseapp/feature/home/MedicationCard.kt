@@ -109,6 +109,7 @@ private fun MedicationCardTakeNowPreview() {
             name = "A big big name for a little medication I needs to take",
             dosage = 1,
             recurrence = "2",
+            startDate = Date(),
             endDate = Date(),
             medicationTime = Date(),
             medicationTaken = false
@@ -125,6 +126,7 @@ private fun MedicationCardTakenPreview() {
             name = "A big big name for a little medication I needs to take",
             dosage = 1,
             recurrence = "2",
+            startDate = Date(),
             endDate = Date(),
             medicationTime = Date(),
             medicationTaken = true
