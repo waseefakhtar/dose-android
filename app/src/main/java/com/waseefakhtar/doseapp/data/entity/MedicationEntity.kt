@@ -11,6 +11,7 @@ data class MedicationEntity(
     val name: String,
     val dosage: Int,
     val recurrence: String,
+    val startDate: Date?,
     val endDate: Date,
     val medicationTaken: Boolean,
     val medicationTime: Date

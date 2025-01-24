@@ -65,4 +65,22 @@
     <string name="daily" tools:ignore="MissingTranslation">Daily</string>
     <string name="weekly" tools:ignore="MissingTranslation">Weekly</string>
     <string name="monthly" tools:ignore="MissingTranslation">Monthly</string>
+    <string name="duration" tools:ignore="MissingTranslation">Duration</string>
+    <string name="select_duration" tools:ignore="MissingTranslation">Select Duration</string>
+    <plurals name="duration_days" tools:ignore="MissingTranslation">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="duration_weeks" tools:ignore="MissingTranslation">
+        <item quantity="one">%d week</item>
+        <item quantity="other">%d weeks</item>
+    </plurals>
+    <plurals name="duration_months" tools:ignore="MissingTranslation">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+    <plurals name="duration_years" tools:ignore="MissingTranslation">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
 </resources>
