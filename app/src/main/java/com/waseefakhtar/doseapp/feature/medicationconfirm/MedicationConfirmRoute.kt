@@ -114,7 +114,7 @@ fun MedicationConfirmScreen(
                 count = medications.size,
                 medication.name,
                 medications.size,
-                medication.recurrence.lowercase(),
+                medication.frequency.lowercase(),
                 medication.endDate.toFormattedDateString()
             ),
             style = MaterialTheme.typography.titleMedium

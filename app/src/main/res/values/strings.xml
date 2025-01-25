@@ -86,4 +86,9 @@
         <item quantity="one">%d year</item>
         <item quantity="other">%d years</item>
     </plurals>
+    <string name="everyday" tools:ignore="MissingTranslation">Everyday</string>
+    <string name="every_n_days" tools:ignore="MissingTranslation">Every %s Days</string>
+    <string name="every_week" tools:ignore="MissingTranslation">Every Week</string>
+    <string name="every_n_weeks" tools:ignore="MissingTranslation">Every %s Weeks</string>
+    <string name="every_month" tools:ignore="MissingTranslation">Every Month</string>
 </resources>
