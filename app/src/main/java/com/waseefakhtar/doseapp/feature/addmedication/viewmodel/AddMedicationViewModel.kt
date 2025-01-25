@@ -26,7 +26,6 @@ class AddMedicationViewModel @Inject constructor(
         endDate: Date,
         medicationTimes: List<CalendarInformation>,
     ): List<Medication> {
-        // Get the interval in days from the Frequency enum
         val frequencyValue = Frequency.valueOf(frequency)
         val interval = try {
             frequencyValue.days
@@ -35,7 +34,10 @@ class AddMedicationViewModel @Inject constructor(
         }
 
         val oneDayInMillis = 86400 * 1000 // Number of milliseconds in one day
-        val numOccurrences = ((endDate.time + oneDayInMillis - startDate.time) / (interval * oneDayInMillis)).toInt()
+        val durationInDays = ((endDate.time + oneDayInMillis - startDate.time) / oneDayInMillis).toInt()
+
+        // Always create at least one occurrence if we have a valid duration
+        val numOccurrences = if (durationInDays > 0) maxOf(1, durationInDays / interval) else 0
 
         // Create a Medication object for each occurrence and add it to a list
         val medications = mutableListOf<Medication>()

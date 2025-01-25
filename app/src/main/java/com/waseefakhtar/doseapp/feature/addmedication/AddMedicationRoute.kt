@@ -60,8 +60,8 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedMonthDateString
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
-import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.Frequency
+import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.getFrequencyList
 import java.util.Calendar
@@ -355,7 +355,7 @@ private fun validateMedication(
     }
 
     if (selectedTimes.isEmpty()) {
-        onInvalidate(R.string.times_for_medication)
+        onInvalidate(R.string.schedule)
         return
     }
 
@@ -377,13 +377,23 @@ fun FrequencyDropdownMenu(frequency: (String) -> Unit) {
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .menuAnchor()
                 .fillMaxWidth(),
             readOnly = true,
-            value = when (selectedOption.stringResId) {
-                R.string.every_n_days -> stringResource(selectedOption.stringResId, selectedOption.days)
-                R.string.every_n_weeks -> stringResource(selectedOption.stringResId, selectedOption.days / 7)
+            value =
+            when (selectedOption.stringResId) {
+                R.string.every_n_days -> stringResource(
+                    selectedOption.stringResId,
+                    selectedOption.days
+                )
+
+                R.string.every_n_weeks -> stringResource(
+                    selectedOption.stringResId,
+                    selectedOption.days / 7
+                )
+
                 else -> stringResource(selectedOption.stringResId)
             },
             onValueChange = {},
@@ -403,7 +413,7 @@ fun FrequencyDropdownMenu(frequency: (String) -> Unit) {
                                 R.string.every_n_days -> stringResource(option.stringResId, option.days)
                                 R.string.every_n_weeks -> stringResource(option.stringResId, option.days / 7)
                                 else -> stringResource(option.stringResId)
-                            }
+                            },
                         )
                     },
                     onClick = {
