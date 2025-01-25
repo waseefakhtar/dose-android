@@ -9,7 +9,7 @@ data class Medication(
     val id: Long = 0,
     val name: String,
     val dosage: Int,
-    val recurrence: String,
+    val frequency: String,
     val startDate: Date,
     val endDate: Date,
     val medicationTaken: Boolean,

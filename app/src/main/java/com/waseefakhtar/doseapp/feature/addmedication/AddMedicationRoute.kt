@@ -61,9 +61,9 @@ import com.waseefakhtar.doseapp.extension.toFormattedMonthDateString
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
-import com.waseefakhtar.doseapp.util.Recurrence
+import com.waseefakhtar.doseapp.util.Frequency
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
-import com.waseefakhtar.doseapp.util.getRecurrenceList
+import com.waseefakhtar.doseapp.util.getFrequencyList
 import java.util.Calendar
 import java.util.Date
 
@@ -91,7 +91,7 @@ fun AddMedicationScreen(
 ) {
     var medicationName by rememberSaveable { mutableStateOf("") }
     var numberOfDosage by rememberSaveable { mutableStateOf("") }
-    var frequency by rememberSaveable { mutableStateOf(Recurrence.Daily.name) }
+    var frequency by rememberSaveable { mutableStateOf(Frequency.EVERYDAY.name) }
     var startDate by rememberSaveable { mutableLongStateOf(0L) }
     var endDate by rememberSaveable { mutableLongStateOf(0L) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -152,7 +152,7 @@ fun AddMedicationScreen(
                     validateMedication(
                         name = medicationName,
                         dosage = numberOfDosage.toIntOrNull() ?: 1,
-                        recurrence = frequency,
+                        frequency = frequency,
                         startDate = startDate,
                         endDate = endDate,
                         selectedTimes = selectedTimes,
@@ -326,7 +326,7 @@ fun AddMedicationScreen(
 private fun validateMedication(
     name: String,
     dosage: Int,
-    recurrence: String,
+    frequency: String,
     startDate: Long,
     endDate: Long,
     selectedTimes: List<CalendarInformation>,
@@ -360,7 +360,7 @@ private fun validateMedication(
     }
 
     val medications =
-        viewModel.createMedications(name, dosage, recurrence, Date(startDate), Date(endDate), selectedTimes)
+        viewModel.createMedications(name, dosage, frequency, Date(startDate), Date(endDate), selectedTimes)
 
     onValidate(medications)
 }
@@ -368,20 +368,24 @@ private fun validateMedication(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FrequencyDropdownMenu(frequency: (String) -> Unit) {
-    val options = getRecurrenceList().map { it.name }
+    val options = getFrequencyList()
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
+    var selectedOption by remember { mutableStateOf(options[0]) }
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            modifier =
-            Modifier
+            modifier = Modifier
                 .menuAnchor()
                 .fillMaxWidth(),
             readOnly = true,
-            value = selectedOptionText,
+            value = when (selectedOption.stringResId) {
+                R.string.every_n_days -> stringResource(selectedOption.stringResId, selectedOption.days)
+                R.string.every_n_weeks -> stringResource(selectedOption.stringResId, selectedOption.days / 7)
+                else -> stringResource(selectedOption.stringResId)
+            },
             onValueChange = {},
             label = { Text(stringResource(id = R.string.frequency)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -391,12 +395,20 @@ fun FrequencyDropdownMenu(frequency: (String) -> Unit) {
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            options.forEach { selectionOption ->
+            options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(selectionOption) },
+                    text = {
+                        Text(
+                            when (option.stringResId) {
+                                R.string.every_n_days -> stringResource(option.stringResId, option.days)
+                                R.string.every_n_weeks -> stringResource(option.stringResId, option.days / 7)
+                                else -> stringResource(option.stringResId)
+                            }
+                        )
+                    },
                     onClick = {
-                        selectedOptionText = selectionOption
-                        frequency(selectionOption)
+                        selectedOption = option
+                        frequency(option.name)
                         expanded = false
                     },
                 )

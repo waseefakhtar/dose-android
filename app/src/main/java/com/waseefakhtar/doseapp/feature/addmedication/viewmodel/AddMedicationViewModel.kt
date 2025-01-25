@@ -1,34 +1,37 @@
 package com.waseefakhtar.doseapp.feature.addmedication.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
+import com.waseefakhtar.doseapp.util.Frequency
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class AddMedicationViewModel @Inject constructor(
-    private val analyticsHelper: AnalyticsHelper
+    private val analyticsHelper: AnalyticsHelper,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     fun createMedications(
         name: String,
         dosage: Int,
-        recurrence: String,
+        frequency: String,
         startDate: Date,
         endDate: Date,
         medicationTimes: List<CalendarInformation>,
     ): List<Medication> {
-
-        // Determine the recurrence interval based on the selected recurrence
-        val interval = when (recurrence) {
-            "Daily" -> 1
-            "Weekly" -> 7
-            "Monthly" -> 30
-            else -> throw IllegalArgumentException("Invalid recurrence: $recurrence")
+        // Get the interval in days from the Frequency enum
+        val frequencyValue = Frequency.valueOf(frequency)
+        val interval = try {
+            frequencyValue.days
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException("Invalid frequency: $frequency")
         }
 
         val oneDayInMillis = 86400 * 1000 // Number of milliseconds in one day
@@ -38,13 +41,15 @@ class AddMedicationViewModel @Inject constructor(
         val medications = mutableListOf<Medication>()
         val calendar = Calendar.getInstance()
         calendar.time = startDate
+
+        val formattedFrequency = context.getString(frequencyValue.stringResId, frequencyValue.days)
         for (i in 0 until numOccurrences) {
             for (medicationTime in medicationTimes) {
                 val medication = Medication(
                     id = 0,
                     name = name,
                     dosage = dosage,
-                    recurrence = recurrence,
+                    frequency = formattedFrequency,
                     startDate = startDate,
                     endDate = endDate,
                     medicationTaken = false,
@@ -53,7 +58,7 @@ class AddMedicationViewModel @Inject constructor(
                 medications.add(medication)
             }
 
-            // Increment the date based on the recurrence interval
+            // Increment the date based on the frequency interval
             calendar.add(Calendar.DAY_OF_YEAR, interval)
         }
 
