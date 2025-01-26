@@ -62,16 +62,16 @@ fun MedicationCard(
                 )
 
                 val doseAndType = "${medication.dosage} ${
-                    stringResource(
-                        when (medication.type) {
-                            MedicationType.TABLET -> R.string.tablet
-                            MedicationType.CAPSULE -> R.string.capsule
-                            MedicationType.SYRUP -> R.string.type_syrup
-                            MedicationType.DROPS -> R.string.drops
-                            MedicationType.SPRAY -> R.string.spray
-                            MedicationType.GEL -> R.string.gel
-                        }
-                    ).lowercase()
+                stringResource(
+                    when (medication.type) {
+                        MedicationType.TABLET -> R.string.tablet
+                        MedicationType.CAPSULE -> R.string.capsule
+                        MedicationType.SYRUP -> R.string.type_syrup
+                        MedicationType.DROPS -> R.string.drops
+                        MedicationType.SPRAY -> R.string.spray
+                        MedicationType.GEL -> R.string.gel
+                    }
+                ).lowercase()
                 }"
 
                 Text(
