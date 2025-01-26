@@ -1,8 +1,10 @@
 package com.waseefakhtar.doseapp.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
+import com.waseefakhtar.doseapp.util.MedicationType
 
 @Entity
 data class MedicationEntity(
@@ -14,5 +16,7 @@ data class MedicationEntity(
     val startDate: Date?,
     val endDate: Date,
     val medicationTaken: Boolean,
-    val medicationTime: Date
+    val medicationTime: Date,
+    @ColumnInfo(defaultValue = "TABLET")
+    val type: String = MedicationType.getDefault().name
 )

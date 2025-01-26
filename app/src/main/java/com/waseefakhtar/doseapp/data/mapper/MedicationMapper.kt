@@ -3,6 +3,7 @@ package com.waseefakhtar.doseapp.data.mapper
 import com.waseefakhtar.doseapp.data.entity.MedicationEntity
 import com.waseefakhtar.doseapp.domain.model.Medication
 import java.util.Date
+import com.waseefakhtar.doseapp.util.MedicationType
 
 fun MedicationEntity.toMedication(): Medication {
     return Medication(
@@ -13,7 +14,8 @@ fun MedicationEntity.toMedication(): Medication {
         startDate = startDate ?: Date(),
         endDate = endDate,
         medicationTime = medicationTime,
-        medicationTaken = medicationTaken
+        medicationTaken = medicationTaken,
+        type = MedicationType.valueOf(type)
     )
 }
 
@@ -26,6 +28,7 @@ fun Medication.toMedicationEntity(): MedicationEntity {
         startDate = startDate,
         endDate = endDate,
         medicationTime = medicationTime,
-        medicationTaken = medicationTaken
+        medicationTaken = medicationTaken,
+        type = type.name
     )
 }

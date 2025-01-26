@@ -1,6 +1,7 @@
 package com.waseefakhtar.doseapp.domain.model
 
 import android.os.Parcelable
+import com.waseefakhtar.doseapp.util.MedicationType
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -13,5 +14,6 @@ data class Medication(
     val startDate: Date,
     val endDate: Date,
     val medicationTaken: Boolean,
-    val medicationTime: Date
+    val medicationTime: Date,
+    val type: MedicationType = MedicationType.getDefault()
 ) : Parcelable

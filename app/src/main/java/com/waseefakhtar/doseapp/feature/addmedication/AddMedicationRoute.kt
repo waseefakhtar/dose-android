@@ -64,6 +64,8 @@ import com.waseefakhtar.doseapp.util.Frequency
 import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.getFrequencyList
+import com.waseefakhtar.doseapp.util.getMedicationTypes
+import com.waseefakhtar.doseapp.util.MedicationType
 import java.util.Calendar
 import java.util.Date
 
@@ -100,6 +102,7 @@ fun AddMedicationScreen(
             saver = CalendarInformation.getStateListSaver(),
         ) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
     val context = LocalContext.current
+    var medicationType by rememberSaveable { mutableStateOf(MedicationType.getDefault()) }
 
     fun addTime(time: CalendarInformation) {
         selectedTimes.add(time)
@@ -156,6 +159,7 @@ fun AddMedicationScreen(
                         startDate = startDate,
                         endDate = endDate,
                         selectedTimes = selectedTimes,
+                        type = medicationType,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
                             showSnackbar(
@@ -207,6 +211,13 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.padding(4.dp))
 
             FrequencyDropdownMenu { frequency = it }
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            MedicationTypeDropdownMenu(
+                selectedType = medicationType,
+                onTypeSelected = { medicationType = it }
+            )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
@@ -330,6 +341,7 @@ private fun validateMedication(
     startDate: Long,
     endDate: Long,
     selectedTimes: List<CalendarInformation>,
+    type: MedicationType,
     onInvalidate: (Int) -> Unit,
     onValidate: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel,
@@ -360,7 +372,15 @@ private fun validateMedication(
     }
 
     val medications =
-        viewModel.createMedications(name, dosage, frequency, Date(startDate), Date(endDate), selectedTimes)
+        viewModel.createMedications(
+            name = name,
+            dosage = dosage,
+            frequency = frequency,
+            startDate = Date(startDate),
+            endDate = Date(endDate),
+            medicationTimes = selectedTimes,
+            type = type
+        )
 
     onValidate(medications)
 }
@@ -487,3 +507,66 @@ private fun buildDateRangeText(
     } else {
         "${Date(startDate).toFormattedMonthDateString()} - ${Date(endDate).toFormattedMonthDateString()}"
     }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MedicationTypeDropdownMenu(
+    selectedType: MedicationType,
+    onTypeSelected: (MedicationType) -> Unit
+) {
+    val options = getMedicationTypes()
+    var expanded by remember { mutableStateOf(false) }
+    
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        TextField(
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
+            readOnly = true,
+            value = stringResource(
+                when (selectedType) {
+                    MedicationType.TABLET -> R.string.tablet
+                    MedicationType.CAPSULE -> R.string.capsule
+                    MedicationType.SYRUP -> R.string.type_syrup
+                    MedicationType.DROPS -> R.string.drops
+                    MedicationType.SPRAY -> R.string.spray
+                    MedicationType.GEL -> R.string.gel
+                }
+            ),
+            onValueChange = {},
+            label = { Text(stringResource(R.string.type)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            stringResource(
+                                when (option) {
+                                    MedicationType.TABLET -> R.string.tablet
+                                    MedicationType.CAPSULE -> R.string.capsule
+                                    MedicationType.SYRUP -> R.string.type_syrup
+                                    MedicationType.DROPS -> R.string.drops
+                                    MedicationType.SPRAY -> R.string.spray
+                                    MedicationType.GEL -> R.string.gel
+                                }
+                            )
+                        )
+                    },
+                    onClick = {
+                        onTypeSelected(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}

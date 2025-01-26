@@ -6,6 +6,7 @@ import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.util.Frequency
+import com.waseefakhtar.doseapp.util.MedicationType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
@@ -25,6 +26,7 @@ class AddMedicationViewModel @Inject constructor(
         startDate: Date,
         endDate: Date,
         medicationTimes: List<CalendarInformation>,
+        type: MedicationType,
     ): List<Medication> {
         val frequencyValue = Frequency.valueOf(frequency)
         val interval = try {
@@ -55,7 +57,8 @@ class AddMedicationViewModel @Inject constructor(
                     startDate = startDate,
                     endDate = endDate,
                     medicationTaken = false,
-                    medicationTime = getMedicationTime(medicationTime, calendar)
+                    medicationTime = getMedicationTime(medicationTime, calendar),
+                    type = type
                 )
                 medications.add(medication)
             }

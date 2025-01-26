@@ -91,4 +91,11 @@
     <string name="every_week" tools:ignore="MissingTranslation">Every Week</string>
     <string name="every_n_weeks" tools:ignore="MissingTranslation">Every %s Weeks</string>
     <string name="every_month" tools:ignore="MissingTranslation">Every Month</string>
+    <string name="type" tools:ignore="MissingTranslation">Type</string>
+    <string name="tablet" tools:ignore="MissingTranslation">Tablet</string>
+    <string name="capsule" tools:ignore="MissingTranslation">Capsule</string>
+    <string name="type_syrup" tools:ignore="MissingTranslation">Syrup</string>
+    <string name="drops" tools:ignore="MissingTranslation">Drops</string>
+    <string name="spray" tools:ignore="MissingTranslation">Spray</string>
+    <string name="gel" tools:ignore="MissingTranslation">Gel</string>
 </resources>
