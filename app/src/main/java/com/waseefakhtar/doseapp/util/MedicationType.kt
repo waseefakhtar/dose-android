@@ -13,4 +13,4 @@ enum class MedicationType {
     }
 }
 
-fun getMedicationTypes(): List<MedicationType> = MedicationType.values().toList() 
+fun getMedicationTypes(): List<MedicationType> = MedicationType.values().toList()
