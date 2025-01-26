@@ -1,38 +1,40 @@
 package com.waseefakhtar.doseapp.feature.home
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.hasPassed
-import com.waseefakhtar.doseapp.extension.toFormattedDateString
-import com.waseefakhtar.doseapp.extension.toFormattedTimeString
+import com.waseefakhtar.doseapp.util.MedicationType
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicationCard(
     medication: Medication,
     navigateToMedicationDetail: (Medication) -> Unit
 ) {
+    val (cardColor, boxColor, textColor) = medication.type.getCardColor()
 
     Card(
         modifier = Modifier
@@ -41,61 +43,77 @@ fun MedicationCard(
         onClick = { navigateToMedicationDetail(medication) },
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            containerColor = Color(cardColor),
         )
     ) {
-
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Column(
-                modifier = Modifier
-                    .weight(2f),
+                modifier = Modifier.weight(2f),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    style = MaterialTheme.typography.titleSmall,
-                    text = medication.medicationTime.toFormattedDateString().uppercase(),
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Text(
                     text = medication.name,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color(boxColor)
                 )
 
-                val medicationStatusText = when {
-                    medication.medicationTime.hasPassed() -> {
-                        if (medication.medicationTaken) {
-                            stringResource(
-                                id = R.string.medication_taken_at,
-                                medication.medicationTime.toFormattedTimeString()
-                            )
-                        } else {
-                            stringResource(
-                                id = R.string.medication_skipped_at,
-                                medication.medicationTime.toFormattedTimeString()
-                            )
-                        }
+                val doseAndType = "${medication.dosage} ${
+                stringResource(
+                    when (medication.type) {
+                        MedicationType.TABLET -> R.string.tablet
+                        MedicationType.CAPSULE -> R.string.capsule
+                        MedicationType.SYRUP -> R.string.type_syrup
+                        MedicationType.DROPS -> R.string.drops
+                        MedicationType.SPRAY -> R.string.spray
+                        MedicationType.GEL -> R.string.gel
                     }
-
-                    else -> stringResource(
-                        id = R.string.medication_scheduled_at,
-                        medication.medicationTime.toFormattedTimeString()
-                    )
-                }
+                ).lowercase()
+                }"
 
                 Text(
-                    text = medicationStatusText,
-                    color = MaterialTheme.colorScheme.primary
+                    text = doseAndType,
+                    color = Color(boxColor)
                 )
             }
 
-            Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
+            Box(
+                modifier = Modifier
+                    .height(64.dp)
+                    .aspectRatio(1f)
+                    .border(
+                        width = 1.5.dp, color = Color(boxColor), shape = RoundedCornerShape(16.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(
+                        when (medication.type) {
+                            MedicationType.TABLET -> R.drawable.ic_tablet
+                            MedicationType.CAPSULE -> R.drawable.ic_capsule
+                            MedicationType.SYRUP -> R.drawable.ic_syrup
+                            MedicationType.DROPS -> R.drawable.ic_drops
+                            MedicationType.SPRAY -> R.drawable.ic_spray
+                            MedicationType.GEL -> R.drawable.ic_gel
+                        }
+                    ),
+                    contentDescription = stringResource(
+                        when (medication.type) {
+                            MedicationType.TABLET -> R.string.tablet
+                            MedicationType.CAPSULE -> R.string.capsule
+                            MedicationType.SYRUP -> R.string.type_syrup
+                            MedicationType.DROPS -> R.string.drops
+                            MedicationType.SPRAY -> R.string.spray
+                            MedicationType.GEL -> R.string.gel
+                        }
+                    ),
+                    modifier = Modifier.size(42.dp),
+                    tint = Color(boxColor)
+                )
+            }
         }
     }
 }
@@ -129,7 +147,8 @@ private fun MedicationCardTakenPreview() {
             startDate = Date(),
             endDate = Date(),
             medicationTime = Date(),
-            medicationTaken = true
+            medicationTaken = true,
+            type = MedicationType.TABLET
         )
     ) { }
 }

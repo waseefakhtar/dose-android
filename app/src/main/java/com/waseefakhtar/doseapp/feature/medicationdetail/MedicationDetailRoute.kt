@@ -1,7 +1,6 @@
 package com.waseefakhtar.doseapp.feature.medicationdetail
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -32,8 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +45,7 @@ import com.waseefakhtar.doseapp.domain.model.Medication
 import com.waseefakhtar.doseapp.extension.toFormattedDateString
 import com.waseefakhtar.doseapp.extension.toFormattedTimeString
 import com.waseefakhtar.doseapp.feature.medicationdetail.viewmodel.MedicationDetailViewModel
+import com.waseefakhtar.doseapp.util.MedicationType
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 
 @Composable
@@ -78,6 +78,7 @@ fun MedicationDetailScreen(
     viewModel: MedicationDetailViewModel,
     onBackClicked: () -> Unit
 ) {
+    val (cardColor, boxColor, textColor) = medication.type.getCardColor()
     var isTakenTapped by remember(medication.medicationTaken) {
         mutableStateOf(medication.medicationTaken)
     }
@@ -189,20 +190,41 @@ fun MedicationDetailScreen(
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.titleLarge,
                 text = medication.medicationTime.toFormattedDateString(),
-                color = MaterialTheme.colorScheme.primary
+                color = Color(boxColor)
             )
 
             Box(
                 modifier = Modifier
                     .padding(16.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    .size(120.dp)
+                    .border(
+                        width = 1.5.dp, color = Color(boxColor), shape = RoundedCornerShape(64.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
+                Icon(
+                    painter = painterResource(
+                        when (medication.type) {
+                            MedicationType.TABLET -> R.drawable.ic_tablet
+                            MedicationType.CAPSULE -> R.drawable.ic_capsule
+                            MedicationType.SYRUP -> R.drawable.ic_syrup
+                            MedicationType.DROPS -> R.drawable.ic_drops
+                            MedicationType.SPRAY -> R.drawable.ic_spray
+                            MedicationType.GEL -> R.drawable.ic_gel
+                        }
+                    ),
+                    contentDescription = stringResource(
+                        when (medication.type) {
+                            MedicationType.TABLET -> R.string.tablet
+                            MedicationType.CAPSULE -> R.string.capsule
+                            MedicationType.SYRUP -> R.string.type_syrup
+                            MedicationType.DROPS -> R.string.drops
+                            MedicationType.SPRAY -> R.string.spray
+                            MedicationType.GEL -> R.string.gel
+                        }
+                    ),
+                    modifier = Modifier.size(64.dp),
+                    tint = Color(boxColor)
                 )
             }
 
@@ -210,17 +232,26 @@ fun MedicationDetailScreen(
                 text = medication.name,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = Color(boxColor)
             )
 
+            val doseAndType = "${medication.dosage} ${
+            stringResource(
+                when (medication.type) {
+                    MedicationType.TABLET -> R.string.tablet
+                    MedicationType.CAPSULE -> R.string.capsule
+                    MedicationType.SYRUP -> R.string.type_syrup
+                    MedicationType.DROPS -> R.string.drops
+                    MedicationType.SPRAY -> R.string.spray
+                    MedicationType.GEL -> R.string.gel
+                }
+            ).lowercase()
+            } at ${medication.medicationTime.toFormattedTimeString()}"
+
             Text(
-                text = stringResource(
-                    id = R.string.medication_dose_details,
-                    medication.dosage,
-                    medication.medicationTime.toFormattedTimeString()
-                ),
+                text = doseAndType,
                 style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
+                color = Color(boxColor)
             )
         }
     }
