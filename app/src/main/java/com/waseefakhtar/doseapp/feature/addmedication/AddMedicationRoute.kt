@@ -1,20 +1,29 @@
 package com.waseefakhtar.doseapp.feature.addmedication
 
-import DateRangePickerDialog
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -47,10 +56,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -62,6 +74,7 @@ import com.waseefakhtar.doseapp.feature.addmedication.model.CalendarInformation
 import com.waseefakhtar.doseapp.feature.addmedication.viewmodel.AddMedicationViewModel
 import com.waseefakhtar.doseapp.util.Frequency
 import com.waseefakhtar.doseapp.util.HOUR_MINUTE_FORMAT
+import com.waseefakhtar.doseapp.util.MedicationType
 import com.waseefakhtar.doseapp.util.SnackbarUtil.Companion.showSnackbar
 import com.waseefakhtar.doseapp.util.getFrequencyList
 import java.util.Calendar
@@ -100,6 +113,7 @@ fun AddMedicationScreen(
             saver = CalendarInformation.getStateListSaver(),
         ) { mutableStateListOf(CalendarInformation(Calendar.getInstance())) }
     val context = LocalContext.current
+    var medicationType by rememberSaveable { mutableStateOf(MedicationType.getDefault()) }
 
     fun addTime(time: CalendarInformation) {
         selectedTimes.add(time)
@@ -156,6 +170,7 @@ fun AddMedicationScreen(
                         startDate = startDate,
                         endDate = endDate,
                         selectedTimes = selectedTimes,
+                        type = medicationType,
                         onInvalidate = {
                             val invalidatedValue = context.getString(it)
                             showSnackbar(
@@ -222,8 +237,7 @@ fun AddMedicationScreen(
                     label = { Text(stringResource(R.string.duration)) },
                     placeholder = { Text(stringResource(R.string.select_duration)) },
                     trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-                    interactionSource =
-                    remember { MutableInteractionSource() }.also { interactionSource ->
+                    interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
                         LaunchedEffect(interactionSource) {
                             interactionSource.interactions.collect {
                                 if (it is PressInteraction.Release) {
@@ -290,19 +304,13 @@ fun AddMedicationScreen(
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            var isMaxDoseError by rememberSaveable { mutableStateOf(false) }
-            val maxDose = 3
-
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = numberOfDosage,
                 onValueChange = {
                     if (it.isEmpty() || it.toIntOrNull() != null) {
-                        if (it.toIntOrNull() ?: 0 <= maxDose) {
+                        if (it.toIntOrNull() ?: 0 <= 3) {
                             numberOfDosage = it
-                            isMaxDoseError = false
-                        } else {
-                            isMaxDoseError = true
                         }
                     }
                 },
@@ -312,12 +320,33 @@ fun AddMedicationScreen(
                 singleLine = true,
             )
 
-            if (isMaxDoseError) {
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Column {
                 Text(
-                    text = stringResource(R.string.max_dosage_error_message),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = stringResource(R.string.type),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 0.dp, bottom = 8.dp)
                 )
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .padding(horizontal = 0.dp),
+                    userScrollEnabled = false
+                ) {
+                    items(MedicationType.entries) { type ->
+                        MedicationTypeBox(
+                            type = type,
+                            isSelected = type == medicationType,
+                            onSelect = { medicationType = type }
+                        )
+                    }
+                }
             }
         }
     }
@@ -330,6 +359,7 @@ private fun validateMedication(
     startDate: Long,
     endDate: Long,
     selectedTimes: List<CalendarInformation>,
+    type: MedicationType,
     onInvalidate: (Int) -> Unit,
     onValidate: (List<Medication>) -> Unit,
     viewModel: AddMedicationViewModel,
@@ -360,7 +390,15 @@ private fun validateMedication(
     }
 
     val medications =
-        viewModel.createMedications(name, dosage, frequency, Date(startDate), Date(endDate), selectedTimes)
+        viewModel.createMedications(
+            name = name,
+            dosage = dosage,
+            frequency = frequency,
+            startDate = Date(startDate),
+            endDate = Date(endDate),
+            medicationTimes = selectedTimes,
+            type = type
+        )
 
     onValidate(medications)
 }
@@ -487,3 +525,70 @@ private fun buildDateRangeText(
     } else {
         "${Date(startDate).toFormattedMonthDateString()} - ${Date(endDate).toFormattedMonthDateString()}"
     }
+
+@Composable
+private fun MedicationTypeBox(
+    type: MedicationType,
+    isSelected: Boolean,
+    onSelect: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(12.dp))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                else MaterialTheme.colorScheme.surface
+            )
+            .border(
+                width = 1.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clickable(onClick = onSelect)
+            .padding(12.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                painter = painterResource(
+                    when (type) {
+                        MedicationType.TABLET -> R.drawable.ic_tablet
+                        MedicationType.CAPSULE -> R.drawable.ic_capsule
+                        MedicationType.SYRUP -> R.drawable.ic_syrup
+                        MedicationType.DROPS -> R.drawable.ic_drops
+                        MedicationType.SPRAY -> R.drawable.ic_spray
+                        MedicationType.GEL -> R.drawable.ic_gel
+                    }
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                tint = if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(
+                    when (type) {
+                        MedicationType.TABLET -> R.string.tablet
+                        MedicationType.CAPSULE -> R.string.capsule
+                        MedicationType.SYRUP -> R.string.type_syrup
+                        MedicationType.DROPS -> R.string.drops
+                        MedicationType.SPRAY -> R.string.spray
+                        MedicationType.GEL -> R.string.gel
+                    }
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
