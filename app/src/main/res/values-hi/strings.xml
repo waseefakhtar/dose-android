@@ -16,7 +16,7 @@
     <string name="schedule" tools:ignore="MissingTranslation">अनुसूची</string>
     <string name="next">अगला</string>
     <string name="value_is_empty">कृपया इसके लिए एक मान्य मान दर्ज करें %s</string>
-    <string name="all_done">सब हो गया!</string>
+    <string name="all_done">संपन्न!</string>
     <plurals name="all_set" tools:ignore="MissingTranslation,UnusedQuantity">
         <item quantity="one">आपके %1$s रिमाइंडर तैयार हैं, %2$s अलर्ट %3$s के साथ %4$s तक।</item>
         <item quantity="many">आपके %1$s रिमाइंडर तैयार हैं, %4$s तक %2$s अलर्ट %3$s के साथ।</item>
@@ -30,7 +30,7 @@
     <string name="take_dose_now">अब अपनी खुराक लें</string>
     <string name="taken">ले लिया</string>
     <string name="skipped">छोड़ दिया</string>
-    <string name="done">हो गया</string>
+    <string name="done">संपन्न</string>
     <string name="history">इतिहास</string>
     <string name="no_history_yet">कोई इतिहास नहीं है</string>
     <string name="back">वापस</string>
