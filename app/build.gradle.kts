@@ -13,7 +13,7 @@ android {
     compileSdk = libs.versions.compile.sdk.version.get().toInt()
 
     defaultConfig {
-        applicationId = "com.waseefakhtar.doseapp"
+        applicationId = "com.waseefakhtar.doseapp.dev"
         minSdk = libs.versions.min.sdk.version.get().toInt()
         targetSdk = libs.versions.target.sdk.version.get().toInt()
         versionCode = libs.versions.version.code.get().toInt()
