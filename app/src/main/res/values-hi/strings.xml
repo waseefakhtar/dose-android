@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Dose</string>
+    <string name="home">होम</string>
+    <string name="calendar">कैलेंडर</string>
+    <string name="add_time" tools:ignore="MissingTranslation">Add Time</string>
+    <string name="add_medication">दवा जोड़ें</string>
+    <string name="medication_name">दवा का नाम</string>
+    <string name="dose_per_day">मात्रा बनाने की विधि</string>
+    <string name="dose_optional" tools:ignore="MissingTranslation">Dose (Optional)</string>
+    <string name="recurrence">पुनरावृत्ति</string>
+    <string name="frequency" tools:ignore="MissingTranslation">Frequency</string>
+    <string name="end_date">अंतिम तिथि</string>
+    <string name="times_of_day">दिन के समय</string>
+    <string name="times_for_medication">दवा के लिए समय</string>
+    <string name="schedule" tools:ignore="MissingTranslation">Schedule</string>
+    <string name="next">अगला</string>
+    <string name="value_is_empty">कृपया इसके लिए एक मान्य मान दर्ज करें %s</string>
+    <string name="all_done">सब हो गया!</string>
+    <plurals name="all_set" tools:ignore="MissingTranslation,UnusedQuantity">
+        <item quantity="one">Your %1$s reminders are ready, with %2$s alert %3$s until %4$s.</item>
+        <item quantity="many">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
+        <item quantity="other">Your %1$s reminders are ready, with %2$s alerts %3$s until %4$s.</item>
+    </plurals>
+    <string name="confirm">पुष्टि करें</string>
+    <string name="time_remaining">Next dose in %1$s %2$s</string>
+    <string name="days">दिन</string>
+    <string name="hours">घंटे</string>
+    <string name="minutes">मिनट</string>
+    <string name="take_dose_now">अब अपनी खुराक लें</string>
+    <string name="taken">ले लिया</string>
+    <string name="skipped">छोड़ दिया</string>
+    <string name="done">हो गया</string>
+    <string name="history">इतिहास</string>
+    <string name="no_history_yet">कोई इतिहास नहीं है</string>
+    <string name="back">वापस</string>
+    <string name="add">जोड़ें</string>
+    <string name="medication_name_hint">e.g. Risperdal, 4mg</string>
+    <string name="error">Error</string>
+    <string name="dosage_hint">e.g. 1</string>
+    <string name="max_dosage_error_message">You cannot have more than 99 dosage per day.</string>
+    <string name="selected_content_description">Selected</string>
+    <string name="dosage_and_frequency_mismatch_error_message">You\'re selecting %s time(s) of days which is more than the number of dosage.</string>
+    <string name="your_plan_for_today">Your plan for today</string>
+    <string name="daily_medicine_log">%d of %d completed.</string>
+    <string name="medication_break">Medication Break</string>
+    <string name="home_screen_empty_card_message">No medications scheduled for this date. Take a break and relax.</string>
+    <string name="today">Today</string>
+    <string name="this_week">This Week</string>
+    <string name="next_week">Next Week</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_permission_required">Notification Permission Required</string>
+    <string name="notification_permission_required_description_message">To ensure you never miss your medication, please grant the notification permission.</string>
+    <string name="alarms" tools:ignore="MissingTranslation">Notifications</string>
+    <string name="alarms_permission_required" tools:ignore="MissingTranslation">Alarms Permission Required</string>
+    <string name="alarms_permission_required_description_message" tools:ignore="MissingTranslation">To ensure you never miss your medication, please grant the alarms permission.</string>
+    <string name="allow">Allow</string>
+    <string name="medication_taken_at">Taken at %s</string>
+    <string name="medication_skipped_at">Skipped at %s</string>
+    <string name="medication_scheduled_at">Scheduled at %s</string>
+    <string name="medication_timely_reminders_setup_message">%s is now set up for timely reminders.</string>
+    <string name="medication_logged">Medication Logged</string>
+    <string name="medication_dose_details">%d dose at %s</string>
+    <string name="medication_reminder">Medication Reminder</string>
+    <string name="notifications_for_medication_reminder">Notifications for medication reminder</string>
+    <string name="medication_reminder_time">It is time to take your medication, %s. Open the app to log it.</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="daily" tools:ignore="MissingTranslation">Daily</string>
+    <string name="weekly" tools:ignore="MissingTranslation">Weekly</string>
+    <string name="monthly" tools:ignore="MissingTranslation">Monthly</string>
+    <string name="duration" tools:ignore="MissingTranslation">Duration</string>
+    <string name="select_duration" tools:ignore="MissingTranslation">Select Duration</string>
+    <plurals name="duration_days" tools:ignore="MissingTranslation">
+        <item quantity="one">%d दिन</item>
+        <item quantity="other">%d दिन</item>
+    </plurals>
+    <plurals name="duration_weeks" tools:ignore="MissingTranslation">
+        <item quantity="one">%d सप्ताह</item>
+        <item quantity="other">%d हफ्तों</item>
+    </plurals>
+    <plurals name="duration_months" tools:ignore="MissingTranslation">
+        <item quantity="one">%d महीना</item>
+        <item quantity="other">%d महीने</item>
+    </plurals>
+    <plurals name="duration_years" tools:ignore="MissingTranslation">
+        <item quantity="one">%d वर्ष</item>
+        <item quantity="other">%d साल</item>
+    </plurals>
+    <string name="everyday" tools:ignore="MissingTranslation">रोज</string>
+    <string name="every_n_days" tools:ignore="MissingTranslation">हर %s दिन में</string>
+    <string name="every_week" tools:ignore="MissingTranslation">हर हफ्ते</string>
+    <string name="every_n_weeks" tools:ignore="MissingTranslation">हर %s सप्ताह में</string>
+    <string name="every_month" tools:ignore="MissingTranslation">प्रत्येक माह</string>
+    <string name="type" tools:ignore="MissingTranslation">प्रकार</string>
+    <string name="tablet" tools:ignore="MissingTranslation">गोली</string>
+    <string name="capsule" tools:ignore="MissingTranslation">कैप्सूल</string>
+    <string name="type_syrup" tools:ignore="MissingTranslation">सिरप</string>
+    <string name="drops" tools:ignore="MissingTranslation">ड्रॉप</string>
+    <string name="spray" tools:ignore="MissingTranslation">स्प्रे</string>
+    <string name="gel" tools:ignore="MissingTranslation">जेल</string>
+</resources>
