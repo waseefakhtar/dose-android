@@ -63,7 +63,7 @@
     <string name="medication_dose_details">%d की खुराक %s</string>
     <string name="medication_reminder">दवा अनुस्मारक</string>
     <string name="notifications_for_medication_reminder">दवा अनुस्मारक के लिए अधिसूचनाएँ</string>
-    <string name="medication_reminder_time">यह आपकी दवा लेने का समय है, %s। इसे लॉग इन करने के लिए ऐप खोलें.</string>
+    <string name="medication_reminder_time">यह आपकी %s दवा लेने का समय है। इसे लॉग इन करने के लिए ऐप खोलें.</string>
     <string name="cancel">रद्द करे</string>
     <string name="ok">ठीक है</string>
     <string name="daily">दैनिक</string>
