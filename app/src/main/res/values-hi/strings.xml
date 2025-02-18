@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Dose</string>
+    <string name="app_name">डोज़</string>
     <string name="home">होम</string>
     <string name="calendar">कैलेंडर</string>
-    <string name="add_time" tools:ignore="MissingTranslation">समय जोड़ें</string>
+    <string name="add_time">समय जोड़ें</string>
     <string name="add_medication">दवा जोड़ें</string>
     <string name="medication_name">दवा का नाम</string>
     <string name="dose_per_day">मात्रा बनाने की विधि</string>
-    <string name="dose_optional" tools:ignore="MissingTranslation">खुराक (वैकल्पिक)</string>
+    <string name="dose_optional">खुराक (वैकल्पिक)</string>
     <string name="recurrence">पुनरावृत्ति</string>
-    <string name="frequency" tools:ignore="MissingTranslation">आवृत्ति</string>
+    <string name="frequency">आवृत्ति</string>
     <string name="end_date">अंतिम तिथि</string>
     <string name="times_of_day">दिन के समय</string>
-    <string name="times_for_medication">दवा के लिए समय</string>
-    <string name="schedule" tools:ignore="MissingTranslation">अनुसूची</string>
+    <string name="times_for_medication">दवा लेने का समय</string>
+    <string name="schedule">अनुसूची</string>
     <string name="next">अगला</string>
-    <string name="value_is_empty">कृपया इसके लिए एक मान्य मान दर्ज करें %s</string>
+    <string name="value_is_empty">कृपया एक मान्य मान दर्ज करें %s के लिए </string>
     <string name="all_done">संपन्न!</string>
-    <plurals name="all_set" tools:ignore="MissingTranslation,UnusedQuantity">
+    <plurals name="all_set" tools:ignore="UnusedQuantity">
         <item quantity="one">आपके %1$s रिमाइंडर तैयार हैं, %2$s अलर्ट %3$s के साथ %4$s तक।</item>
         <item quantity="many">आपके %1$s रिमाइंडर तैयार हैं, %4$s तक %2$s अलर्ट %3$s के साथ।</item>
         <item quantity="other">आपके %1$s रिमाइंडर तैयार हैं, %4$s तक %2$s अलर्ट %3$s के साथ।</item>
@@ -32,12 +32,12 @@
     <string name="skipped">छोड़ दिया</string>
     <string name="done">संपन्न</string>
     <string name="history">इतिहास</string>
-    <string name="no_history_yet">कोई इतिहास नहीं है</string>
+    <string name="no_history_yet">कोई इतिहास नहीं</string>
     <string name="back">वापस</string>
     <string name="add">जोड़ें</string>
-    <string name="medication_name_hint">e.g रिस्परडाल, 4mg</string>
-    <string name="error">Error</string>
-    <string name="dosage_hint">e.g. 1</string>
+    <string name="medication_name_hint">उदाहरण रिस्परडाल, 4 मि.ग्रा</string>
+    <string name="error">त्रुटि</string>
+    <string name="dosage_hint">उदाहरण 1</string>
     <string name="max_dosage_error_message">आप प्रति दिन 99 से अधिक खुराक नहीं ले सकते।</string>
     <string name="selected_content_description">चयनित</string>
     <string name="dosage_and_frequency_mismatch_error_message">आप दिनों के %s समय का चयन कर रहे हैं जो खुराक की संख्या से अधिक है।</string>
@@ -51,52 +51,52 @@
     <string name="notifications">सूचनाएं</string>
     <string name="notification_permission_required">अधिसूचना अनुमति आवश्यक है</string>
     <string name="notification_permission_required_description_message">यह सुनिश्चित करने के लिए कि आपकी दवा कभी न छूटे, कृपया अधिसूचना की अनुमति प्रदान करें।</string>
-    <string name="alarms" tools:ignore="MissingTranslation">सूचनाएं</string>
-    <string name="alarms_permission_required" tools:ignore="MissingTranslation">अलार्म की अनुमति आवश्यक है</string>
-    <string name="alarms_permission_required_description_message" tools:ignore="MissingTranslation">यह सुनिश्चित करने के लिए कि आपकी दवा कभी न छूटे, कृपया अलार्म की अनुमति दें।</string>
+    <string name="alarms">सूचनाएं</string>
+    <string name="alarms_permission_required">अलार्म की अनुमति आवश्यक है</string>
+    <string name="alarms_permission_required_description_message">यह सुनिश्चित करने के लिए कि आपकी दवा कभी न छूटे, कृपया अलार्म की अनुमति दें।</string>
     <string name="allow">अनुमति दें</string>
     <string name="medication_taken_at">%s बजे लिया गया</string>
     <string name="medication_skipped_at">%s बजे छोड़ दिया गया</string>
     <string name="medication_scheduled_at">%s बजे शेड्यूल किया गया</string>
     <string name="medication_timely_reminders_setup_message">%s क्रॉक अब समय पर अनुस्मारक के लिए स्थापित किया गया है।</string>
     <string name="medication_logged">दवा लॉग की गई</string>
-    <string name="medication_dose_details">%d क्रोसिन की खुराक %s</string>
+    <string name="medication_dose_details">%d की खुराक %s</string>
     <string name="medication_reminder">दवा अनुस्मारक</string>
     <string name="notifications_for_medication_reminder">दवा अनुस्मारक के लिए अधिसूचनाएँ</string>
     <string name="medication_reminder_time">यह आपकी दवा लेने का समय है, %s। इसे लॉग इन करने के लिए ऐप खोलें.</string>
     <string name="cancel">रद्द करे</string>
     <string name="ok">ठीक है</string>
-    <string name="daily" tools:ignore="MissingTranslation">दैनिक</string>
-    <string name="weekly" tools:ignore="MissingTranslation">साप्ताहिक</string>
-    <string name="monthly" tools:ignore="MissingTranslation">महीने</string>
-    <string name="duration" tools:ignore="MissingTranslation">अवधि</string>
-    <string name="select_duration" tools:ignore="MissingTranslation">अवधि चुनें</string>
-    <plurals name="duration_days" tools:ignore="MissingTranslation">
+    <string name="daily">दैनिक</string>
+    <string name="weekly">साप्ताहिक</string>
+    <string name="monthly">महीने</string>
+    <string name="duration">अवधि</string>
+    <string name="select_duration">अवधि चुनें</string>
+    <plurals name="duration_days">
         <item quantity="one">%d दिन</item>
         <item quantity="other">%d दिन</item>
     </plurals>
-    <plurals name="duration_weeks" tools:ignore="MissingTranslation">
+    <plurals name="duration_weeks">
         <item quantity="one">%d सप्ताह</item>
         <item quantity="other">%d हफ्तों</item>
     </plurals>
-    <plurals name="duration_months" tools:ignore="MissingTranslation">
+    <plurals name="duration_months">
         <item quantity="one">%d महीना</item>
         <item quantity="other">%d महीने</item>
     </plurals>
-    <plurals name="duration_years" tools:ignore="MissingTranslation">
+    <plurals name="duration_years">
         <item quantity="one">%d वर्ष</item>
         <item quantity="other">%d साल</item>
     </plurals>
-    <string name="everyday" tools:ignore="MissingTranslation">रोज</string>
-    <string name="every_n_days" tools:ignore="MissingTranslation">हर %s दिन में</string>
-    <string name="every_week" tools:ignore="MissingTranslation">हर हफ्ते</string>
-    <string name="every_n_weeks" tools:ignore="MissingTranslation">हर %s सप्ताह में</string>
-    <string name="every_month" tools:ignore="MissingTranslation">प्रत्येक माह</string>
-    <string name="type" tools:ignore="MissingTranslation">प्रकार</string>
-    <string name="tablet" tools:ignore="MissingTranslation">गोली</string>
-    <string name="capsule" tools:ignore="MissingTranslation">कैप्सूल</string>
-    <string name="type_syrup" tools:ignore="MissingTranslation">सिरप</string>
-    <string name="drops" tools:ignore="MissingTranslation">ड्रॉप</string>
-    <string name="spray" tools:ignore="MissingTranslation">स्प्रे</string>
-    <string name="gel" tools:ignore="MissingTranslation">जेल</string>
+    <string name="everyday">रोज</string>
+    <string name="every_n_days">हर %s दिन में</string>
+    <string name="every_week">हर हफ्ते</string>
+    <string name="every_n_weeks">हर %s सप्ताह में</string>
+    <string name="every_month">प्रत्येक माह</string>
+    <string name="type">प्रकार</string>
+    <string name="tablet">गोली</string>
+    <string name="capsule">कैप्सूल</string>
+    <string name="type_syrup">सिरप</string>
+    <string name="drops">ड्रॉप</string>
+    <string name="spray">स्प्रे</string>
+    <string name="gel">जेल</string>
 </resources>
