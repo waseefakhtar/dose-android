@@ -20,7 +20,13 @@ class AddMedicationViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val DEFAULT_ONGOING_DURATION_DAYS = 365 // 1 year for ongoing medications
+        /**
+         * Default duration for ongoing medications (no end date).
+         * We create 1 year of medication reminders initially for ongoing medications.
+         * This allows users to have a practical number of reminders while the app
+         * can be enhanced in the future to automatically extend this duration.
+         */
+        private const val DEFAULT_ONGOING_DURATION_DAYS = 365
     }
 
     fun createMedications(
