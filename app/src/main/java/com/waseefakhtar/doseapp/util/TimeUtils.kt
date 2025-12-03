@@ -17,7 +17,9 @@ fun getTimeRemaining(medication: Medication): String {
     val timeDiff = abs(currentTime.time - dateBefore.time)
 
     // If the medication is scheduled for a future date, display days remaining
-    if (medication.medicationTime.toFormattedDateString() != medication.endDate.toFormattedDateString()) {
+    // For ongoing medications (null endDate), use medication time for comparison
+    val endDateString = medication.endDate?.toFormattedDateString()
+    if (endDateString != null && medication.medicationTime.toFormattedDateString() != endDateString) {
         val daysRemaining = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS) + 1L
         return stringResource(id = R.string.time_remaining, daysRemaining, stringResource(id = R.string.days))
     }

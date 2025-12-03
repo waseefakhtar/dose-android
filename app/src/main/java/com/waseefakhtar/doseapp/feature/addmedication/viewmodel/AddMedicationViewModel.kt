@@ -19,12 +19,22 @@ class AddMedicationViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+    companion object {
+        /**
+         * Default duration for ongoing medications (no end date).
+         * We create 1 year of medication reminders initially for ongoing medications.
+         * This allows users to have a practical number of reminders while the app
+         * can be enhanced in the future to automatically extend this duration.
+         */
+        private const val DEFAULT_ONGOING_DURATION_DAYS = 365
+    }
+
     fun createMedications(
         name: String,
         dosage: Int,
         frequency: String,
         startDate: Date,
-        endDate: Date,
+        endDate: Date?,
         medicationTimes: List<CalendarInformation>,
         type: MedicationType,
     ): List<Medication> {
@@ -36,7 +46,16 @@ class AddMedicationViewModel @Inject constructor(
         }
 
         val oneDayInMillis = 86400 * 1000 // Number of milliseconds in one day
-        val durationInDays = ((endDate.time + oneDayInMillis - startDate.time) / oneDayInMillis).toInt()
+
+        // For ongoing medications (null endDate), use a default duration
+        val effectiveEndDate = endDate ?: run {
+            val calendar = Calendar.getInstance()
+            calendar.time = startDate
+            calendar.add(Calendar.DAY_OF_YEAR, DEFAULT_ONGOING_DURATION_DAYS)
+            calendar.time
+        }
+
+        val durationInDays = ((effectiveEndDate.time + oneDayInMillis - startDate.time) / oneDayInMillis).toInt()
 
         // Always create at least one occurrence if we have a valid duration
         val numOccurrences = if (durationInDays > 0) maxOf(1, durationInDays / interval) else 0
