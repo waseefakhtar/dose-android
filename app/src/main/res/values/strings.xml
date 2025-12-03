@@ -70,6 +70,15 @@
     <string name="monthly" tools:ignore="MissingTranslation">Monthly</string>
     <string name="duration" tools:ignore="MissingTranslation">Duration</string>
     <string name="select_duration" tools:ignore="MissingTranslation">Select Duration</string>
+    <string name="ongoing_medication" tools:ignore="MissingTranslation">Ongoing (no end date)</string>
+    <string name="start_date" tools:ignore="MissingTranslation">Start Date</string>
+    <string name="select_start_date" tools:ignore="MissingTranslation">Select Start Date</string>
+    <string name="ongoing" tools:ignore="MissingTranslation">ongoing</string>
+    <plurals name="all_set_ongoing" tools:ignore="MissingTranslation">
+        <item quantity="one">Your %1$s reminders are ready, with %2$s alert %3$s, %4$s.</item>
+        <item quantity="many">Your %1$s reminders are ready, with %2$s alerts %3$s, %4$s.</item>
+        <item quantity="other">Your %1$s reminders are ready, with %2$s alerts %3$s, %4$s.</item>
+    </plurals>
     <plurals name="duration_days" tools:ignore="MissingTranslation">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

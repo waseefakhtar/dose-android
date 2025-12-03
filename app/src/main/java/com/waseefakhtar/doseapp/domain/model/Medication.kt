@@ -12,7 +12,7 @@ data class Medication(
     val dosage: Int,
     val frequency: String,
     val startDate: Date,
-    val endDate: Date,
+    val endDate: Date?,
     val medicationTaken: Boolean,
     val medicationTime: Date,
     val type: MedicationType = MedicationType.getDefault()

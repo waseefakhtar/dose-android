@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -107,6 +108,7 @@ fun AddMedicationScreen(
     var frequency by rememberSaveable { mutableStateOf(Frequency.EVERYDAY.name) }
     var startDate by rememberSaveable { mutableLongStateOf(0L) }
     var endDate by rememberSaveable { mutableLongStateOf(0L) }
+    var isOngoing by rememberSaveable { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     val selectedTimes =
         rememberSaveable(
@@ -169,6 +171,7 @@ fun AddMedicationScreen(
                         frequency = frequency,
                         startDate = startDate,
                         endDate = endDate,
+                        isOngoing = isOngoing,
                         selectedTimes = selectedTimes,
                         type = medicationType,
                         onInvalidate = {
@@ -227,38 +230,85 @@ fun AddMedicationScreen(
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                TextField(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
-                    value = buildDateRangeText(startDate, endDate),
-                    onValueChange = {},
-                    label = { Text(stringResource(R.string.duration)) },
-                    placeholder = { Text(stringResource(R.string.select_duration)) },
-                    trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-                    interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
-                        LaunchedEffect(interactionSource) {
-                            interactionSource.interactions.collect {
-                                if (it is PressInteraction.Release) {
-                                    showDatePicker = true
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Checkbox(
+                        checked = isOngoing,
+                        onCheckedChange = { isOngoing = it },
+                    )
+                    Text(
+                        text = stringResource(R.string.ongoing_medication),
+                        modifier = Modifier.clickable { isOngoing = !isOngoing },
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                if (isOngoing) {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        value = buildStartDateText(startDate),
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.start_date)) },
+                        placeholder = { Text(stringResource(R.string.select_start_date)) },
+                        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                        interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
+                            LaunchedEffect(interactionSource) {
+                                interactionSource.interactions.collect {
+                                    if (it is PressInteraction.Release) {
+                                        showDatePicker = true
+                                    }
                                 }
                             }
-                        }
+                        },
+                    )
+                } else {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        value = buildDateRangeText(startDate, endDate),
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.duration)) },
+                        placeholder = { Text(stringResource(R.string.select_duration)) },
+                        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+                        interactionSource = remember { MutableInteractionSource() }.also { interactionSource ->
+                            LaunchedEffect(interactionSource) {
+                                interactionSource.interactions.collect {
+                                    if (it is PressInteraction.Release) {
+                                        showDatePicker = true
+                                    }
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+
+            if (isOngoing) {
+                StartDatePickerDialog(
+                    showDialog = showDatePicker,
+                    selectedDate = startDate,
+                    onDismiss = { showDatePicker = false },
+                    onDateSelected = { start ->
+                        startDate = start
+                    },
+                )
+            } else {
+                DateRangePickerDialog(
+                    showDialog = showDatePicker,
+                    startDate = startDate,
+                    endDate = endDate,
+                    onDismiss = { showDatePicker = false },
+                    onDateSelected = { start, end ->
+                        startDate = start
+                        endDate = end
                     },
                 )
             }
-
-            DateRangePickerDialog(
-                showDialog = showDatePicker,
-                startDate = startDate,
-                endDate = endDate,
-                onDismiss = { showDatePicker = false },
-                onDateSelected = { start, end ->
-                    startDate = start
-                    endDate = end
-                },
-            )
 
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
@@ -358,6 +408,7 @@ private fun validateMedication(
     frequency: String,
     startDate: Long,
     endDate: Long,
+    isOngoing: Boolean,
     selectedTimes: List<CalendarInformation>,
     type: MedicationType,
     onInvalidate: (Int) -> Unit,
@@ -374,14 +425,22 @@ private fun validateMedication(
         return
     }
 
-    if (startDate == 0L || endDate == 0L) {
-        onInvalidate(R.string.duration)
-        return
-    }
+    // For ongoing medications, only startDate is required
+    if (isOngoing) {
+        if (startDate == 0L) {
+            onInvalidate(R.string.start_date)
+            return
+        }
+    } else {
+        if (startDate == 0L || endDate == 0L) {
+            onInvalidate(R.string.duration)
+            return
+        }
 
-    if (startDate >= endDate) {
-        onInvalidate(R.string.duration)
-        return
+        if (startDate >= endDate) {
+            onInvalidate(R.string.duration)
+            return
+        }
     }
 
     if (selectedTimes.isEmpty()) {
@@ -395,7 +454,7 @@ private fun validateMedication(
             dosage = dosage,
             frequency = frequency,
             startDate = Date(startDate),
-            endDate = Date(endDate),
+            endDate = if (isOngoing) null else Date(endDate),
             medicationTimes = selectedTimes,
             type = type
         )
@@ -524,6 +583,16 @@ private fun buildDateRangeText(
         ""
     } else {
         "${Date(startDate).toFormattedMonthDateString()} - ${Date(endDate).toFormattedMonthDateString()}"
+    }
+
+@Composable
+private fun buildStartDateText(
+    startDate: Long,
+): String =
+    if (startDate == 0L) {
+        ""
+    } else {
+        Date(startDate).toFormattedMonthDateString()
     }
 
 @Composable

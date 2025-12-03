@@ -108,15 +108,27 @@ fun MedicationConfirmScreen(
         )
 
         val medication = medications.first()
-        Text(
-            text = pluralStringResource(
+        val confirmationText = if (medication.endDate != null) {
+            pluralStringResource(
                 id = R.plurals.all_set,
                 count = medications.size,
                 medication.name,
                 medications.size,
                 medication.frequency.lowercase(),
                 medication.endDate.toFormattedDateString()
-            ),
+            )
+        } else {
+            pluralStringResource(
+                id = R.plurals.all_set_ongoing,
+                count = medications.size,
+                medication.name,
+                medications.size,
+                medication.frequency.lowercase(),
+                stringResource(R.string.ongoing)
+            )
+        }
+        Text(
+            text = confirmationText,
             style = MaterialTheme.typography.titleMedium
         )
     }
