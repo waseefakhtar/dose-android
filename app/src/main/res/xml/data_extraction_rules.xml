@@ -1,19 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Data extraction rules for Android 12+ (API 31+)
+
+   This configuration allows full backup to cloud and device-to-device transfer.
+   For personal use where Google account security is trusted.
+
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
 -->
 <data-extraction-rules>
+    <!-- Cloud backup (Google Drive) - includes medication database -->
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <include domain="database" path="."/>
+        <include domain="sharedpref" path="."/>
+        <!-- Exclude local crash logs -->
+        <exclude domain="file" path="crash_logs"/>
     </cloud-backup>
-    <!--
+
+    <!-- Device-to-device transfer (e.g., via cable when setting up new phone) -->
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <include domain="database" path="."/>
+        <include domain="sharedpref" path="."/>
+        <!-- Exclude local crash logs -->
+        <exclude domain="file" path="crash_logs"/>
     </device-transfer>
-    -->
 </data-extraction-rules>

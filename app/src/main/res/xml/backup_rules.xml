@@ -1,13 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older that API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Backup configuration for personal use.
+
+   This app is configured to backup all data including the medication database
+   to Google Drive for easy transfer to new devices.
+
+   For personal use with sole access to Google account, this is an acceptable
+   trade-off between security and convenience. Medication data is backed up
+   alongside other personal data already in Google account (email, photos, etc.)
+
+   See https://developer.android.com/guide/topics/data/autobackup for details.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Backup all app data including medication database -->
+    <include domain="database" path="."/>
+    <include domain="sharedpref" path="."/>
+
+    <!-- Exclude local crash logs (device-specific debugging) -->
+    <exclude domain="file" path="crash_logs"/>
 </full-backup-content>
