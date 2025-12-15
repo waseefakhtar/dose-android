@@ -1,0 +1,51 @@
+version: 2
+updates:
+  # Monitor Gradle dependencies for security updates
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      # Check for updates monthly (reasonable for personal use)
+      interval: "monthly"
+      # Run on the first of each month at 9am UTC
+      time: "09:00"
+    # Limit open PRs to avoid noise
+    open-pull-requests-limit: 5
+    # Group compatible updates together to reduce PR spam
+    groups:
+      # Group all AndroidX library updates together
+      androidx:
+        patterns:
+          - "androidx.*"
+      # Group all Compose library updates together
+      compose:
+        patterns:
+          - "androidx.compose.*"
+          - "*compose*"
+      # Group all Kotlin updates together
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "*kotlin*"
+      # Group all testing library updates together
+      testing:
+        patterns:
+          - "junit*"
+          - "*test*"
+          - "espresso*"
+    # Automatically rebase PRs if conflicts occur
+    rebase-strategy: "auto"
+    # Add labels to PRs for easy filtering
+    labels:
+      - "dependencies"
+      - "automated"
+
+  # Monitor GitHub Actions for updates (if you add more workflows)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    labels:
+      - "github-actions"
+      - "automated"
