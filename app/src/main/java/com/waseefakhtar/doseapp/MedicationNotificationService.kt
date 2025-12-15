@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.waseefakhtar.doseapp.analytics.AnalyticsHelper
 import com.waseefakhtar.doseapp.domain.model.Medication
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -37,7 +36,8 @@ class MedicationNotificationService @Inject constructor(
                     alarmPendingIntent
                 )
             } catch (exception: SecurityException) {
-                FirebaseCrashlytics.getInstance().recordException(exception)
+                // Log security exception locally
+                analyticsHelper.getCrashLogger().recordException(exception)
             }
         }
 

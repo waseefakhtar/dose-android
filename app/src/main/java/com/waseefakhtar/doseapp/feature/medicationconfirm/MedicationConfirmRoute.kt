@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import android.util.Log
 import com.waseefakhtar.doseapp.R
 import com.waseefakhtar.doseapp.analytics.AnalyticsEvents
 import com.waseefakhtar.doseapp.domain.model.Medication
@@ -49,8 +49,8 @@ fun MedicationConfirmRoute(
             navigateToHome = navigateToHome,
             logEvent = viewModel::logEvent
         )
-    } ?: {
-        FirebaseCrashlytics.getInstance().log("Error: Cannot show MedicationConfirmScreen. Medication is null.")
+    } ?: run {
+        Log.e("MedicationConfirmRoute", "Error: Cannot show MedicationConfirmScreen. Medication is null.")
     }
 }
 

@@ -2,40 +2,51 @@ package com.waseefakhtar.doseapp.analytics
 
 import android.content.Context
 import android.os.Bundle
-import androidx.core.os.bundleOf
-import com.google.firebase.analytics.FirebaseAnalytics
+import android.util.Log
 import com.waseefakhtar.doseapp.domain.model.Medication
-import com.waseefakhtar.doseapp.extension.toFormattedDateString
-import java.util.Date
 
-private const val MEDICATION_TIME = "medication_time"
-private const val MEDICATION_END_DATE = "medication_end_date"
-private const val NOTIFICATION_TIME = "notification_time"
-
+/**
+ * Analytics helper for personal use.
+ * Logs events to logcat instead of sending to external services.
+ * All analytics are local-only for privacy.
+ */
 class AnalyticsHelper(
     context: Context
 ) {
-    private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    private val crashLogger = LocalCrashLogger(context)
 
+    /**
+     * Track when a medication notification is shown
+     * This is now a no-op or logs locally
+     */
     fun trackNotificationShown(medication: Medication) {
-        val params = bundleOf(
-            MEDICATION_TIME to medication.medicationTime.toFormattedDateString(),
-            MEDICATION_END_DATE to medication.endDate.toFormattedDateString(),
-            NOTIFICATION_TIME to Date().toFormattedDateString()
-        )
-        logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SHOWN, params)
+        logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SHOWN, null)
     }
 
+    /**
+     * Track when a medication notification is scheduled
+     * This is now a no-op or logs locally
+     */
     fun trackNotificationScheduled(medication: Medication) {
-        val params = bundleOf(
-            MEDICATION_TIME to medication.medicationTime.toFormattedDateString(),
-            MEDICATION_END_DATE to medication.endDate.toFormattedDateString(),
-            NOTIFICATION_TIME to Date().toFormattedDateString()
-        )
-        logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, params)
+        logEvent(AnalyticsEvents.MEDICATION_NOTIFICATION_SCHEDULED, null)
     }
 
+    /**
+     * Log an event locally (no external tracking)
+     * @param eventName Name of the event
+     * @param params Optional parameters (ignored for privacy)
+     */
     fun logEvent(eventName: String, params: Bundle? = null) {
-        firebaseAnalytics.logEvent(eventName, params)
+        // Local logging only - no external analytics
+        Log.d(TAG, "Event: $eventName")
+    }
+
+    /**
+     * Get the local crash logger for recording exceptions
+     */
+    fun getCrashLogger(): LocalCrashLogger = crashLogger
+
+    companion object {
+        private const val TAG = "AnalyticsHelper"
     }
 }

@@ -25,7 +25,8 @@ fun String.toDate(): Date? {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         sdf.parse(this)
     } catch (e: Exception) {
-        e.printStackTrace()
+        // Log error without exposing stack trace in production
+        android.util.Log.w("DateExtension", "Failed to parse date: $this")
         null
     }
 }

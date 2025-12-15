@@ -14,3 +14,21 @@
 .cxx
 local.properties
 .idea/
+
+# Security: Never commit these files
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+*.apk
+*.aab
+*.ap_
+*.key
+*.pem
+.env
+.env.*
+secrets.properties
+signing.properties
+
+# Crash logs (local only)
+app/crash_logs/
