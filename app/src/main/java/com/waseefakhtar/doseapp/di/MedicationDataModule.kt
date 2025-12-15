@@ -9,25 +9,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
 
+/**
+ * Dependency injection module for medication data layer.
+ *
+ * This app is fully offline - all data stored locally in Room database.
+ * No network dependencies required.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object MedicationDataModule {
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
-            )
-            .build()
-    }
 
     @Provides
     @Singleton
